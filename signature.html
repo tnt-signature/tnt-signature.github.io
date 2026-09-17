@@ -22,7 +22,10 @@
 (function(){
   try{
     var ua = navigator.userAgent || '';
-    if (/Line\//i.test(ua) && location.search.indexOf('openExternalBrowser=1') < 0){
+    /* ★ただし LINEの専用ページ（LIFF）から来た時（入口 index.html が liff=1 を付ける）は外へ出さない。
+       お店のトークの中に居ないと「押したら注文をそのまま送る」が使えないため（2026-09-17 まるちゃん決定）。 */
+    if (/Line\//i.test(ua) && location.search.indexOf('openExternalBrowser=1') < 0
+        && location.search.indexOf('liff=1') < 0){
       window.__ttExt = true;   /* 下の「最新のページへ移る」を止める（読み直しと取り合わないように） */
       location.replace(location.pathname + (location.search ? location.search + '&' : '?') + 'openExternalBrowser=1');
     }
@@ -34,7 +37,7 @@
    こうすると、スマホに古い画面が残っていても必ず新しい画面が出る。 */
 (function(){
   if (window.__ttExt) return;
-  var here = '20260917191951';
+  var here = '20260917192118';
   function go(v){ location.replace('page-' + v + '.html'); }
   var moved = false;
   function once(v){ if (moved) return; moved = true; go(v); }
@@ -48,6 +51,6 @@
   setTimeout(function(){ once(here); }, 4000);
 })();
 </script>
-<noscript><a href="page-20260917191951.html">開く</a></noscript>
+<noscript><a href="page-20260917192118.html">開く</a></noscript>
 </body>
 </html>

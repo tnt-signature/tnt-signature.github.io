@@ -12,7 +12,9 @@
   var st = null;
   try { st = new URLSearchParams(location.search).get('liff.state'); } catch(e) {}
   if (st && /^\/[A-Za-z0-9_\-\.\/]*(\?[^#]*)?$/.test(st) && st.indexOf('//') < 0) {
-    location.replace(st.replace(/^\/+/, '') || 'signature.html');
+    /* liff=1＝専用ページから来た印。入口（signature.html）はこの印がある時、LINEの外へ出さない */
+    var p = st.replace(/^\/+/, '') || 'signature.html';
+    location.replace(p + (p.indexOf('?') < 0 ? '?' : '&') + 'liff=1');
   } else {
     location.replace('signature.html' + location.search);
   }
