@@ -15,10 +15,26 @@
 </head>
 <body>
 <script>
+/* ★2026-09-17 まるちゃん「URLの隣に×が出て誤って閉じる」。
+   LINEの中で開かれた時は、LINEの外（スマホのふつうのブラウザ）で開き直してもらう印を付けて読み直す。
+   短いリンク（x.gd）は飛び先を変えられないので、印はここで付ける。
+   LINEがこの印に応じない時は、そのままLINEの中で今までどおり開く（困ることは起きない）。 */
+(function(){
+  try{
+    var ua = navigator.userAgent || '';
+    if (/Line\//i.test(ua) && location.search.indexOf('openExternalBrowser=1') < 0){
+      window.__ttExt = true;   /* 下の「最新のページへ移る」を止める（読み直しと取り合わないように） */
+      location.replace(location.pathname + (location.search ? location.search + '&' : '?') + 'openExternalBrowser=1');
+    }
+  }catch(e){}
+})();
+</script>
+<script>
 /* ★ここは「入口」だけ。中身は毎回 ver.txt を見て、最新の番号のページへ移る。
    こうすると、スマホに古い画面が残っていても必ず新しい画面が出る。 */
 (function(){
-  var here = '20260917185850';
+  if (window.__ttExt) return;
+  var here = '20260917190943';
   function go(v){ location.replace('page-' + v + '.html'); }
   var moved = false;
   function once(v){ if (moved) return; moved = true; go(v); }
@@ -32,6 +48,6 @@
   setTimeout(function(){ once(here); }, 4000);
 })();
 </script>
-<noscript><a href="page-20260917185850.html">開く</a></noscript>
+<noscript><a href="page-20260917190943.html">開く</a></noscript>
 </body>
 </html>
