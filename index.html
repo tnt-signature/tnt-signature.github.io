@@ -3,5 +3,19 @@
 <title>T&amp;T SIGNATURE</title>
 <meta property="og:title" content="T&amp;T SIGNATURE"><meta property="og:description" content="T&amp;T SIGNATURE"><meta property="og:site_name" content="T&amp;T SIGNATURE">
 <style>html,body{margin:0;height:100%;background:#ffffff}</style>
-<script>location.replace('signature.html' + location.search);</script>
+<script>
+/* ★LINEの専用ページ（LIFF）から開いた時（2026-09-17）。
+   https://liff.line.me/<ID>/signaturech.html の形で開くと、LINEはまずこの入口へ
+   「?liff.state=/signaturech.html」を付けて来る。その行き先（同じ置き場の中の住所だけ）へ進む。
+   それ以外は今までどおり日本語の商品ページへ。 */
+(function(){
+  var st = null;
+  try { st = new URLSearchParams(location.search).get('liff.state'); } catch(e) {}
+  if (st && /^\/[A-Za-z0-9_\-\.\/]*(\?[^#]*)?$/.test(st) && st.indexOf('//') < 0) {
+    location.replace(st.replace(/^\/+/, '') || 'signature.html');
+  } else {
+    location.replace('signature.html' + location.search);
+  }
+})();
+</script>
 </head><body><noscript><a href="signature.html">T&amp;T SIGNATURE</a></noscript></body></html>
