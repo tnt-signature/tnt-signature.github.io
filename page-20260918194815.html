@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,7 +8,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="T&amp;T SIGNATURE">
 <meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
+<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
 <meta property="og:site_name" content="T&amp;T SIGNATURE">
 <meta name="twitter:card" content="summary">
 </head>
@@ -1534,7 +1534,7 @@ body.dark .todoline{color:#a2947f}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "zh";
+var LANG = "ja";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1706,7 +1706,7 @@ var ZH = {
   "ホホバエッセンスの秘密":"荷荷芭精華的秘密",
   "月室美容液の秘密":"月室精華液的秘密",
   "準備中":"準備中",
-  "ぐみ茶":"gumi茶",   /* 中国語版での名前（2026-09-06 まるちゃん） */
+  "gumi茶":"gumi茶",   /* 中国語版での名前（2026-09-06 まるちゃん・2026-09-18 日本語名もgumi茶に） */
   "本":"支",
   "点":"項",
   "1本だけ 250元":"單支 250元",
@@ -1786,6 +1786,9 @@ var QR = { linepay:"", jkopay:"" };
 /* ★郵送でのお受け取り＝蝦皮（Shopee）のお店のページ（2026-09-06 まるちゃん）。
    ここが空の間は、ボタンは出るが押せない（「ご用意でき次第…」と小さく出る）。
    商品ごとに別のページへ飛ばしたい時は、その商品の並びに shopee:"住所" を1行足せば、そちらが優先される。 */
+/* ★2026-09-18 まるちゃん：「郵送で受け取る」ボタンをしばらく隠す（また出す予定）。
+   出したくなったら true にして出し直すだけ（蝦皮の住所・割引コードの画面はそのまま残してある）。 */
+var NET_ON = false;
 var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは今のところNo.31だけ。
                       お店全体の住所は空にし、送れる商品にだけ shopee:"住所" を書く。
                       shopee が無い商品は「郵送で受け取る」ボタン自体を出さない。 */
@@ -1799,7 +1802,7 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
 var SHOPEE_CODE = "TAKY0105";
 var SHOPEE_OFF  = 150;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-020a716380.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -2087,7 +2090,7 @@ var DATA = {
          値段も「詳細を見る」も出さない。押しても何も起きない（詳しい画面はまだ無いので）。
          写真が用意できたら soon を消して、ふつうの商品と同じように書けばよい。 */
       { id:"gumi_tea", soon:true,
-        nm:"ぐみ茶", nm_zh:"gumi茶",   /* 名前はひらがな（2026-09-05 まるちゃん） */
+        nm:"gumi茶", nm_zh:"gumi茶",   /* 名前は「gumi茶」（2026-09-18 まるちゃん。前はひらがなの「ぐみ茶」） */
         sub:"",                      /* 「近日登場」は出さない（2026-09-02 まるちゃん） */
         one:"", now:null, was:null, tags:[], body:"" }
     ],
@@ -3501,6 +3504,10 @@ function ttDbg(m){
       liff.init({ liffId: LIFF_ID }).then(function(){
         var c = liff.getContext ? liff.getContext() : null;
         ttDbg('init成功 inClient=' + liff.isInClient() + ' login=' + liff.isLoggedIn() + ' 種類=' + (c && c.type) + ' 版=' + liff.getVersion());
+        /* ★2026-09-18 調べ用：この専用ページから見た「その人の番号」。お店の公式LINEのトークの番号と同じなら、
+           LINEの外から開いた注文でも、お店からその人のトークへ送れる（登録の場所が同じ＝番号が同じ）。 */
+        try{ var tk = liff.getDecodedIDToken && liff.getDecodedIDToken(); ttDbg('番号(ID)=' + (tk && tk.sub)); }catch(e){ ttDbg('番号(ID)取れない ' + e); }
+        try{ liff.getProfile().then(function(p){ ttDbg('番号(プロフィール)=' + p.userId); }).catch(function(e){ ttDbg('プロフィール失敗 ' + (e && e.message)); }); }catch(e){}
         try{ liff.permission.query('chat_message.write').then(function(p){ ttDbg('送信の許可=' + JSON.stringify(p)); }).catch(function(e){ ttDbg('許可の問い合わせ失敗 ' + (e && (e.code + ' ' + e.message))); }); }catch(e){ ttDbg('許可の問い合わせ不可 ' + e); }
         if (!liff.isInClient()) return;       /* 専用ページとして開いていない（ふつうのリンク） */
         /* 1対1のトーク（お店の公式LINEとのトーク）から開いた時だけ送る */
@@ -3978,7 +3985,7 @@ function setStep(n){
   document.getElementById('stepHead').style.display = (n===0 || n===4) ? 'none'  : 'flex';
   document.getElementById('stepWay').style.display  = (n===1) ? 'block' : 'none';
   /* 郵送で送れない商品（蝦皮の住所が無い）は「郵送で受け取る」を出さない（2026-09-14 まるちゃん） */
-  document.getElementById('buyNet').style.display = shopeeUrl() ? '' : 'none';
+  document.getElementById('buyNet').style.display = (NET_ON && shopeeUrl()) ? '' : 'none';
   document.getElementById('stepNet').style.display  = (n===5) ? 'block' : 'none';   /* 郵送＝蝦皮 */
   document.getElementById('stepCode').style.display = (n===6) ? 'block' : 'none';   /* 蝦皮の割引コード */
   document.getElementById('stepQty').style.display  = (n===2) ? 'block' : 'none';
