@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
 </head>
-<body style="margin:0"><title>T&amp;T SIGNATURE</title>
+<body style="margin:0">
+<script>window.__FILM_ONLY__=true;</script><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1324,6 +1325,22 @@ body.dark .todoline{color:#a2947f}
   margin:16px 0 0;border:1px dashed #c9b48c;border-radius:14px;
   background:#fffaf0;padding:13px 16px;font-size:12.5px;color:#8a7444;line-height:1.8;
 }
+
+/* ★見せる用：下の見出しとボタンを隠して、上の映像だけにする */
+.homelower{display:none !important}
+#viewHome{justify-content:center}
+/* ★映像だけの版は「正方形のまま、いちばん大きく」出す（2026-09-02 まるちゃん）。
+   スマホ用の写真は正方形なので、入れ物の四角ぜんぶを写真で埋める。
+   パソコンでは高さいっぱいの正方形になり、左右に黒い余白ができる。 */
+html,body{background:#000}
+.wrap{max-width:none;padding:0;min-height:100dvh;
+      display:flex;align-items:center;justify-content:center}
+#viewHome{flex:none;width:min(100vw,100dvh)}
+.hero{width:100%;margin-left:0;margin-right:0;aspect-ratio:1/1}
+@media (min-width:780px){ .hero{aspect-ratio:1/1} }
+/* ★正方形の写真を使うので、字の置き方もスマホと同じ右そろえにする（2026-09-10） */
+.cap .ja4{align-items:flex-end}
+.cap .side{align-self:flex-end;align-items:flex-end}
 </style>
 <div class="wrap">
   <!-- 日本語のお客様向けのページなので、中国語は付けない（2026-09-02 まるちゃん） -->
@@ -3432,6 +3449,20 @@ function orderPing(){
     fetch(u, { mode:"no-cors", cache:"no-store" }).catch(function(){});
   }catch(e){}
 }
+/* ★2026-09-18：LINEの専用ページから注文した時は、すぐにトークへ移るので、上の合図が途中で消えていた
+   （12:37 以降、専用ページからの注文で合図が1回も届いていなかった＝速い見張りに入らず返事が遅れた）。
+   専用ページの時だけ、合図が出ていくのを待ってから（長くても1.5秒）トークへ移る。 */
+function orderPingWait(){
+  return new Promise(function(done){
+    var fin = false;
+    function end(){ if (!fin){ fin = true; done(); } }
+    setTimeout(end, 1500);
+    try{
+      fetch(SHOP_PIPE + "?action=hit&who=shop&role=customer&view=order&device=liff",
+            { mode:"no-cors", cache:"no-store", keepalive:true }).then(end, end);
+    }catch(e){ end(); }
+  });
+}
 
 /* ★お店のトークから開いた時は、押した瞬間に注文を送る（2026-09-17 まるちゃん決定）。
    LINEの「専用ページ」の仕組み（LIFF）を使う。登録＝LINE Developers のプロバイダー「T&T SIGNATURE」→
@@ -3494,9 +3525,12 @@ function ttDbg(m){
 
 /* 注文ボタンを押した時：お店とのトークから開いていれば、その場で送ってページを閉じる。
    それ以外、または送れなかった時は、今までどおり入力欄に文を入れてLINEを開く。 */
+var ORDER_BUSY = 0;   /* 二度押しで同じ注文が2通届かないように（2026-09-18 美嘉さんの注文が同じ秒に2通届いた） */
 function orderGo(el, payName, payKey){
+  if (Date.now() - ORDER_BUSY < 8000) return false;
+  ORDER_BUSY = Date.now();
   orderPing();
-  el.href = orderLink(payName, payKey);
+  if (!(LIFF_SEND && window.liff)) el.href = orderLink(payName, payKey);
   ttDbg('注文ボタン 自動送信=' + LIFF_SEND + ' 部品=' + !!window.liff);
   if (!LIFF_SEND || !window.liff){
     if (TT_DBG){ ttDbg('→ふつうならここでLINEの入力欄へ移る（確かめ中は移らない）'); return false; }
@@ -3504,23 +3538,21 @@ function orderGo(el, payName, payKey){
   }
   var msg = orderText(payName, payKey);
   if (!msg) return true;
+  var pw = orderPingWait();   /* 合図を先に出しておき、トークへ移る前にそれを待つ */
   try{
-    liff.sendMessages([{ type:'text', text: msg }]).then(function(){
+    liff.sendMessages([{ type:'text', text: msg }]).then(function(){ return pw; }).then(function(){
       ttDbg('送信成功');
       if (TT_DBG) return;                    /* 確かめ中は閉じない */
-      /* ★2026-09-18 試し中：閉じたあとトークが一番下（最新）になっていない件。
-         住所に ttjump=1＝送ったあとお店のトークを開き直す／ttjump=2＝1.2秒待ってから閉じる。
-         どちらが効くか、まるちゃんのスマホで確かめてから本番の動きを決める（印が無い時は今までどおり）。 */
-      var jm = (location.search.match(/[?&]ttjump=(\d)/) || [])[1];
-      if (jm === '1'){ location.href = 'https://line.me/R/oaMessage/' + encodeURIComponent(LINE_ID) + '/'; return; }
-      if (jm === '2'){ setTimeout(function(){ try{ liff.closeWindow(); }catch(e){} }, 1200); return; }
-      try{ liff.closeWindow(); }catch(e){}
+      /* ★2026-09-18 まるちゃんのスマホで確かめて決定：送ったあとは閉じるのでなく、お店とのトークを開き直す。
+         ただ閉じる（liff.closeWindow）と、下のトークが一番下（最新＝送った注文文）まで動かなかった。
+         1.2秒待ってから閉じる形も試したが効かなかった。開き直すと一番下の最新まで出る。 */
+      location.href = 'https://line.me/R/oaMessage/' + encodeURIComponent(LINE_ID) + '/';
     }).catch(function(e){
       ttDbg('送信失敗 ' + (e && (e.code + ' ' + e.message)));
       if (TT_DBG) return;                    /* 確かめ中は画面に残す */
-      location.href = el.href;
+      location.href = orderLink(payName, payKey);   /* 送れなかった時だけ、今までどおり入力欄に入れて開く */
     });
-  }catch(e){ ttDbg('送信例外 ' + e); return true; }
+  }catch(e){ ttDbg('送信例外 ' + e); location.href = orderLink(payName, payKey); return false; }
   return false;
 }
 
@@ -3782,8 +3814,11 @@ function drawConfirm(){
     + '<div class="ost"><span class="no">③</span><span class="tx">' + s3 + '</span></div>';
 
   var href = orderLink(way.name, key);
+  /* ★2026-09-18：自動で送れる時（LIFF_SEND）は、ボタンに「注文文入りのLINEの住所」を持たせない。
+     持たせていると、押した瞬間にLINEがその住所を拾い、入力欄にも注文文が入ってしまった（まるちゃん指摘）。 */
+  var liffNow = LIFF_SEND && !!window.liff;
   document.getElementById('confirmBtn').innerHTML = href
-     ? '<a class="buy line order" href="' + href + '" target="_blank" rel="noopener"'
+     ? '<a class="buy line order" href="' + (liffNow ? '#' : href) + '"' + (liffNow ? '' : ' target="_blank" rel="noopener"')
        + ' onclick="return orderGo(this,\'' + way.name + '\',\'' + key + '\')">'   /* 合図を飛ばす。お店とのトークから開いていれば、その場で送る */
        + '<span class="t">この内容で注文する</span></a>'
      : '<a class="buy line order" href="#" onclick="return false">'
@@ -4084,16 +4119,5 @@ show('home');
 })();
 </script>
 
-<script>
-(function(){
-  function tomeru(){
-    var b = document.querySelectorAll("[data-go]");
-    for (var i = 0; i < b.length; i++){
-      b[i].onclick = function(e){ if (e && e.preventDefault) e.preventDefault(); };
-    }
-  }
-  tomeru();
-  setTimeout(tomeru, 1500);
-})();
-</script>
+
 </body></html>
