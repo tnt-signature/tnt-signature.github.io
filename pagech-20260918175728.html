@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-TW">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
+<meta name="description" content="T&amp;T SIGNATURE">
+<meta property="og:type" content="website">
+<meta property="og:title" content="T&amp;T SIGNATURE">
+<meta property="og:description" content="T&amp;T SIGNATURE">
+<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
+<meta property="og:site_name" content="T&amp;T SIGNATURE">
+<meta name="twitter:card" content="summary">
 </head>
 <body style="margin:0"><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
@@ -539,7 +546,8 @@ body:not(.ready) .buy .s{visibility:hidden}
   margin-top:12px;background:#fbf4e8;border:1px solid var(--gold-soft);
   border-radius:14px;padding:13px 16px;font-size:13px;color:#7a6437;line-height:1.75;
 }
-.buys{display:grid;gap:12px;margin:22px 0 0}
+/* minmax(0,1fr)＝中の字が長くても、ボタンが画面の右へはみ出さない（2026-09-18） */
+.buys{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:22px 0 0}
 .buy{
   display:block;width:100%;border:none;border-radius:16px;cursor:pointer;
   padding:19px 16px;font-size:18px;font-weight:800;font-family:inherit;text-align:center;
@@ -1526,7 +1534,7 @@ body.dark .todoline{color:#a2947f}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "ja";
+var LANG = "zh";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1791,7 +1799,7 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
 var SHOPEE_CODE = "TAKY0105";
 var SHOPEE_OFF  = 150;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-020a716380.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -2629,6 +2637,11 @@ function fitItem(){
   /* 成分の並びを先に1行ずつに収める＝この高さが決まらないと写真の大きさを決められない */
   try { fitSpec(); } catch(e){}
   try { fitSizes(); } catch(e){}
+  /* ★「◯◯を購入する」を1行のままボタンの中に収める（2026-09-18 まるちゃん）。
+     スマホの文字を大きくしている人では、字が長くてボタンが右へはみ出し、右の余白が消えていた。
+     原因＝ボタンの並び（.buys）が中の字の長さに合わせて横に伸び、fitBuys がその伸びた幅で測っていた。
+     並びの幅を画面内に固定し（CSS の minmax(0,1fr)）、商品を開くたびに fitBuys で字を収める。 */
+  try { fitBuys(); } catch(e){}
   hero.style.height = '';
   hero.style.width  = '';
   pane.classList.remove('tight');
@@ -3492,12 +3505,22 @@ function orderGo(el, payName, payKey){
   orderPing();
   el.href = orderLink(payName, payKey);
   ttDbg('注文ボタン 自動送信=' + LIFF_SEND + ' 部品=' + !!window.liff);
-  if (!LIFF_SEND || !window.liff) return true;
+  if (!LIFF_SEND || !window.liff){
+    if (TT_DBG){ ttDbg('→ふつうならここでLINEの入力欄へ移る（確かめ中は移らない）'); return false; }
+    return true;
+  }
   var msg = orderText(payName, payKey);
   if (!msg) return true;
   try{
     liff.sendMessages([{ type:'text', text: msg }]).then(function(){
       ttDbg('送信成功');
+      if (TT_DBG) return;                    /* 確かめ中は閉じない */
+      /* ★2026-09-18 試し中：閉じたあとトークが一番下（最新）になっていない件。
+         住所に ttjump=1＝送ったあとお店のトークを開き直す／ttjump=2＝1.2秒待ってから閉じる。
+         どちらが効くか、まるちゃんのスマホで確かめてから本番の動きを決める（印が無い時は今までどおり）。 */
+      var jm = (location.search.match(/[?&]ttjump=(\d)/) || [])[1];
+      if (jm === '1'){ location.href = 'https://line.me/R/oaMessage/' + encodeURIComponent(LINE_ID) + '/'; return; }
+      if (jm === '2'){ setTimeout(function(){ try{ liff.closeWindow(); }catch(e){} }, 1200); return; }
       try{ liff.closeWindow(); }catch(e){}
     }).catch(function(e){
       ttDbg('送信失敗 ' + (e && (e.code + ' ' + e.message)));
@@ -4068,16 +4091,4 @@ show('home');
 })();
 </script>
 
-<script>
-(function(){
-  function tomeru(){
-    var b = document.querySelectorAll("[data-go]");
-    for (var i = 0; i < b.length; i++){
-      b[i].onclick = function(e){ if (e && e.preventDefault) e.preventDefault(); };
-    }
-  }
-  tomeru();
-  setTimeout(tomeru, 1500);
-})();
-</script>
 </body></html>
