@@ -4,15 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
-<meta name="description" content="T&amp;T SIGNATURE">
-<meta property="og:type" content="website">
-<meta property="og:title" content="T&amp;T SIGNATURE">
-<meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
-<meta property="og:site_name" content="T&amp;T SIGNATURE">
-<meta name="twitter:card" content="summary">
 </head>
-<body style="margin:0"><title>T&amp;T SIGNATURE</title>
+<body style="margin:0">
+<script>window.__FILM_ONLY__=true;</script><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1202,14 +1196,17 @@ body.dark .bogo .pic.set .two{display:flex;gap:4px}
 body.dark .bogo .pic.set img{height:46px}
 body.dark .bogo .plus{color:#e8d3a6;font-size:15px;line-height:1.1}
 body.dark .bogo .gift{position:relative;display:inline-block}
-body.dark .bogo .free{position:absolute;left:100%;top:12px;margin-left:2px;font-size:9px;font-weight:700;
+body.dark .bogo .free{position:absolute;left:100%;top:0;margin-left:2px;font-size:9px;font-weight:700;line-height:1.3;
   color:#0f333d;background:#e8d3a6;border-radius:6px;padding:1px 4px}
-body.dark .bogo .nm{font-size:13px;color:#fff;margin-top:6px;letter-spacing:.04em}
+body.dark .bogo .nm{font-size:13px;color:#fff;margin-top:6px;letter-spacing:.04em;white-space:nowrap}
 body.dark .bogo .pr{font-family:"EB Garamond",serif;font-style:italic;font-size:20px;color:#fff;line-height:1.2}
 body.dark .bogo .per{font-size:10.5px;color:#cdbb95}
+/* 枠を出している間の「お支払い金額」＝左に見出し・右に金額の1行（2026-09-18 まるちゃん） */
+body.dark #stepQty.bogoOn .qsum{display:flex;justify-content:space-between;align-items:center;text-align:left}
+body.dark #stepQty.bogoOn .qsum .qv{margin-top:0}
 /* プレゼントの本数の札（本数の下） */
 body.dark .qgift{margin:10px auto 0;width:max-content;max-width:100%;background:rgba(232,211,166,.16);
-  border:1px solid rgba(232,211,166,.55);border-radius:20px;padding:5px 14px;font-size:14px;color:#f1dfb7;letter-spacing:.04em}
+  border:1px solid rgba(232,211,166,.55);border-radius:20px;padding:5px 14px;font-size:14px;color:#f1dfb7;letter-spacing:.04em;white-space:nowrap}
 body.dark .qgift b{font-size:18px;color:#fff;margin:0 2px}
 body.dark .qgift .gt{font-size:11px;color:#cdbb95;margin-left:4px}
 /* 画面が短い機種では、枠の瓶を小さくして1画面に収める（fitQty が付け外しする） */
@@ -1217,7 +1214,17 @@ body.dark #viewItem.qtight .bogo .pic.one img{height:100px}
 body.dark #viewItem.qtight .bogo .pic.set img{height:40px}
 body.dark #viewItem.qtighter .bogo .pic.one img{height:84px}
 body.dark #viewItem.qtighter .bogo .pic.set img{height:34px}
-body.dark #viewItem.qtighter .bogo{margin-bottom:8px}
+body.dark #viewItem.qtighter .bogo{margin-bottom:6px;gap:8px}
+body.dark #viewItem.qtighter .bogo .band{padding:5px 3px}
+body.dark #viewItem.qtighter .bogo .op{font-size:10px}
+body.dark #viewItem.qtighter .bogo .b1{font-size:13px;margin-top:0}
+body.dark #viewItem.qtighter .bogo .b2{font-size:15px}
+body.dark #viewItem.qtighter .bogo .nm{font-size:11px;margin-top:3px}
+body.dark #viewItem.qtighter .bogo .pr{font-size:17px}
+body.dark #viewItem.qtighter .bogo .per{display:none}
+body.dark #viewItem.qtighter .qgift{margin-top:6px;padding:3px 12px;font-size:13px}
+body.dark #viewItem.qtighter .qgift b{font-size:16px}
+body.dark #viewItem.qtighter #stepQty.bogoOn .qsum{margin-top:8px;padding:6px 0}
 /* ご確認の画面のプレゼントの添え書き */
 body.dark .gft{color:#ffe7a8;margin-left:4px}
 body.dark #stepQty .buy .t{font-size:21px;letter-spacing:.14em}
@@ -1370,6 +1377,22 @@ body.dark .todoline{color:#a2947f}
   margin:16px 0 0;border:1px dashed #c9b48c;border-radius:14px;
   background:#fffaf0;padding:13px 16px;font-size:12.5px;color:#8a7444;line-height:1.8;
 }
+
+/* ★見せる用：下の見出しとボタンを隠して、上の映像だけにする */
+.homelower{display:none !important}
+#viewHome{justify-content:center}
+/* ★映像だけの版は「正方形のまま、いちばん大きく」出す（2026-09-02 まるちゃん）。
+   スマホ用の写真は正方形なので、入れ物の四角ぜんぶを写真で埋める。
+   パソコンでは高さいっぱいの正方形になり、左右に黒い余白ができる。 */
+html,body{background:#000}
+.wrap{max-width:none;padding:0;min-height:100dvh;
+      display:flex;align-items:center;justify-content:center}
+#viewHome{flex:none;width:min(100vw,100dvh)}
+.hero{width:100%;margin-left:0;margin-right:0;aspect-ratio:1/1}
+@media (min-width:780px){ .hero{aspect-ratio:1/1} }
+/* ★正方形の写真を使うので、字の置き方もスマホと同じ右そろえにする（2026-09-10） */
+.cap .ja4{align-items:flex-end}
+.cap .side{align-self:flex-end;align-items:flex-end}
 </style>
 <div class="wrap">
   <!-- 日本語のお客様向けのページなので、中国語は付けない（2026-09-02 まるちゃん） -->
@@ -1749,7 +1772,9 @@ var ZH = {
   "ホホバエッセンスの使い方":"荷荷芭精華的使用方法",
   "月室美容液の秘密":"月室精華液的秘密",
   "準備中":"準備中",
-  "gumi茶":"gumi茶",   /* 中国語版での名前（2026-09-06 まるちゃん・2026-09-18 日本語名もgumi茶に） */
+  "台湾GUMI茶":"台灣GUMI茶",   /* 中国語版での名前（2026-09-18 まるちゃん） */
+  "小さな命と出会って生まれた、":"與小小生命相遇而生，",
+  "茶葉に宿る奇跡の蜜香":"蘊藏於茶葉中的奇蹟蜜香",
   "本":"支",
   "点":"項",
   "1本だけ 250元":"單支 250元",
@@ -2147,8 +2172,9 @@ var DATA = {
          値段も「詳細を見る」も出さない。押しても何も起きない（詳しい画面はまだ無いので）。
          写真が用意できたら soon を消して、ふつうの商品と同じように書けばよい。 */
       { id:"gumi_tea", soon:true,
-        nm:"gumi茶", nm_zh:"gumi茶",   /* 名前は「gumi茶」（2026-09-18 まるちゃん。前はひらがなの「ぐみ茶」） */
-        sub:"",                      /* 「近日登場」は出さない（2026-09-02 まるちゃん） */
+        nm:"台湾GUMI茶", nm_zh:"台灣GUMI茶",   /* 名前は「台湾GUMI茶」（2026-09-18 まるちゃん。ぐみ茶→gumi茶→台湾GUMI茶） */
+        /* 名前の下のキャッチコピー（2026-09-18 まるちゃん） */
+        sub:"小さな命と出会って生まれた、<br>茶葉に宿る奇跡の蜜香",   /* 読点のあとで改行（言葉の途中で切れないように） */
         one:"", now:null, was:null, tags:[], body:"" }
     ],
     sets:[]
@@ -2581,8 +2607,25 @@ function fitQty(){
   function over(){
     return document.documentElement.scrollHeight - window.innerHeight;
   }
+  /* 「2本買うと1本プレゼント」の枠の瓶は、前回縮めた大きさをいったん戻してから測る */
+  var bimgs = [].slice.call(document.querySelectorAll('#qPromo img'));
+  bimgs.forEach(function(im){ im.style.height = ''; });
   if (over() > 0) v.classList.add('qtight');
   if (over() > 0) v.classList.add('qtighter');
+  /* ★それでもはみ出す時は、枠の瓶をはみ出した分だけ小さくする（2026-09-18 まるちゃん
+     「プレゼントが出るとお支払いへ進むが画面から切れる」）。瓶は小さくしても形は保つ。 */
+  if (over() > 0 && bimgs.length && document.getElementById('qPromo').style.display !== 'none'){
+    for (var k = 0; k < 6 && over() > 0; k++){
+      var ov = over();
+      bimgs.forEach(function(im){
+        var h = im.getBoundingClientRect().height;
+        var isOne = !!im.closest('.one');
+        /* 左の1本は瓶1本分、右は瓶2段分の高さがあるので、はみ出しを分けて引く */
+        var nh = Math.max(isOne ? 40 : 18, h - (isOne ? ov : ov / 2) - 2);
+        im.style.height = Math.floor(nh) + 'px';
+      });
+    }
+  }
 }
 
 /* ★ご注文内容のご確認も同じやり方で1画面に収める（2026-09-06 まるちゃん）。
@@ -4053,6 +4096,8 @@ function drawBogo(){
   if (!box || !gb) return;
   var on = !!(BOGO_ON && curItem && curItem.bogo);
   box.style.display = on ? '' : 'none';
+  /* 枠を出している間は「お支払い金額」を左、金額を右の1行にして縦を詰める（2026-09-18 まるちゃん） */
+  var sq = document.getElementById('stepQty'); if (sq) sq.classList.toggle('bogoOn', on);
   var g = giftOf(curItem, qty);
   gb.style.display = (on && g > 0) ? '' : 'none';
   if (!on) return;
@@ -4077,8 +4122,10 @@ function drawBogo(){
                                               : ('1' + cw + 'あたり' + yen(Math.round(p * 2 / 3)))) + '</div>' : '')
     + '</div>';
   gb.innerHTML = '🎁 ' + (zh ? '贈送 ' : 'プレゼント ') + '<b>' + g + '</b> ' + Z(cw)
-    + '<span class="gt">' + (zh ? ('（共可領取 ' + honLabel(qty + g, cw) + '）')
-                               : ('（お受け取りは 合計' + honLabel(qty + g, cw) + '）')) + '</span>';
+    + '<span class="gt">' + (zh ? ('（共' + honLabel(qty + g, cw) + '）')
+                               : ('（合計' + honLabel(qty + g, cw) + '）')) + '</span>';
+  /* ★本数を変えてプレゼントの札が出たり消えたりすると高さが変わるので、その場で1画面に収め直す */
+  if (payStep === 2) { try { fitQty(); } catch(e){} }
 }
 
 function setStep(n){
@@ -4220,5 +4267,6 @@ show('home');
   document.body.appendChild(bar);
 })();
 </script>
+
 
 </body></html>
