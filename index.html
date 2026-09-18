@@ -4,20 +4,55 @@
 <meta property="og:title" content="T&amp;T SIGNATURE"><meta property="og:description" content="T&amp;T SIGNATURE"><meta property="og:site_name" content="T&amp;T SIGNATURE">
 <style>html,body{margin:0;height:100%;background:#ffffff}</style>
 <script>
-/* ★LINEの専用ページ（LIFF）から開いた時（2026-09-17）。
-   https://liff.line.me/<ID>/signaturech.html の形で開くと、LINEはまずこの入口へ
-   「?liff.state=/signaturech.html」を付けて来る。その行き先（同じ置き場の中の住所だけ）へ進む。
+/* ★LINEの専用ページ（LIFF）から開いた時（2026-09-17／2026-09-18直し）。
+   https://liff.line.me/<ID>/signature.html の形で開くと、LINEはまずこの入口へ
+   「?liff.state=/signature.html」とログインの証を付けて来る。
+   2026-09-17版は自分で行き先へ飛んでログインの証を捨てていたため、中身のページがログインをやり直し、
+   0.5秒ごとに回り続けた。→ LINEの部品（liff.init）にここで証を受け取らせ、行き先へもLINEの部品に運ばせる
+   （LINEの説明どおりのやり方）。
+   ★回り続けの歯止め：1分の間に3回ここへ来たら、専用ページの仕組みを止めて、ふつうの商品ページを出す。
    それ以外は今までどおり日本語の商品ページへ。 */
 (function(){
+  var LIFF_ID = '2011645873-ptEzpnsI';
   var st = null;
   try { st = new URLSearchParams(location.search).get('liff.state'); } catch(e) {}
-  if (st && /^\/[A-Za-z0-9_\-\.\/]*(\?[^#]*)?$/.test(st) && st.indexOf('//') < 0) {
-    /* liff=1＝専用ページから来た印。入口（signature.html）はこの印がある時、LINEの外へ出さない */
-    var p = st.replace(/^\/+/, '') || 'signature.html';
-    location.replace(p + (p.indexOf('?') < 0 ? '?' : '&') + 'liff=1');
-  } else {
-    location.replace('signature.html' + location.search);
+  var ok = st && /^\/[A-Za-z0-9_\-\.\/]*(\?[^#]*)?$/.test(st) && st.indexOf('//') < 0;
+  if (!ok) { location.replace('signature.html' + location.search); return; }
+
+  var p = st.replace(/^\/+/, '') || 'signature.html';
+  function plain(){   /* 専用ページの仕組みを使わずに行き先へ（ログインの証も持って行く） */
+    var q = location.search.replace(/([?&])liff\.state=[^&]*&?/, '$1').replace(/[?&]$/, '');
+    var add = q ? q.slice(1) : '';
+    location.replace(p + (p.indexOf('?') < 0 ? '?' : '&') + 'liff=1' + (add ? '&' + add : '') + location.hash);
   }
+  var n = [];
+  try {
+    sessionStorage.setItem('tt_liff', '1');
+    var now = Date.now();
+    n = JSON.parse(sessionStorage.getItem('tt_liff_n') || '[]').filter(function(t){ return now - t < 60000; });
+    n.push(now);
+    sessionStorage.setItem('tt_liff_n', JSON.stringify(n));
+  } catch(e) {}
+  if (n.length >= 3) {
+    try { sessionStorage.setItem('tt_liff_off', '1'); } catch(e) {}
+    plain(); return;
+  }
+  var moved = false;
+  var s = document.createElement('script');
+  s.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
+  s.onload = function(){
+    try {
+      /* 証を受け取ると、LINEの部品が行き先（liff.state）へ自分で移る */
+      liff.init({ liffId: LIFF_ID }).then(function(){
+        /* 受け取り終わっても1.5秒ここに居たら、自分で行き先へ（証はもう保存されている） */
+        setTimeout(function(){ if (!moved) { moved = true; plain(); } }, 1500);
+      }).catch(function(){ if (!moved) { moved = true; plain(); } });
+    } catch(e) { if (!moved) { moved = true; plain(); } }
+  };
+  s.onerror = function(){ if (!moved) { moved = true; plain(); } };
+  document.head.appendChild(s);
+  /* 8秒たってもここに居たら（部品が移らなかった）、自分で行き先へ */
+  setTimeout(function(){ if (!moved) { moved = true; plain(); } }, 8000);
 })();
 </script>
 </head><body><noscript><a href="signature.html">T&amp;T SIGNATURE</a></noscript></body></html>

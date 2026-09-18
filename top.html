@@ -24,8 +24,10 @@
     var ua = navigator.userAgent || '';
     /* ★ただし LINEの専用ページ（LIFF）から来た時（入口 index.html が liff=1 を付ける）は外へ出さない。
        お店のトークの中に居ないと「押したら注文をそのまま送る」が使えないため（2026-09-17 まるちゃん決定）。 */
+    var liffIn = false;   /* 入口 index.html が専用ページの時に付ける印（同じタブの間だけ残る） */
+    try{ liffIn = sessionStorage.getItem('tt_liff') === '1'; }catch(e){}
     if (/Line\//i.test(ua) && location.search.indexOf('openExternalBrowser=1') < 0
-        && location.search.indexOf('liff=1') < 0){
+        && location.search.indexOf('liff=1') < 0 && !liffIn){
       window.__ttExt = true;   /* 下の「最新のページへ移る」を止める（読み直しと取り合わないように） */
       location.replace(location.pathname + (location.search ? location.search + '&' : '?') + 'openExternalBrowser=1');
     }
@@ -37,8 +39,13 @@
    こうすると、スマホに古い画面が残っていても必ず新しい画面が出る。 */
 (function(){
   if (window.__ttExt) return;
-  var here = '20260917192118';
-  function go(v){ location.replace('top-' + v + '.html'); }
+  var here = '20260918115826';
+  /* ★2026-09-18：専用ページ（LIFF）から来た時は、住所の後ろ（?以降・#以降）をそのまま持って移る。
+     LINEがログインの証をそこに付けて来るので、捨てると中身のページがログインをやり直し、
+     「ログイン→入口→中身→ログイン…」と0.5秒ごとに回り続けた（まるちゃんのスマホで発生）。 */
+  var keep = '';
+  try{ if (sessionStorage.getItem('tt_liff') === '1') keep = location.search + location.hash; }catch(e){}
+  function go(v){ location.replace('top-' + v + '.html' + keep); }
   var moved = false;
   function once(v){ if (moved) return; moved = true; go(v); }
   try{
@@ -51,6 +58,6 @@
   setTimeout(function(){ once(here); }, 4000);
 })();
 </script>
-<noscript><a href="top-20260917192118.html">開く</a></noscript>
+<noscript><a href="top-20260918115826.html">開く</a></noscript>
 </body>
 </html>

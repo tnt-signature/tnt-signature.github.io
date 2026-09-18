@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
 </head>
-<body style="margin:0">
-<script>window.__FILM_ONLY__=true;</script><title>T&amp;T SIGNATURE</title>
+<body style="margin:0"><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1324,22 +1323,6 @@ body.dark .todoline{color:#a2947f}
   margin:16px 0 0;border:1px dashed #c9b48c;border-radius:14px;
   background:#fffaf0;padding:13px 16px;font-size:12.5px;color:#8a7444;line-height:1.8;
 }
-
-/* ★見せる用：下の見出しとボタンを隠して、上の映像だけにする */
-.homelower{display:none !important}
-#viewHome{justify-content:center}
-/* ★映像だけの版は「正方形のまま、いちばん大きく」出す（2026-09-02 まるちゃん）。
-   スマホ用の写真は正方形なので、入れ物の四角ぜんぶを写真で埋める。
-   パソコンでは高さいっぱいの正方形になり、左右に黒い余白ができる。 */
-html,body{background:#000}
-.wrap{max-width:none;padding:0;min-height:100dvh;
-      display:flex;align-items:center;justify-content:center}
-#viewHome{flex:none;width:min(100vw,100dvh)}
-.hero{width:100%;margin-left:0;margin-right:0;aspect-ratio:1/1}
-@media (min-width:780px){ .hero{aspect-ratio:1/1} }
-/* ★正方形の写真を使うので、字の置き方もスマホと同じ右そろえにする（2026-09-10） */
-.cap .ja4{align-items:flex-end}
-.cap .side{align-self:flex-end;align-items:flex-end}
 </style>
 <div class="wrap">
   <!-- 日本語のお客様向けのページなので、中国語は付けない（2026-09-02 まるちゃん） -->
@@ -3444,7 +3427,64 @@ function orderPing(){
   }catch(e){}
 }
 
+/* ★お店のトークから開いた時は、押した瞬間に注文を送る（2026-09-17 まるちゃん決定）。
+   LINEの「専用ページ」の仕組み（LIFF）を使う。登録＝LINE Developers のプロバイダー「T&T SIGNATURE」→
+   チャネル「T&T SIGNATURE」（LINEログイン）→ LIFF。許可の項目は ユーザー識別子＋メッセージの送信 だけ。
+   ・送れるのは「お店の公式LINEのトークの中で、専用ページのリンク（liff.line.me/…）を押して開いた時」だけ。
+     それ以外（インスタ・ふつうのブラウザ・短いリンク経由・友だちとのトーク以外）は今までどおり
+     入力欄に注文の文を入れて開く（下の orderLink）。
+   ・LIFF_ID を空にすれば、この仕組みはまるごと止まり、今までどおりになる。
+   ・送る文は orderLink と同じ（注文の自動返信が同じ見出しで見分ける）。 */
+var LIFF_ID = "2011645873-ptEzpnsI";
+var LIFF_SEND = false;   /* true＝押した瞬間に送れる状態（お店とのトークから開いた） */
+(function(){
+  if (!LIFF_ID) return;
+  var ua = navigator.userAgent || '';
+  if (!/Line\//i.test(ua)) return;          /* LINEの中で開いた時だけ仕組みを読み込む（他の人には重くしない） */
+  /* ★2026-09-18：専用ページの入口（index.html）を通って来た時だけ動かす。
+     入口が「ぐるぐる回っている」と判断して止めた時（tt_liff_off）も動かさない＝ログインのやり直しで回り続けない。 */
+  try{
+    if (sessionStorage.getItem('tt_liff') !== '1') return;
+    if (sessionStorage.getItem('tt_liff_off') === '1') return;
+  }catch(e){ return; }
+  var s = document.createElement('script');
+  s.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
+  s.onload = function(){
+    try{
+      liff.init({ liffId: LIFF_ID }).then(function(){
+        if (!liff.isInClient()) return;       /* 専用ページとして開いていない（ふつうのリンク） */
+        var c = liff.getContext ? liff.getContext() : null;
+        /* 1対1のトーク（お店の公式LINEとのトーク）から開いた時だけ送る */
+        if (c && c.type === 'utou') LIFF_SEND = true;
+      }).catch(function(){});
+    }catch(e){}
+  };
+  document.head.appendChild(s);
+})();
+
+/* 注文ボタンを押した時：お店とのトークから開いていれば、その場で送ってページを閉じる。
+   それ以外、または送れなかった時は、今までどおり入力欄に文を入れてLINEを開く。 */
+function orderGo(el, payName, payKey){
+  orderPing();
+  el.href = orderLink(payName, payKey);
+  if (!LIFF_SEND || !window.liff) return true;
+  var msg = orderText(payName, payKey);
+  if (!msg) return true;
+  try{
+    liff.sendMessages([{ type:'text', text: msg }]).then(function(){
+      try{ liff.closeWindow(); }catch(e){}
+    }).catch(function(){ location.href = el.href; });
+  }catch(e){ return true; }
+  return false;
+}
+
 function orderLink(payName, payKey){
+  var msg = orderText(payName, payKey);
+  if (!msg) return '';
+  return orderLinkOf(msg);
+}
+
+function orderText(payName, payKey){
   if (!LINE_ID || !cart.length) return '';
   var tot = cartTotal();
   var amt = tot!=null ? yen(tot) : 'お値段は追ってご案内します';
@@ -3467,6 +3507,11 @@ function orderLink(payName, payKey){
   msg += zh
     ? ('付款方式：' + Z(payName) + '\n' + '取貨方式：到店取貨')
     : ('お支払い：' + payName + '\n' + '受け取り：お店で受け取り');
+  return msg;
+}
+
+/* 注文の文を入力欄に入れた状態で、お店のLINEを開く行き先 */
+function orderLinkOf(msg){
   var url = 'https://line.me/R/oaMessage/' + encodeURIComponent(LINE_ID) + '/?' + encodeURIComponent(msg);
   /* ★2026-09-17 まるちゃん：LINEの外（ふつうのブラウザ）で開いたアンドロイドでは、このリンクを押すと
      「LINEアプリを開いて続行してください」という中継の画面が出て、もう1回押させてしまう。
@@ -3667,15 +3712,20 @@ function drawConfirm(){
   var s1, s2, s3;
   if (isZH()){
     s1 = '<em>請按下方的「以此內容下單」</em>';
-    s2 = '接著<em>本店的LINE會自動開啟</em>，<em>請直接按下傳送鍵</em>'
-       + '（訂單內容已自動填入LINE的輸入欄）';
+    /* ★お店とのトークから開いた時は、押した瞬間に送られるので、送信ボタンの案内は出さない（2026-09-17） */
+    s2 = LIFF_SEND
+       ? '接著<em>訂單內容會直接傳送到本店的LINE</em>'
+       : ('接著<em>本店的LINE會自動開啟</em>，<em>請直接按下傳送鍵</em>'
+          + '（訂單內容已自動填入LINE的輸入欄）');
     s3 = (key === 'bank')
        ? '稍後<em>匯款帳號就會送達</em>'
        : ('稍後<em>' + esc(Z(way.name)) + '的付款連結就會送達</em>');
   } else {
     s1 = '<em>下の「この内容で注文する」を押してください</em>';
-    s2 = 'すると<em>当店のLINEが開きますので</em>、<em>そのまま送信ボタンを押してください</em>'
-       + '（LINEの入力欄に自動で注文内容が入っています）';
+    s2 = LIFF_SEND
+       ? 'すると<em>ご注文内容がそのまま当店のLINEに送られます</em>'
+       : ('すると<em>当店のLINEが開きますので</em>、<em>そのまま送信ボタンを押してください</em>'
+          + '（LINEの入力欄に自動で注文内容が入っています）');
     s3 = (key === 'bank')
        ? 'すぐに<em>お振込先が届きます</em>'
        : ('すぐに' + esc(way.name) + 'の<em>お支払いリンクが届きます</em>');
@@ -3688,7 +3738,7 @@ function drawConfirm(){
   var href = orderLink(way.name, key);
   document.getElementById('confirmBtn').innerHTML = href
      ? '<a class="buy line order" href="' + href + '" target="_blank" rel="noopener"'
-       + ' onclick="orderPing();this.href=orderLink(\'' + way.name + '\',\'' + key + '\')">'   /* 合図を飛ばし、押した瞬間の日時を入れ直す */
+       + ' onclick="return orderGo(this,\'' + way.name + '\',\'' + key + '\')">'   /* 合図を飛ばす。お店とのトークから開いていれば、その場で送る */
        + '<span class="t">この内容で注文する</span></a>'
      : '<a class="buy line order" href="#" onclick="return false">'
        + '<span class="t">この内容で注文する</span>'
@@ -3988,5 +4038,16 @@ show('home');
 })();
 </script>
 
-
+<script>
+(function(){
+  function tomeru(){
+    var b = document.querySelectorAll("[data-go]");
+    for (var i = 0; i < b.length; i++){
+      b[i].onclick = function(e){ if (e && e.preventDefault) e.preventDefault(); };
+    }
+  }
+  tomeru();
+  setTimeout(tomeru, 1500);
+})();
+</script>
 </body></html>
