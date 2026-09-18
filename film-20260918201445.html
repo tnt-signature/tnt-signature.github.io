@@ -947,14 +947,17 @@ body.dark .dsub{
 }
 /* 説明と購入ボタンの間の読みものリンク（金の細い下線・押せると分かる形） */
 body.dark .dsecret{text-align:center;margin-top:16px}
+/* ★2026-09-18 まるちゃん「リンクに見えなくて客が気づかない」→ 案B＝丸い帯＋本のしるし＋右へ小さく動く矢印 */
 body.dark .dsecret a{
-  display:inline-block;color:#e8d3a6;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;color:#e8d3a6;text-decoration:none;
   font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;
-  font-size:15px;letter-spacing:.14em;padding-bottom:4px;
-  border-bottom:1px solid rgba(232,211,166,.6);
+  font-size:15px;letter-spacing:.12em;padding:6px 14px;border-radius:20px;
+  background:rgba(232,211,166,.14);
 }
-body.dark .dsecret a:active{color:#fff4e0;border-bottom-color:#f0e6d6}
-body.dark .dsecret a .ar{margin-left:8px;font-family:inherit}
+body.dark .dsecret a:active{color:#fff4e0;background:rgba(232,211,166,.26)}
+body.dark .dsecret a .bk{font-family:initial;letter-spacing:0}
+body.dark .dsecret a .ar{display:inline-block;font-family:inherit;animation:secNudge 1.4s ease-in-out infinite}
+@keyframes secNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
 /* 飛び先がまだ無い読みもの（2026-09-07 まるちゃん）＝押せないと分かる控えめな見た目 */
 body.dark .dsecret a.soon{color:#9d9182;border-bottom-color:rgba(157,145,130,.5);cursor:default}
 body.dark .dsecret a.soon .soonmk{margin-left:8px;font-size:.72em;letter-spacing:.1em;color:#8e8172}
@@ -1796,6 +1799,9 @@ var QR = { linepay:"", jkopay:"" };
 /* ★郵送でのお受け取り＝蝦皮（Shopee）のお店のページ（2026-09-06 まるちゃん）。
    ここが空の間は、ボタンは出るが押せない（「ご用意でき次第…」と小さく出る）。
    商品ごとに別のページへ飛ばしたい時は、その商品の並びに shopee:"住所" を1行足せば、そちらが優先される。 */
+/* ★2026-09-18 まるちゃん：「郵送で受け取る」ボタンをしばらく隠す（また出す予定）。
+   出したくなったら true にして出し直すだけ（蝦皮の住所・割引コードの画面はそのまま残してある）。 */
+var NET_ON = false;
 var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは今のところNo.31だけ。
                       お店全体の住所は空にし、送れる商品にだけ shopee:"住所" を書く。
                       shopee が無い商品は「郵送で受け取る」ボタン自体を出さない。 */
@@ -3347,7 +3353,7 @@ function openItem(cat, id){
   ds.innerHTML = !sec ? ''
     : (secUrl
         ? '<a href="' + secUrl + '" target="_blank" rel="noopener">'
-          + esc(Z(sec.t)) + '<span class="ar">\u203a</span></a>'
+          + '<span class="bk">\ud83d\udcd6</span>' + esc(Z(sec.t)) + '<span class="ar">\u203a</span></a>'
         : '<a href="#" class="soon" onclick="return false">'
           + esc(Z(sec.t)) + '<span class="soonmk">' + esc(Z('準備中')) + '</span></a>');
   ds.style.display = sec ? '' : 'none';
@@ -3511,6 +3517,10 @@ function ttDbg(m){
       liff.init({ liffId: LIFF_ID }).then(function(){
         var c = liff.getContext ? liff.getContext() : null;
         ttDbg('init成功 inClient=' + liff.isInClient() + ' login=' + liff.isLoggedIn() + ' 種類=' + (c && c.type) + ' 版=' + liff.getVersion());
+        /* ★2026-09-18 調べ用：この専用ページから見た「その人の番号」。お店の公式LINEのトークの番号と同じなら、
+           LINEの外から開いた注文でも、お店からその人のトークへ送れる（登録の場所が同じ＝番号が同じ）。 */
+        try{ var tk = liff.getDecodedIDToken && liff.getDecodedIDToken(); ttDbg('番号(ID)=' + (tk && tk.sub)); }catch(e){ ttDbg('番号(ID)取れない ' + e); }
+        try{ liff.getProfile().then(function(p){ ttDbg('番号(プロフィール)=' + p.userId); }).catch(function(e){ ttDbg('プロフィール失敗 ' + (e && e.message)); }); }catch(e){}
         try{ liff.permission.query('chat_message.write').then(function(p){ ttDbg('送信の許可=' + JSON.stringify(p)); }).catch(function(e){ ttDbg('許可の問い合わせ失敗 ' + (e && (e.code + ' ' + e.message))); }); }catch(e){ ttDbg('許可の問い合わせ不可 ' + e); }
         if (!liff.isInClient()) return;       /* 専用ページとして開いていない（ふつうのリンク） */
         /* 1対1のトーク（お店の公式LINEとのトーク）から開いた時だけ送る */
@@ -3988,7 +3998,7 @@ function setStep(n){
   document.getElementById('stepHead').style.display = (n===0 || n===4) ? 'none'  : 'flex';
   document.getElementById('stepWay').style.display  = (n===1) ? 'block' : 'none';
   /* 郵送で送れない商品（蝦皮の住所が無い）は「郵送で受け取る」を出さない（2026-09-14 まるちゃん） */
-  document.getElementById('buyNet').style.display = shopeeUrl() ? '' : 'none';
+  document.getElementById('buyNet').style.display = (NET_ON && shopeeUrl()) ? '' : 'none';
   document.getElementById('stepNet').style.display  = (n===5) ? 'block' : 'none';   /* 郵送＝蝦皮 */
   document.getElementById('stepCode').style.display = (n===6) ? 'block' : 'none';   /* 蝦皮の割引コード */
   document.getElementById('stepQty').style.display  = (n===2) ? 'block' : 'none';
