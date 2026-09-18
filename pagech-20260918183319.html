@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-TW">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
+<meta name="description" content="T&amp;T SIGNATURE">
+<meta property="og:type" content="website">
+<meta property="og:title" content="T&amp;T SIGNATURE">
+<meta property="og:description" content="T&amp;T SIGNATURE">
+<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
+<meta property="og:site_name" content="T&amp;T SIGNATURE">
+<meta name="twitter:card" content="summary">
 </head>
-<body style="margin:0">
-<script>window.__FILM_ONLY__=true;</script><title>T&amp;T SIGNATURE</title>
+<body style="margin:0"><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1325,22 +1331,6 @@ body.dark .todoline{color:#a2947f}
   margin:16px 0 0;border:1px dashed #c9b48c;border-radius:14px;
   background:#fffaf0;padding:13px 16px;font-size:12.5px;color:#8a7444;line-height:1.8;
 }
-
-/* ★見せる用：下の見出しとボタンを隠して、上の映像だけにする */
-.homelower{display:none !important}
-#viewHome{justify-content:center}
-/* ★映像だけの版は「正方形のまま、いちばん大きく」出す（2026-09-02 まるちゃん）。
-   スマホ用の写真は正方形なので、入れ物の四角ぜんぶを写真で埋める。
-   パソコンでは高さいっぱいの正方形になり、左右に黒い余白ができる。 */
-html,body{background:#000}
-.wrap{max-width:none;padding:0;min-height:100dvh;
-      display:flex;align-items:center;justify-content:center}
-#viewHome{flex:none;width:min(100vw,100dvh)}
-.hero{width:100%;margin-left:0;margin-right:0;aspect-ratio:1/1}
-@media (min-width:780px){ .hero{aspect-ratio:1/1} }
-/* ★正方形の写真を使うので、字の置き方もスマホと同じ右そろえにする（2026-09-10） */
-.cap .ja4{align-items:flex-end}
-.cap .side{align-self:flex-end;align-items:flex-end}
 </style>
 <div class="wrap">
   <!-- 日本語のお客様向けのページなので、中国語は付けない（2026-09-02 まるちゃん） -->
@@ -1544,7 +1534,7 @@ html,body{background:#000}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "ja";
+var LANG = "zh";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1716,7 +1706,7 @@ var ZH = {
   "ホホバエッセンスの秘密":"荷荷芭精華的秘密",
   "月室美容液の秘密":"月室精華液的秘密",
   "準備中":"準備中",
-  "ぐみ茶":"gumi茶",   /* 中国語版での名前（2026-09-06 まるちゃん） */
+  "gumi茶":"gumi茶",   /* 中国語版での名前（2026-09-06 まるちゃん・2026-09-18 日本語名もgumi茶に） */
   "本":"支",
   "点":"項",
   "1本だけ 250元":"單支 250元",
@@ -1809,7 +1799,7 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
 var SHOPEE_CODE = "TAKY0105";
 var SHOPEE_OFF  = 150;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-020a716380.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -2097,7 +2087,7 @@ var DATA = {
          値段も「詳細を見る」も出さない。押しても何も起きない（詳しい画面はまだ無いので）。
          写真が用意できたら soon を消して、ふつうの商品と同じように書けばよい。 */
       { id:"gumi_tea", soon:true,
-        nm:"ぐみ茶", nm_zh:"gumi茶",   /* 名前はひらがな（2026-09-05 まるちゃん） */
+        nm:"gumi茶", nm_zh:"gumi茶",   /* 名前は「gumi茶」（2026-09-18 まるちゃん。前はひらがなの「ぐみ茶」） */
         sub:"",                      /* 「近日登場」は出さない（2026-09-02 まるちゃん） */
         one:"", now:null, was:null, tags:[], body:"" }
     ],
@@ -3511,6 +3501,10 @@ function ttDbg(m){
       liff.init({ liffId: LIFF_ID }).then(function(){
         var c = liff.getContext ? liff.getContext() : null;
         ttDbg('init成功 inClient=' + liff.isInClient() + ' login=' + liff.isLoggedIn() + ' 種類=' + (c && c.type) + ' 版=' + liff.getVersion());
+        /* ★2026-09-18 調べ用：この専用ページから見た「その人の番号」。お店の公式LINEのトークの番号と同じなら、
+           LINEの外から開いた注文でも、お店からその人のトークへ送れる（登録の場所が同じ＝番号が同じ）。 */
+        try{ var tk = liff.getDecodedIDToken && liff.getDecodedIDToken(); ttDbg('番号(ID)=' + (tk && tk.sub)); }catch(e){ ttDbg('番号(ID)取れない ' + e); }
+        try{ liff.getProfile().then(function(p){ ttDbg('番号(プロフィール)=' + p.userId); }).catch(function(e){ ttDbg('プロフィール失敗 ' + (e && e.message)); }); }catch(e){}
         try{ liff.permission.query('chat_message.write').then(function(p){ ttDbg('送信の許可=' + JSON.stringify(p)); }).catch(function(e){ ttDbg('許可の問い合わせ失敗 ' + (e && (e.code + ' ' + e.message))); }); }catch(e){ ttDbg('許可の問い合わせ不可 ' + e); }
         if (!liff.isInClient()) return;       /* 専用ページとして開いていない（ふつうのリンク） */
         /* 1対1のトーク（お店の公式LINEとのトーク）から開いた時だけ送る */
@@ -3525,9 +3519,12 @@ function ttDbg(m){
 
 /* 注文ボタンを押した時：お店とのトークから開いていれば、その場で送ってページを閉じる。
    それ以外、または送れなかった時は、今までどおり入力欄に文を入れてLINEを開く。 */
+var ORDER_BUSY = 0;   /* 二度押しで同じ注文が2通届かないように（2026-09-18 美嘉さんの注文が同じ秒に2通届いた） */
 function orderGo(el, payName, payKey){
+  if (Date.now() - ORDER_BUSY < 8000) return false;
+  ORDER_BUSY = Date.now();
   orderPing();
-  el.href = orderLink(payName, payKey);
+  if (!(LIFF_SEND && window.liff)) el.href = orderLink(payName, payKey);
   ttDbg('注文ボタン 自動送信=' + LIFF_SEND + ' 部品=' + !!window.liff);
   if (!LIFF_SEND || !window.liff){
     if (TT_DBG){ ttDbg('→ふつうならここでLINEの入力欄へ移る（確かめ中は移らない）'); return false; }
@@ -3547,9 +3544,9 @@ function orderGo(el, payName, payKey){
     }).catch(function(e){
       ttDbg('送信失敗 ' + (e && (e.code + ' ' + e.message)));
       if (TT_DBG) return;                    /* 確かめ中は画面に残す */
-      location.href = el.href;
+      location.href = orderLink(payName, payKey);   /* 送れなかった時だけ、今までどおり入力欄に入れて開く */
     });
-  }catch(e){ ttDbg('送信例外 ' + e); return true; }
+  }catch(e){ ttDbg('送信例外 ' + e); location.href = orderLink(payName, payKey); return false; }
   return false;
 }
 
@@ -3811,8 +3808,11 @@ function drawConfirm(){
     + '<div class="ost"><span class="no">③</span><span class="tx">' + s3 + '</span></div>';
 
   var href = orderLink(way.name, key);
+  /* ★2026-09-18：自動で送れる時（LIFF_SEND）は、ボタンに「注文文入りのLINEの住所」を持たせない。
+     持たせていると、押した瞬間にLINEがその住所を拾い、入力欄にも注文文が入ってしまった（まるちゃん指摘）。 */
+  var liffNow = LIFF_SEND && !!window.liff;
   document.getElementById('confirmBtn').innerHTML = href
-     ? '<a class="buy line order" href="' + href + '" target="_blank" rel="noopener"'
+     ? '<a class="buy line order" href="' + (liffNow ? '#' : href) + '"' + (liffNow ? '' : ' target="_blank" rel="noopener"')
        + ' onclick="return orderGo(this,\'' + way.name + '\',\'' + key + '\')">'   /* 合図を飛ばす。お店とのトークから開いていれば、その場で送る */
        + '<span class="t">この内容で注文する</span></a>'
      : '<a class="buy line order" href="#" onclick="return false">'
@@ -4112,6 +4112,5 @@ show('home');
   document.body.appendChild(bar);
 })();
 </script>
-
 
 </body></html>
