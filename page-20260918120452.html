@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,7 +8,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="T&amp;T SIGNATURE">
 <meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
+<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
 <meta property="og:site_name" content="T&amp;T SIGNATURE">
 <meta name="twitter:card" content="summary">
 </head>
@@ -1533,7 +1533,7 @@ body.dark .todoline{color:#a2947f}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "zh";
+var LANG = "ja";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1798,7 +1798,7 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
 var SHOPEE_CODE = "TAKY0105";
 var SHOPEE_OFF  = 150;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-020a716380.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -3444,22 +3444,51 @@ function orderPing(){
    ・送る文は orderLink と同じ（注文の自動返信が同じ見出しで見分ける）。 */
 var LIFF_ID = "2011645873-ptEzpnsI";
 var LIFF_SEND = false;   /* true＝押した瞬間に送れる状態（お店とのトークから開いた） */
+/* ★2026-09-18 確かめ用：住所に ttdebug=1 が付いている時だけ、画面の下に途中の様子を出す（お客様には出ない）。
+   専用リンクなら https://liff.line.me/<ID>/signature.html?ttdebug=1 で開く。 */
+var TT_DBG = /[?&]ttdebug=1/.test(location.search);
+function ttDbg(m){
+  if (!TT_DBG) return;
+  try{
+    var b = document.getElementById('ttdbg');
+    if (!b){
+      b = document.createElement('div'); b.id = 'ttdbg';
+      b.style.cssText = 'position:fixed;left:0;right:0;bottom:0;max-height:40vh;overflow:auto;z-index:99999;'
+        + 'background:rgba(0,0,0,.85);color:#0f0;font:12px/1.4 monospace;padding:6px;white-space:pre-wrap;word-break:break-all';
+      (document.body || document.documentElement).appendChild(b);
+    }
+    b.textContent += m + '\n';
+  }catch(e){}
+}
 (function(){
   if (!LIFF_ID) return;
   var ua = navigator.userAgent || '';
+  var ss = {};
+  try{ ss = { liff: sessionStorage.getItem('tt_liff'), off: sessionStorage.getItem('tt_liff_off'), n: sessionStorage.getItem('tt_liff_n') }; }catch(e){ ss = { err: String(e) }; }
+  ttDbg('UA=' + ua.slice(-60) + '\n印=' + JSON.stringify(ss));
   if (!/Line\//i.test(ua)) return;          /* LINEの中で開いた時だけ仕組みを読み込む（他の人には重くしない） */
+  /* ★2026-09-18：専用ページの入口（index.html）を通って来た時だけ動かす。
+     入口が「ぐるぐる回っている」と判断して止めた時（tt_liff_off）も動かさない＝ログインのやり直しで回り続けない。 */
+  try{
+    if (sessionStorage.getItem('tt_liff') !== '1') { ttDbg('入口の印なし→読み込まない'); return; }
+    if (sessionStorage.getItem('tt_liff_off') === '1') { ttDbg('歯止めで停止中→読み込まない'); return; }
+  }catch(e){ return; }
   var s = document.createElement('script');
   s.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
   s.onload = function(){
     try{
       liff.init({ liffId: LIFF_ID }).then(function(){
-        if (!liff.isInClient()) return;       /* 専用ページとして開いていない（ふつうのリンク） */
         var c = liff.getContext ? liff.getContext() : null;
+        ttDbg('init成功 inClient=' + liff.isInClient() + ' login=' + liff.isLoggedIn() + ' 種類=' + (c && c.type) + ' 版=' + liff.getVersion());
+        try{ liff.permission.query('chat_message.write').then(function(p){ ttDbg('送信の許可=' + JSON.stringify(p)); }).catch(function(e){ ttDbg('許可の問い合わせ失敗 ' + (e && (e.code + ' ' + e.message))); }); }catch(e){ ttDbg('許可の問い合わせ不可 ' + e); }
+        if (!liff.isInClient()) return;       /* 専用ページとして開いていない（ふつうのリンク） */
         /* 1対1のトーク（お店の公式LINEとのトーク）から開いた時だけ送る */
         if (c && c.type === 'utou') LIFF_SEND = true;
-      }).catch(function(){});
-    }catch(e){}
+        ttDbg('自動送信=' + LIFF_SEND);
+      }).catch(function(e){ ttDbg('init失敗 ' + (e && (e.code + ' ' + e.message))); });
+    }catch(e){ ttDbg('init例外 ' + e); }
   };
+  s.onerror = function(){ ttDbg('LINEの部品を読めない'); };
   document.head.appendChild(s);
 })();
 
@@ -3468,14 +3497,20 @@ var LIFF_SEND = false;   /* true＝押した瞬間に送れる状態（お店と
 function orderGo(el, payName, payKey){
   orderPing();
   el.href = orderLink(payName, payKey);
+  ttDbg('注文ボタン 自動送信=' + LIFF_SEND + ' 部品=' + !!window.liff);
   if (!LIFF_SEND || !window.liff) return true;
   var msg = orderText(payName, payKey);
   if (!msg) return true;
   try{
     liff.sendMessages([{ type:'text', text: msg }]).then(function(){
+      ttDbg('送信成功');
       try{ liff.closeWindow(); }catch(e){}
-    }).catch(function(){ location.href = el.href; });
-  }catch(e){ return true; }
+    }).catch(function(e){
+      ttDbg('送信失敗 ' + (e && (e.code + ' ' + e.message)));
+      if (TT_DBG) return;                    /* 確かめ中は画面に残す */
+      location.href = el.href;
+    });
+  }catch(e){ ttDbg('送信例外 ' + e); return true; }
   return false;
 }
 
