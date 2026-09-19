@@ -21,7 +21,6 @@ body{background:linear-gradient(160deg,#22707f 0%,#1a5a69 45%,#123f4b 100%);colo
 /* ★ショップの入口：言葉を選ぶ（2026-09-18 まるちゃん決定）
    ・初めての時だけ「日本語／中文」の2つのボタンを出す。選んだ言葉はこのスマホに覚え、2回目からはすぐ開く。
    ・LINEの言葉が日本語の人には「日本語」を、中国語の人には「中文」を上（目立つ方）に置く。
-     LINEの専用ページから来た時はLINEアプリの言語（入口が覚える）、それ以外はスマホの言語で決める（2026-09-19）。
    ・ショップの中の「日本語／中文」の切り替えでも、覚えた言葉が書き換わる。
    ・住所の後ろ（?以降・#以降）はそのまま持って行く（LINEの専用ページの証が入っているため）。 */
 (function(){
@@ -36,9 +35,7 @@ body{background:linear-gradient(160deg,#22707f 0%,#1a5a69 45%,#123f4b 100%);colo
   try { saved = localStorage.getItem(KEY); } catch(e) {}
   if (saved === 'ja' || saved === 'zh') { go(saved); return; }
   document.addEventListener('DOMContentLoaded', function(){
-    /* LINEの専用ページから来た時は、入口が覚えたLINEの言語を先に見る（無ければスマホの言語） */
-    var al = ''; try { al = sessionStorage.getItem('tt_applang') || ''; } catch(e) {}
-    var nl = (al || navigator.language || '').toLowerCase();
+    var nl = (navigator.language || '').toLowerCase();
     var zhFirst = /^zh/.test(nl);
     var ja = '<button class="btn' + (zhFirst ? ' sub' : '') + '" onclick="ttGo(\'ja\')">日本語<small>日本語で見る</small></button>';
     var zh = '<button class="btn' + (zhFirst ? '' : ' sub') + '" onclick="ttGo(\'zh\')">中文<small>以中文瀏覽</small></button>';
