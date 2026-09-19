@@ -28,6 +28,8 @@
   var n = [];
   try {
     sessionStorage.setItem('tt_liff', '1');
+    /* ★2026-09-19：リッチメニューから開いた印（住所の from=rm）を、この見ている間だけ覚える（ショップ履歴で入口を見分ける） */
+    if (/[?&]from=rm(&|$)/.test(st)) sessionStorage.setItem('tt_from', 'rm'); else sessionStorage.removeItem('tt_from');
     var now = Date.now();
     n = JSON.parse(sessionStorage.getItem('tt_liff_n') || '[]').filter(function(t){ return now - t < 60000; });
     n.push(now);
