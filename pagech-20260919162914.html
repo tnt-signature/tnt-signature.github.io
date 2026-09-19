@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-TW">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
+<meta name="description" content="T&amp;T SIGNATURE">
+<meta property="og:type" content="website">
+<meta property="og:title" content="T&amp;T SIGNATURE">
+<meta property="og:description" content="T&amp;T SIGNATURE">
+<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
+<meta property="og:site_name" content="T&amp;T SIGNATURE">
+<meta name="twitter:card" content="summary">
 </head>
 <body style="margin:0"><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
@@ -1249,6 +1256,13 @@ body.dark .pays .pay.on{
 }
 
 /* ── カートの印（右上）と、カートの中身の画面（2026-09-02 まるちゃん） ── */
+/* ★言葉の切り替え（最初の画面の左上・2026-09-18） */
+.langsw{position:fixed;top:14px;left:14px;z-index:60;display:flex;align-items:center;gap:4px;
+  background:rgba(15,51,61,.55);backdrop-filter:blur(6px);border:1px solid rgba(232,211,166,.55);
+  border-radius:999px;padding:5px 12px;font-size:13px;letter-spacing:.06em}
+.langsw a{color:#d8cbb4;text-decoration:none;padding:2px 2px}
+.langsw a.on{color:#fff;font-weight:700}
+.langsw span{color:rgba(232,211,166,.6)}
 .cartbtn{
   position:fixed;top:14px;right:14px;z-index:60;
   width:52px;height:52px;border-radius:50%;cursor:pointer;
@@ -1386,6 +1400,11 @@ body.dark .todoline{color:#a2947f}
     <button class="lswbtn" id="listSwitch" type="button" style="display:none"></button>
   </div>
 
+  <!-- ★言葉の切り替え（2026-09-18 まるちゃん）。最初の画面の左上だけに出す。押すと、もう一方の言葉のショップへ移り、
+       入口（shop.html）で覚えた言葉も書き換える。本物のショップ（page-／pagech-）の時だけ出す。 -->
+  <div class="langsw" id="langSw" style="display:none">
+    <a href="#" data-l="ja">日本語</a><span>｜</span><a href="#" data-l="zh">中文</a>
+  </div>
   <!-- カートの印（中身がある時だけ右上に出る・押すと中身を見られる） -->
   <button class="cartbtn" id="cartBtn" type="button" style="display:none" aria-label="カートを見る">
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
@@ -1582,7 +1601,7 @@ body.dark .todoline{color:#a2947f}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "ja";
+var LANG = "zh";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1755,7 +1774,7 @@ var ZH = {
   "ホホバエッセンスの使い方":"荷荷芭精華的使用方法",
   "月室美容液の秘密":"月室精華液的秘密",
   "準備中":"準備中",
-  "台湾GUMI茶":"台灣GUMI茶",   /* 中国語版での名前（2026-09-18 まるちゃん） */
+  "台湾GUMI茶":"台灣果蜜茶",   /* 中国語版での名前（2026-09-18 まるちゃん指定） */
   "小さな命と出会って生まれた、":"與小小生命相遇而生，",
   "茶葉に宿る奇跡の蜜香":"蘊藏於茶葉中的奇蹟蜜香",
   "本":"支",
@@ -1768,6 +1787,7 @@ var ZH = {
   "ムーラダーラとは？":"什麼是 Muladhara？",
   "米国アリゾナ産100%ピュアゴールデンホホバ":"美國亞利桑那州產 100% 純黃金荷荷芭",
   "USDA（米国農務省）オーガニック認証":"USDA（美國農業部）有機認證",
+  "台湾の化粧品安全基準（PIF）に適合":"符合台灣化粧品PIF規範",
   "VIO保湿美容オイルとVIO専用泡ソープのセットです。":"私密處保濕美容油與私密處專用泡沫皂的組合。",
   "50ml":"50ml"
 };
@@ -1864,7 +1884,7 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
 var SHOPEE_CODE = "TAKY0105";
 var SHOPEE_OFF  = 150;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-020a716380.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -2150,12 +2170,12 @@ var DATA = {
         now:990, was:1500,   /* 2026-09-02 まるちゃん決定＝1,090元から990元へ */
         lb_now:"当店LINE会員価格",   /* lb_was:"通常価格" ＝出さない。まるちゃんが整えた今の形のまま（2026-09-06） */
         tags:[],
-        body:"米国アリゾナ産100%ピュアゴールデンホホバ\nUSDA（米国農務省）オーガニック認証" },
+        body:"米国アリゾナ産100%ピュアゴールデンホホバ\nUSDA（米国農務省）オーガニック認証\n台湾の化粧品安全基準（PIF）に適合" },   /* 3行目＝2026-09-18 まるちゃん */
       /* ★まだ発売前の商品（2026-09-02 まるちゃん）。写真のかわりに「COMING SOON」の面を出し、
          値段も「詳細を見る」も出さない。押しても何も起きない（詳しい画面はまだ無いので）。
          写真が用意できたら soon を消して、ふつうの商品と同じように書けばよい。 */
       { id:"gumi_tea", soon:true,
-        nm:"台湾GUMI茶", nm_zh:"台灣GUMI茶",   /* 名前は「台湾GUMI茶」（2026-09-18 まるちゃん。ぐみ茶→gumi茶→台湾GUMI茶） */
+        nm:"台湾GUMI茶", nm_zh:"台灣果蜜茶",   /* 中国語名はまるちゃん指定（2026-09-18） */   /* 名前は「台湾GUMI茶」（2026-09-18 まるちゃん。ぐみ茶→gumi茶→台湾GUMI茶） */
         /* 名前の下のキャッチコピー（2026-09-18 まるちゃん） */
         sub:"小さな命と出会って生まれた、<br>茶葉に宿る奇跡の蜜香",   /* 読点のあとで改行（言葉の途中で切れないように） */
         one:"", now:null, was:null, tags:[], body:"" }
@@ -3216,6 +3236,9 @@ function show(which){
   vItem.style.display = which==='item' ? 'flex':'none';
   vCart.style.display = which==='cart' ? 'block':'none';
   back.classList.toggle('show', which!=='home');
+  /* 言葉の切り替えは最初の画面だけ・本物のショップの時だけ（2026-09-18） */
+  var _ls = document.getElementById('langSw');
+  if (_ls) _ls.style.display = (which==='home' && /\/page(ch)?-\d+\.html$/.test(location.pathname)) ? 'flex' : 'none';
   /* 一覧と詳しい画面は、上の映像の続きに見えるよう暗い世界にする */
   document.body.classList.toggle('dark', which!=='home');
   curView = which;
@@ -3224,6 +3247,24 @@ function show(which){
 }
 
 function yen(n){ return n==null ? '' : n.toLocaleString('ja-JP') + '元'; }
+
+/* 言葉の切り替え（2026-09-18 まるちゃん）＝今の言葉は太く、押すともう一方の言葉の入口へ移る */
+(function(){
+  var ls = document.getElementById('langSw');
+  if (!ls) return;
+  var cur = isZH() ? 'zh' : 'ja';
+  [].slice.call(ls.querySelectorAll('a')).forEach(function(a){
+    var l = a.getAttribute('data-l');
+    if (l === cur) a.classList.add('on');
+    a.onclick = function(e){
+      e.preventDefault();
+      if (l === cur) return false;
+      try { localStorage.setItem('tt_lang', l); } catch(x) {}
+      location.href = (l === 'zh' ? 'signaturech.html' : 'signature.html') + location.search + location.hash;
+      return false;
+    };
+  });
+})();
 
 function openList(cat){
   curCat = cat;
@@ -4251,16 +4292,4 @@ show('home');
 })();
 </script>
 
-<script>
-(function(){
-  function tomeru(){
-    var b = document.querySelectorAll("[data-go]");
-    for (var i = 0; i < b.length; i++){
-      b[i].onclick = function(e){ if (e && e.preventDefault) e.preventDefault(); };
-    }
-  }
-  tomeru();
-  setTimeout(tomeru, 1500);
-})();
-</script>
 </body></html>

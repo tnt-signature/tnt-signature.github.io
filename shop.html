@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>T&amp;T SIGNATURE</title>
+<meta property="og:title" content="T&amp;T SIGNATURE"><meta property="og:site_name" content="T&amp;T SIGNATURE">
+<style>
+html,body{margin:0;height:100%}
+body{background:linear-gradient(160deg,#22707f 0%,#1a5a69 45%,#123f4b 100%);color:#f1e7d6;
+  font-family:"Hiragino Sans","Noto Sans JP","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  display:flex;align-items:center;justify-content:center}
+#box{display:none;width:100%;max-width:420px;padding:24px 24px 40px;box-sizing:border-box;text-align:center}
+.brand{font-family:"Hiragino Mincho ProN","Noto Serif JP",serif;letter-spacing:.32em;font-size:18px;color:#e8d3a6;margin-bottom:6px}
+.ask{font-size:13px;letter-spacing:.12em;color:#d8cbb4;margin:18px 0 26px;line-height:1.9}
+.btn{display:block;width:100%;box-sizing:border-box;padding:22px 10px;margin:0 0 16px;border-radius:2px;
+  font-size:21px;font-weight:700;letter-spacing:.18em;cursor:pointer;
+  background:linear-gradient(180deg,#e2caa0 0%,#cdad74 48%,#b7915a 100%);color:#0f333d;
+  border:1px solid rgba(255,246,228,.5);box-shadow:0 10px 24px rgba(0,0,0,.3)}
+.btn.sub{background:transparent;color:#f1dfb7;border-color:rgba(232,211,166,.8);box-shadow:none}
+.btn small{display:block;font-size:12px;letter-spacing:.1em;font-weight:400;margin-top:4px;opacity:.8}
+</style>
+<script>
+/* ★ショップの入口：言葉を選ぶ（2026-09-18 まるちゃん決定）
+   ・初めての時だけ「日本語／中文」の2つのボタンを出す。選んだ言葉はこのスマホに覚え、2回目からはすぐ開く。
+   ・LINEの言葉が日本語の人には「日本語」を、中国語の人には「中文」を上（目立つ方）に置く。
+   ・ショップの中の「日本語／中文」の切り替えでも、覚えた言葉が書き換わる。
+   ・住所の後ろ（?以降・#以降）はそのまま持って行く（LINEの専用ページの証が入っているため）。 */
+(function(){
+  var KEY = 'tt_lang';
+  function go(lang){
+    try { localStorage.setItem(KEY, lang); } catch(e) {}
+    var to = (lang === 'zh') ? 'signaturech.html' : 'signature.html';
+    location.replace(to + location.search + location.hash);
+  }
+  window.ttGo = go;
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch(e) {}
+  if (saved === 'ja' || saved === 'zh') { go(saved); return; }
+  document.addEventListener('DOMContentLoaded', function(){
+    var nl = (navigator.language || '').toLowerCase();
+    var zhFirst = /^zh/.test(nl);
+    var ja = '<button class="btn' + (zhFirst ? ' sub' : '') + '" onclick="ttGo(\'ja\')">日本語<small>日本語で見る</small></button>';
+    var zh = '<button class="btn' + (zhFirst ? '' : ' sub') + '" onclick="ttGo(\'zh\')">中文<small>以中文瀏覽</small></button>';
+    document.getElementById('btns').innerHTML = zhFirst ? (zh + ja) : (ja + zh);
+    document.getElementById('box').style.display = 'block';
+  });
+})();
+</script>
+</head><body>
+<div id="box">
+  <div class="brand">T&amp;T SIGNATURE</div>
+  <div class="ask">言語をお選びください<br>請選擇語言</div>
+  <div id="btns"></div>
+</div>
+</body></html>
