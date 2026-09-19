@@ -20,6 +20,20 @@
   if (!ok) { location.replace('signature.html' + location.search); return; }
 
   var p = st.replace(/^\/+/, '') || 'signature.html';
+  /* ★2026-09-19 ショップ履歴：LINEの許可の画面を通ってここへ来た（許可を押した）。確かめ用（ttdebug=1）の時は送らない。
+     許可の画面はLINEがこのページより前に出すので、そこで閉じた人はこちらからは見えない。 */
+  try {
+    if (!/ttdebug=1/.test(decodeURIComponent(location.search))) {
+      var v = '';
+      try {
+        v = localStorage.getItem('tt_sub') || localStorage.getItem('tt_vid') || '';
+        if (!v) { v = 'd' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); localStorage.setItem('tt_vid', v); }
+      } catch(e) { v = 'dnostore'; }
+      fetch('https://script.google.com/macros/s/AKfycbzSxho3e4CHyAuoymGlzcVwGnLshGoCg53zY18laLrHMq5Cun_pBv8XgRsNxKMDxlKwUA/exec'
+        + '?action=hit&who=shopv&role=.liff&device=' + encodeURIComponent(v) + '&view=perm',
+        { mode:'no-cors', cache:'no-store', keepalive:true }).catch(function(){});
+    }
+  } catch(e) {}
   function plain(){   /* 専用ページの仕組みを使わずに行き先へ（ログインの証も持って行く） */
     var q = location.search.replace(/([?&])liff\.state=[^&]*&?/, '$1').replace(/[?&]$/, '');
     var add = q ? q.slice(1) : '';
