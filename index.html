@@ -42,10 +42,20 @@
   var moved = false;
   var s = document.createElement('script');
   s.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
+  /* ★2026-09-19 まるちゃん：言葉を選ぶ画面で、LINEの言語の方を上にする。LINEの言語をこの見ている間だけ覚える
+     （取れない時は選ぶ画面がスマホの言語で決める）。 */
+  function keepLang(){
+    try {
+      var al = (liff.getAppLanguage && liff.getAppLanguage()) || '';
+      if (al) sessionStorage.setItem('tt_applang', al);
+    } catch(e) {}
+  }
   s.onload = function(){
+    keepLang();
     try {
       /* 証を受け取ると、LINEの部品が行き先（liff.state）へ自分で移る */
       liff.init({ liffId: LIFF_ID }).then(function(){
+        keepLang();
         /* 受け取り終わっても1.5秒ここに居たら、自分で行き先へ（証はもう保存されている） */
         setTimeout(function(){ if (!moved) { moved = true; plain(); } }, 1500);
       }).catch(function(){ if (!moved) { moved = true; plain(); } });
