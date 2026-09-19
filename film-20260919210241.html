@@ -3246,9 +3246,10 @@ function show(which){
   vItem.style.display = which==='item' ? 'flex':'none';
   vCart.style.display = which==='cart' ? 'block':'none';
   back.classList.toggle('show', which!=='home');
-  /* 言葉の切り替えは最初の画面だけ・本物のショップの時だけ（2026-09-18） */
+  /* 言葉の切り替え：2026-09-19 まるちゃん「最初の画面の上はかっこわるい。まず消して、商品ページに入った時に出したい」
+     ＝出す場所が決まるまで、どの画面にも出さない（仕組みは残してある）。 */
   var _ls = document.getElementById('langSw');
-  if (_ls) _ls.style.display = (which==='home' && /\/page(ch)?-\d+\.html$/.test(location.pathname)) ? 'flex' : 'none';
+  if (_ls) _ls.style.display = 'none';
   /* 一覧と詳しい画面は、上の映像の続きに見えるよう暗い世界にする */
   document.body.classList.toggle('dark', which!=='home');
   curView = which;
@@ -3442,6 +3443,7 @@ function drawSizes(){
 function openItem(cat, id){
   var it = DATA[cat].items.filter(function(x){return x.id===id})[0];
   if(!it) return;
+  ttTrack('i_' + id);   /* ショップ履歴：どの商品を見たか */
 
   var dpic = itemPic(it);
   /* ★写真の中に、白い字で一言を重ねる（2026-09-03 まるちゃん）。
@@ -3599,6 +3601,63 @@ function orderPingWait(){
   });
 }
 
+/* ★2026-09-19 まるちゃん依頼：ネットショップに「どなたが・何回・何を見て・注文したか」を残す
+   （スーパーズコの管理者用「T＆Tショップ履歴」で見る）。
+   ・運ぶ道は上の注文の合図と同じ軽い記録（action=hit）。窓口は無改修。who=shopv で注文の合図（who=shop）と分ける。
+   ・人の見分け：LINEの専用ページで開いた時は LINE の番号（このショップ用の番号）。それ以外はこのスマホに置く番号。
+     一度でも専用ページで開いたスマホは、その後ふつうに開いても同じ人として数える（LINEの番号を覚えておく）。
+   ・窓口は1項目20〜40字までしか受けないので短く詰める（device＝人の番号／role＝言葉.入口／view＝出来事）。
+   ・確かめ用（ttdebug=1）の時は送らない。名前は受け取らない（許可の画面を増やさない・まるちゃん了承）。 */
+var TT_SUB = '', TT_CTX = '', TT_Q = [], TT_READY = false, TT_LAST = '';
+function ttVid(){
+  if (TT_SUB) return TT_SUB;
+  var v = '';
+  try{
+    v = localStorage.getItem('tt_sub') || localStorage.getItem('tt_vid') || '';
+    if (!v){ v = 'd' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); localStorage.setItem('tt_vid', v); }
+  }catch(e){ v = 'dnostore'; }
+  return v;
+}
+function ttRoute(){
+  var ua = navigator.userAgent || '';
+  if (TT_CTX === 'utou'){                                    /* お店とのトーク */
+    /* ★2026-09-19：リッチメニューの住所には印（from=rm）が付けてある＝入口の係が覚えた印で見分ける */
+    var rm = /[?&]from=rm(&|$)/.test(location.search);
+    try{ rm = rm || sessionStorage.getItem('tt_from') === 'rm'; }catch(e){}
+    return rm ? 'rich' : 'talk';                             /* rich＝リッチメニュー／talk＝お店が送ったリンク */
+  }
+  if (TT_CTX === 'group' || TT_CTX === 'room' || TT_CTX === 'square_chat') return 'group';
+  if (/Line\//i.test(ua)) return 'line';                     /* LINEの中のふつうのブラウザ */
+  if (/Instagram/i.test(ua)) return 'ig';
+  if (/FBAN|FBAV|FB_IAB/i.test(ua)) return 'fb';
+  return 'web';
+}
+function ttSend(ev){
+  if (TT_DBG) return;
+  try{
+    var u = SHOP_PIPE + '?action=hit&who=shopv'
+      + '&role=' + encodeURIComponent(LANG + '.' + ttRoute())
+      + '&device=' + encodeURIComponent(ttVid())
+      + '&view=' + encodeURIComponent(String(ev).slice(0, 20));
+    fetch(u, { mode:'no-cors', cache:'no-store', keepalive:true }).catch(function(){});
+  }catch(e){}
+}
+/* 同じ出来事が続けて来たら1回にする（写真の送り直し等で二重に数えない） */
+function ttTrack(ev){
+  if (ev === TT_LAST) return;
+  TT_LAST = ev;
+  if (TT_READY) ttSend(ev); else TT_Q.push(ev);
+}
+/* LINEの専用ページの準備（番号が分かる）を待ってから送り始める。長くても4秒で送り始める。 */
+function ttTrackReady(){
+  if (TT_READY) return;
+  TT_READY = true;
+  var q = TT_Q; TT_Q = [];
+  q.forEach(ttSend);
+}
+setTimeout(ttTrackReady, 4000);
+ttTrack('open');
+
 /* ★お店のトークから開いた時は、押した瞬間に注文を送る（2026-09-17 まるちゃん決定）。
    LINEの「専用ページ」の仕組み（LIFF）を使う。登録＝LINE Developers のプロバイダー「T&T SIGNATURE」→
    チャネル「T&T SIGNATURE」（LINEログイン）→ LIFF。許可の項目は ユーザー識別子＋メッセージの送信 だけ。
@@ -3627,18 +3686,18 @@ function ttDbg(m){
   }catch(e){}
 }
 (function(){
-  if (!LIFF_ID) return;
+  if (!LIFF_ID) { ttTrackReady(); return; }
   var ua = navigator.userAgent || '';
   var ss = {};
   try{ ss = { liff: sessionStorage.getItem('tt_liff'), off: sessionStorage.getItem('tt_liff_off'), n: sessionStorage.getItem('tt_liff_n') }; }catch(e){ ss = { err: String(e) }; }
   ttDbg('UA=' + ua.slice(-60) + '\n印=' + JSON.stringify(ss));
-  if (!/Line\//i.test(ua)) return;          /* LINEの中で開いた時だけ仕組みを読み込む（他の人には重くしない） */
+  if (!/Line\//i.test(ua)) { ttTrackReady(); return; }   /* LINEの中で開いた時だけ仕組みを読み込む（他の人には重くしない） */
   /* ★2026-09-18：専用ページの入口（index.html）を通って来た時だけ動かす。
      入口が「ぐるぐる回っている」と判断して止めた時（tt_liff_off）も動かさない＝ログインのやり直しで回り続けない。 */
   try{
-    if (sessionStorage.getItem('tt_liff') !== '1') { ttDbg('入口の印なし→読み込まない'); return; }
-    if (sessionStorage.getItem('tt_liff_off') === '1') { ttDbg('歯止めで停止中→読み込まない'); return; }
-  }catch(e){ return; }
+    if (sessionStorage.getItem('tt_liff') !== '1') { ttDbg('入口の印なし→読み込まない'); ttTrackReady(); return; }
+    if (sessionStorage.getItem('tt_liff_off') === '1') { ttDbg('歯止めで停止中→読み込まない'); ttTrackReady(); return; }
+  }catch(e){ ttTrackReady(); return; }
   var s = document.createElement('script');
   s.src = 'https://static.line-scdn.net/liff/edge/2/sdk.js';
   s.onload = function(){
@@ -3651,14 +3710,26 @@ function ttDbg(m){
         try{ var tk = liff.getDecodedIDToken && liff.getDecodedIDToken(); ttDbg('番号(ID)=' + (tk && tk.sub)); }catch(e){ ttDbg('番号(ID)取れない ' + e); }
         try{ liff.getProfile().then(function(p){ ttDbg('番号(プロフィール)=' + p.userId); }).catch(function(e){ ttDbg('プロフィール失敗 ' + (e && e.message)); }); }catch(e){}
         try{ liff.permission.query('chat_message.write').then(function(p){ ttDbg('送信の許可=' + JSON.stringify(p)); }).catch(function(e){ ttDbg('許可の問い合わせ失敗 ' + (e && (e.code + ' ' + e.message))); }); }catch(e){ ttDbg('許可の問い合わせ不可 ' + e); }
+        /* ★2026-09-19 記録用：この人の番号と、どこから開いたか。前にこのスマホに置いた番号があれば、
+           「同じ人でした」と1回だけ知らせて、以後はLINEの番号で数える（ショップ履歴で2人に分かれない）。 */
+        try{
+          var tk2 = liff.getDecodedIDToken && liff.getDecodedIDToken();
+          if (tk2 && tk2.sub){
+            var old = ''; try{ old = localStorage.getItem('tt_vid') || ''; localStorage.setItem('tt_sub', tk2.sub); }catch(e){}
+            TT_SUB = tk2.sub;
+            if (old) { ttTrack('w' + old); try{ localStorage.removeItem('tt_vid'); }catch(e){} }
+          }
+          TT_CTX = (c && c.type) || '';
+        }catch(e){}
+        ttTrackReady();
         if (!liff.isInClient()) return;       /* 専用ページとして開いていない（ふつうのリンク） */
         /* 1対1のトーク（お店の公式LINEとのトーク）から開いた時だけ送る */
         if (c && c.type === 'utou') LIFF_SEND = true;
         ttDbg('自動送信=' + LIFF_SEND);
-      }).catch(function(e){ ttDbg('init失敗 ' + (e && (e.code + ' ' + e.message))); });
-    }catch(e){ ttDbg('init例外 ' + e); }
+      }).catch(function(e){ ttDbg('init失敗 ' + (e && (e.code + ' ' + e.message))); ttTrackReady(); });
+    }catch(e){ ttDbg('init例外 ' + e); ttTrackReady(); }
   };
-  s.onerror = function(){ ttDbg('LINEの部品を読めない'); };
+  s.onerror = function(){ ttDbg('LINEの部品を読めない'); ttTrackReady(); };
   document.head.appendChild(s);
 })();
 
@@ -3669,6 +3740,8 @@ function orderGo(el, payName, payKey){
   if (Date.now() - ORDER_BUSY < 8000) return false;
   ORDER_BUSY = Date.now();
   orderPing();
+  /* ショップ履歴：注文した（合計の金額を付ける＝お店に届いた注文文と時刻・金額で突き合わせてどなたか分かる） */
+  try{ var tt = cartTotal(); TT_LAST = ''; ttTrack('buy' + (tt != null ? tt : '')); ttTrackReady(); }catch(e){}
   if (!(LIFF_SEND && window.liff)) el.href = orderLink(payName, payKey);
   ttDbg('注文ボタン 自動送信=' + LIFF_SEND + ' 部品=' + !!window.liff);
   if (!LIFF_SEND || !window.liff){
@@ -4164,6 +4237,7 @@ function drawBogo(){
 
 function setStep(n){
   payStep = n;
+  if (n > 0) ttTrack('s' + n);   /* ショップ履歴：どこまで進んだか（1受け取り方 2本数 3お支払い 4ご確認 5郵送） */
   document.getElementById('stepItem').style.display = (n===0) ? 'block' : 'none';
   /* flex＝左に写真・右に名前と金額を横に並べる（block だと写真が上に乗ってしまう）
      ★ご確認の画面（4）では出さない。下のご注文内容の枠に同じことが全部書いてあるので、
