@@ -39,12 +39,17 @@
    こうすると、スマホに古い画面が残っていても必ず新しい画面が出る。 */
 (function(){
   if (window.__ttExt) return;
-  var here = '20260919222228';
+  var here = '20260919225941';
   /* ★2026-09-18：専用ページ（LIFF）から来た時は、住所の後ろ（?以降・#以降）をそのまま持って移る。
      LINEがログインの証をそこに付けて来るので、捨てると中身のページがログインをやり直し、
      「ログイン→入口→中身→ログイン…」と0.5秒ごとに回り続けた（まるちゃんのスマホで発生）。 */
   var keep = '';
   try{ if (sessionStorage.getItem('tt_liff') === '1') keep = location.search + location.hash; }catch(e){}
+  /* ★2026-09-19 まるちゃん：LINEのリンクから外のブラウザへ移って来た人を、ショップ履歴で「ブラウザ」でなく
+     「LINEのリンク（外で開いた）」と数えるための目印（同じタブの間だけ残る）。住所の後ろは中身へ運ばないので、ここで覚える。
+     確かめ用の印（ttdebug=1）も中身へ運ぶ（運ばないと確かめのつもりが本物の記録に入る）。 */
+  try{ if (/[?&]openExternalBrowser=1/.test(location.search)) sessionStorage.setItem('tt_ext', '1'); }catch(e){}
+  if (!keep && /[?&]ttdebug=1/.test(location.search)) keep = '?ttdebug=1';
   function go(v){ location.replace('page-' + v + '.html' + keep); }
   var moved = false;
   function once(v){ if (moved) return; moved = true; go(v); }
@@ -58,6 +63,6 @@
   setTimeout(function(){ once(here); }, 4000);
 })();
 </script>
-<noscript><a href="page-20260919222228.html">開く</a></noscript>
+<noscript><a href="page-20260919225941.html">開く</a></noscript>
 </body>
 </html>

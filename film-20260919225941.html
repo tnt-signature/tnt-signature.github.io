@@ -4,15 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
-<meta name="description" content="T&amp;T SIGNATURE">
-<meta property="og:type" content="website">
-<meta property="og:title" content="T&amp;T SIGNATURE">
-<meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
-<meta property="og:site_name" content="T&amp;T SIGNATURE">
-<meta name="twitter:card" content="summary">
 </head>
-<body style="margin:0"><title>T&amp;T SIGNATURE</title>
+<body style="margin:0">
+<script>window.__FILM_ONLY__=true;</script><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1257,9 +1251,17 @@ body.dark .pays .pay.on{
 
 /* ── カートの印（右上）と、カートの中身の画面（2026-09-02 まるちゃん） ── */
 /* ★言葉の切り替え（最初の画面の左上・2026-09-18） */
-.langsw{position:fixed;top:14px;left:14px;z-index:60;display:flex;align-items:center;gap:4px;
-  background:rgba(15,51,61,.55);backdrop-filter:blur(6px);border:1px solid rgba(232,211,166,.55);
-  border-radius:999px;padding:5px 12px;font-size:13px;letter-spacing:.06em}
+/* 下の「前へ戻る」の上の余白（18px）に半分重ねて、足す高さを小さくする（小さいスマホでも1画面に収めるため・2026-09-19） */
+.langsw{width:max-content;margin:6px 0 -14px auto;display:flex;align-items:center;gap:4px;
+  background:rgba(15,51,61,.55);border:1px solid rgba(232,211,166,.55);
+  border-radius:999px;padding:4px 12px;font-size:13px;letter-spacing:.06em}
+/* カートの印（右上に浮いている丸）が出ている間は、その左に寄せて重ならないようにする */
+body.cartshow .langsw{margin-right:62px}
+/* 縦が短いスマホ（画面の高さ620以下）だけ、切り替えを小さくして「前へ戻る」の上の余白を詰める＝1画面に収める（2026-09-19） */
+@media (max-height:620px){
+  .langsw{font-size:11px;padding:2px 10px;margin:4px 0 -16px auto}
+  body.dark .backrow .back, body.dark .backrow .lswbtn{margin-top:12px}
+}
 .langsw a{color:#d8cbb4;text-decoration:none;padding:2px 2px}
 .langsw a.on{color:#fff;font-weight:700}
 .langsw span{color:rgba(232,211,166,.6)}
@@ -1305,11 +1307,12 @@ body.dark .cartrow .qb .n{
 body.dark .cartempty{
   text-align:center;color:#c8bdae;padding:26px 0;font-size:15px;
 }
-body.dark #viewCart .buy{padding:24px 18px}
+/* 2026-09-19：言葉の切り替えを上に足した分、小さいスマホでも1画面に収まるよう少し詰めた（24px→18px） */
+body.dark #viewCart .buy{padding:18px 18px}
 body.dark #viewCart .buy .t{font-size:19px;letter-spacing:.12em}
 /* 「カートを空にする」は、押し間違えないよう控えめな見た目にする（2026-09-06） */
 body.dark #viewCart .buy.empty{background:none;border:1px solid rgba(201,171,115,.45);
-  color:#c9ab73;box-shadow:none;padding:15px 14px}
+  color:#c9ab73;box-shadow:none;padding:12px 14px}
 body.dark #viewCart .buy.empty .t{font-size:14px;letter-spacing:.1em}
 /* 聞き返している間だけ、はっきり分かる赤みにする */
 body.dark #viewCart .buy.empty.armed{border-color:#c9756f;color:#e8a49e}
@@ -1390,21 +1393,39 @@ body.dark .todoline{color:#a2947f}
   margin:16px 0 0;border:1px dashed #c9b48c;border-radius:14px;
   background:#fffaf0;padding:13px 16px;font-size:12.5px;color:#8a7444;line-height:1.8;
 }
+
+/* ★見せる用：下の見出しとボタンを隠して、上の映像だけにする */
+.homelower{display:none !important}
+#viewHome{justify-content:center}
+/* ★映像だけの版は「正方形のまま、いちばん大きく」出す（2026-09-02 まるちゃん）。
+   スマホ用の写真は正方形なので、入れ物の四角ぜんぶを写真で埋める。
+   パソコンでは高さいっぱいの正方形になり、左右に黒い余白ができる。 */
+html,body{background:#000}
+.wrap{max-width:none;padding:0;min-height:100dvh;
+      display:flex;align-items:center;justify-content:center}
+#viewHome{flex:none;width:min(100vw,100dvh)}
+.hero{width:100%;margin-left:0;margin-right:0;aspect-ratio:1/1}
+@media (min-width:780px){ .hero{aspect-ratio:1/1} }
+/* ★正方形の写真を使うので、字の置き方もスマホと同じ右そろえにする（2026-09-10） */
+.cap .ja4{align-items:flex-end}
+.cap .side{align-self:flex-end;align-items:flex-end}
 </style>
 <div class="wrap">
   <!-- 日本語のお客様向けのページなので、中国語は付けない（2026-09-02 まるちゃん） -->
   <!-- 一覧の時だけ、右に「もう一方へ切り替える」ボタンが並ぶ（2026-09-06 まるちゃん）。
        前へ戻る＝3分の1、切り替える＝3分の2の幅。 -->
+  <!-- ★言葉の切り替え（2026-09-18 まるちゃん／2026-09-19 置き場所を変更）。
+       最初の画面には出さない（かっこわるい）。商品の画面（一覧・詳しい画面・注文の各段・カート）に入ったら、
+       「前へ戻る／SELECT」の上の右端に出す。押すと、もう一方の言葉のショップへ移り、入口（shop.html）で覚えた言葉も書き換える。
+       本物のショップ（page-／pagech-）の時だけ出す。 -->
+  <div class="langsw" id="langSw" style="display:none">
+    <a href="#" data-l="ja">日本語</a><span>｜</span><a href="#" data-l="zh">中文</a>
+  </div>
   <div class="backrow" id="backRow">
     <button class="back" id="backTop">← 前へ戻る</button>
     <button class="lswbtn" id="listSwitch" type="button" style="display:none"></button>
   </div>
 
-  <!-- ★言葉の切り替え（2026-09-18 まるちゃん）。最初の画面の左上だけに出す。押すと、もう一方の言葉のショップへ移り、
-       入口（shop.html）で覚えた言葉も書き換える。本物のショップ（page-／pagech-）の時だけ出す。 -->
-  <div class="langsw" id="langSw" style="display:none">
-    <a href="#" data-l="ja">日本語</a><span>｜</span><a href="#" data-l="zh">中文</a>
-  </div>
   <!-- カートの印（中身がある時だけ右上に出る・押すと中身を見られる） -->
   <button class="cartbtn" id="cartBtn" type="button" style="display:none" aria-label="カートを見る">
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
@@ -2805,7 +2826,21 @@ function fitItem(){
   }
 }
 
+/* ★カートの画面も1画面に収める（2026-09-19 まるちゃん「言葉の切り替えを入れても全部の画面が1画面」）。
+   はみ出す時だけ、金色のボタンの上下の余白を少しずつ詰める（小さいスマホ用）。収まる所で止める。 */
+function fitCart(){
+  var v = document.getElementById('viewCart');
+  if (!v || v.style.display === 'none') return;
+  var bs = [].slice.call(v.querySelectorAll('.buy')).filter(function(b){ return !b.classList.contains('empty'); });
+  var over = function(){ return document.documentElement.scrollHeight - window.innerHeight; };
+  var steps = [18, 14, 11, 8];
+  for (var i = 0; i < steps.length; i++){
+    bs.forEach(function(b){ b.style.paddingTop = b.style.paddingBottom = steps[i] + 'px'; });
+    if (over() <= 0) break;
+  }
+}
 function fitAll(){
+  try { fitCart(); } catch(e){}
   try { fitQty(); } catch(e){} try { fitConfirm(); } catch(e){} try { fitTiles(); } catch(e){} fitCaps(); fitIntro(); fitCards(); fitTitle(); fitBuys(); fitItem(); alignTextTop(); }
 
 applyHero();
@@ -3117,6 +3152,7 @@ function dwellOf(i){
 }
 
 function runPhotos(i){
+  ttFilm(4 + i);                      /* ショップ履歴：4クジラ 5農務省 6ホホバ畑 7サボテン 8No.31の瓶 */
   setPhoto(i);
   later(function(){
     if (i + 1 < slides.length) runPhotos(i + 1);
@@ -3125,6 +3161,7 @@ function runPhotos(i){
 }
 
 function playIntro(instant){
+  ttFilm(2);                          /* ショップ履歴：冒頭の言葉 */
   /* 言葉の出方を最初からやり直す */
   introEl.querySelectorAll('.ln').forEach(function(e){
     e.style.animation = 'none';
@@ -3160,6 +3197,7 @@ function playIntro(instant){
   }, INTRO_MS);
 
   function showTitle(){
+    ttFilm(3);                        /* ショップ履歴：題名 */
     /* 灰色になりきったところで、映画の題名のような一枚を出す */
     titleEl.classList.add('on');
     /* 1文字ずつ打ち出す。打ち終わりの時刻が返るので、
@@ -3186,9 +3224,20 @@ var openingImB = document.getElementById('openingImgB');
 
 var openTimers = [];
 
+/* ★ショップ履歴（2026-09-19 まるちゃん）：上の映像がいまどの場面か。
+   1白い瓶 2冒頭の言葉 3題名 4クジラ 5農務省 6ホホバ畑 7サボテン 8No.31の瓶。
+   最後まで行って白い瓶に戻った回数（一巡）も数える。記録へ送るのは下の ttScrFilm（最初の画面を見ている間だけ数える）。 */
+var TT_FILM_STAGE = 0, TT_FILM_LOOPS = 0;
+function ttFilm(n, loopDone){
+  TT_FILM_STAGE = n;
+  if (loopDone) TT_FILM_LOOPS++;
+  try { ttScrFilm(n, loopDone); } catch(e) {}
+}
+
 /* first＝ページを開いた一番最初。2回目からは、最後の「あなたの肌へ」のあとに
    またこの瓶の画面へ戻ってくるので、白い画面をふわっと重ねてから出す */
 function startShow(first){
+  ttFilm(1, !first);                  /* ショップ履歴：白い瓶（2回目からは一巡した印） */
   if (!IMG_BOTTLE_WHITE || IMG_BOTTLE_WHITE.charAt(0) === '@') { playIntro(); return; }
   openTimers.forEach(clearTimeout); openTimers = [];
   openingIm.src = IMG_BOTTLE_WHITE;
@@ -3236,12 +3285,14 @@ function show(which){
   vItem.style.display = which==='item' ? 'flex':'none';
   vCart.style.display = which==='cart' ? 'block':'none';
   back.classList.toggle('show', which!=='home');
-  /* 言葉の切り替えは最初の画面だけ・本物のショップの時だけ（2026-09-18） */
+  /* 言葉の切り替え：2026-09-19 まるちゃん「最初の画面の上はかっこわるい。商品の画面に入ったら全部の画面に出す。
+     場所は前へ戻る・SELECTの上」。本物のショップの時だけ。 */
   var _ls = document.getElementById('langSw');
-  if (_ls) _ls.style.display = (which==='home' && /\/page(ch)?-\d+\.html$/.test(location.pathname)) ? 'flex' : 'none';
+  if (_ls) _ls.style.display = (which!=='home' && /\/page(ch)?-\d+\.html$/.test(location.pathname)) ? 'flex' : 'none';
   /* 一覧と詳しい画面は、上の映像の続きに見えるよう暗い世界にする */
   document.body.classList.toggle('dark', which!=='home');
   curView = which;
+  try { ttScrSync(); } catch(e) {}   /* ショップ履歴：前の画面の秒数を送って数え直す */
   drawCartBtn();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -3259,6 +3310,7 @@ function yen(n){ return n==null ? '' : n.toLocaleString('ja-JP') + '元'; }
     a.onclick = function(e){
       e.preventDefault();
       if (l === cur) return false;
+      try { ttClick('lang', l); } catch(x) {}   /* ショップ履歴：言葉を切り替えた */
       try { localStorage.setItem('tt_lang', l); } catch(x) {}
       location.href = (l === 'zh' ? 'signaturech.html' : 'signature.html') + location.search + location.hash;
       return false;
@@ -3464,7 +3516,7 @@ function openItem(cat, id){
   var secUrl = sec ? ((isZH() && sec.url_zh) ? sec.url_zh : sec.url) : '';
   ds.innerHTML = !sec ? ''
     : (secUrl
-        ? '<a href="' + secUrl + '" target="_blank" rel="noopener">'
+        ? '<a href="' + secUrl + '" target="_blank" rel="noopener" onclick="ttClick(\'sec\',\'' + it.id + '\')">'
           + '<span class="bk">\ud83d\udcd6</span>' + esc(Z(sec.t)) + '<span class="ar">\u203a</span></a>'
         : '<a href="#" class="soon" onclick="return false">'
           + esc(Z(sec.t)) + '<span class="soonmk">' + esc(Z('準備中')) + '</span></a>');
@@ -3473,7 +3525,7 @@ function openItem(cat, id){
   var use = it.usage;
   var useUrl = use ? ((isZH() && use.url_zh) ? use.url_zh : use.url) : '';
   if (use && useUrl){
-    ds.innerHTML += '<a class="use" href="' + useUrl + '" target="_blank" rel="noopener">'
+    ds.innerHTML += '<a class="use" href="' + useUrl + '" target="_blank" rel="noopener" onclick="ttClick(\'use\',\'' + it.id + '\')">'
       + '<span class="bk">💧</span>' + esc(Z(use.t)) + '<span class="ar">›</span></a>';
     ds.style.display = '';
   }
@@ -3616,6 +3668,8 @@ function ttRoute(){
     return rm ? 'rich' : 'talk';                             /* rich＝リッチメニュー／talk＝お店が送ったリンク */
   }
   if (TT_CTX === 'group' || TT_CTX === 'room' || TT_CTX === 'square_chat') return 'group';
+  /* ★2026-09-19：LINEのリンクを押して外のブラウザへ移って来た人（入口が目印を付ける） */
+  try{ if (sessionStorage.getItem('tt_ext') === '1') return 'lineout'; }catch(e){}
   if (/Line\//i.test(ua)) return 'line';                     /* LINEの中のふつうのブラウザ */
   if (/Instagram/i.test(ua)) return 'ig';
   if (/FBAN|FBAV|FB_IAB/i.test(ua)) return 'fb';
@@ -3623,6 +3677,9 @@ function ttRoute(){
 }
 function ttSend(ev){
   if (TT_DBG) return;
+  /* ★2026-09-19：写真を差し込む前の元ファイルや手元のファイルを開いた試し（言葉が差し込み前の印のまま・住所が http でない）は送らない
+     （AIの確かめが本物の記録に入っていた） */
+  if (!/^https?:$/.test(location.protocol) || String(LANG).charAt(0) === '@') return;
   try{
     var u = SHOP_PIPE + '?action=hit&who=shopv'
       + '&role=' + encodeURIComponent(LANG + '.' + ttRoute())
@@ -3646,6 +3703,77 @@ function ttTrackReady(){
 }
 setTimeout(ttTrackReady, 4000);
 ttTrack('open');
+
+/* ★2026-09-19 まるちゃん「どの画面を何秒見たか・どこまで見たか・何を押したか」も残す。
+   ・1つの画面にいた秒数を、画面を移る時／スマホを裏に回した・閉じた時／30秒ごと に、
+     「前に送ってから増えた秒数」だけ送る（足し算すればその画面の合計になる＝二重に数えない）。
+   ・スマホの画面を消している間・LINEを裏に回している間は数えない。
+   ・1枚めくるごとには送らない（窓口の受け取りがパンクして注文の知らせまで遅れるため）。
+   ・出来事の形（窓口は1項目20字まで）：
+       h秒.場面.一巡 … 最初の画面（映像）。場面＝そこまでに見た一番先の場面（ttFilm の番号）。一巡＝最後まで見て戻った回数
+       lo秒／ls秒     … ORIGINAL／SELECT の一覧
+       t商品.段.秒    … 商品の画面（段 0＝説明 1受け取り方 2本数 3お支払い 4ご確認 5郵送）
+       c秒            … カート
+       ksec.商品／kuse.商品 … 「◯◯の秘密」「◯◯の使い方」を押した　klang.zh／klang.ja … 言葉の切り替えを押した */
+var TT_SCR = null;
+function ttNow(){ return Date.now(); }
+function ttSendRaw(ev){ if (TT_READY) ttSend(ev); else TT_Q.push(ev); }   /* 同じ文字が続いても送る */
+function ttScrKey(){
+  if (curView === 'home') return 'h';
+  if (curView === 'list') return 'l' + (curCat === 'original' ? 'o' : 's');
+  if (curView === 'cart') return 'c';
+  if (curView === 'item' && curItem) return 't' + curItem.id + '.' + (payStep || 0);
+  return '';
+}
+function ttScrPause(){
+  if (TT_SCR && TT_SCR.since){ TT_SCR.ms += ttNow() - TT_SCR.since; TT_SCR.since = 0; }
+}
+function ttScrResume(){
+  if (TT_SCR && !TT_SCR.since && !document.hidden) TT_SCR.since = ttNow();
+}
+/* いまの画面の「前に送ってから増えた秒数」を送る（1秒未満は送らない） */
+function ttScrFlush(){
+  if (!TT_SCR) return;
+  var run = !!TT_SCR.since;
+  ttScrPause();
+  var sec = Math.floor(TT_SCR.ms / 1000);
+  if (sec >= 1){
+    TT_SCR.ms -= sec * 1000;
+    var k = TT_SCR.key, ev;
+    if (k === 'h') ev = 'h' + sec + '.' + (TT_SCR.max || 0) + '.' + (TT_SCR.loops || 0);
+    else if (k.charAt(0) === 't') ev = k + '.' + sec;
+    else ev = k + sec;
+    ttSendRaw(String(ev).slice(0, 20));
+  }
+  if (run) ttScrResume();
+}
+/* 画面が変わったか見て、変わっていたら前の画面の秒数を送って数え直す（show・setStep から呼ぶ） */
+function ttScrSync(){
+  var key = ttScrKey();
+  if (TT_SCR && TT_SCR.key === key) return;
+  if (TT_SCR){ ttScrFlush(); ttScrPause(); }
+  TT_SCR = key ? { key:key, ms:0, since:0, max:0, loops:0 } : null;
+  if (TT_SCR && key === 'h') TT_SCR.max = TT_FILM_STAGE;
+  ttScrResume();
+}
+/* 映像の場面が進んだ時（最初の画面を見ている時だけ数える） */
+function ttScrFilm(n, loopDone){
+  if (!TT_SCR || TT_SCR.key !== 'h' || !TT_SCR.since) return;
+  if (n > TT_SCR.max) TT_SCR.max = n;
+  if (loopDone) TT_SCR.loops++;
+}
+/* 押した物 */
+function ttClick(kind, extra){
+  ttScrFlush();
+  ttSendRaw(('k' + kind + (extra ? '.' + extra : '')).slice(0, 20));
+}
+document.addEventListener('visibilitychange', function(){
+  if (document.hidden) ttScrFlush(), ttScrPause();
+  else ttScrResume();
+});
+/* 閉じる時は、LINEの番号を待たずに送り始める（待っていると送れないまま消える） */
+window.addEventListener('pagehide', function(){ ttScrFlush(); ttScrPause(); ttTrackReady(); });
+setInterval(function(){ if (TT_SCR && TT_SCR.since) ttScrFlush(); }, 30000);
 
 /* ★お店のトークから開いた時は、押した瞬間に注文を送る（2026-09-17 まるちゃん決定）。
    LINEの「専用ページ」の仕組み（LIFF）を使う。登録＝LINE Developers のプロバイダー「T&T SIGNATURE」→
@@ -4084,6 +4212,7 @@ function drawCartBtn(){
 }
 /* カートの中身の画面を組み立てる */
 function drawCart(){
+  setTimeout(function(){ try { fitCart(); } catch(e){} }, 0);
   var box = document.getElementById('cartList');
   if (!cart.length){
     box.innerHTML = '<div class="cartempty">カートは空です</div>';
@@ -4226,6 +4355,7 @@ function drawBogo(){
 
 function setStep(n){
   payStep = n;
+  try { ttScrSync(); } catch(e) {}   /* ショップ履歴：段ごとの秒数 */
   if (n > 0) ttTrack('s' + n);   /* ショップ履歴：どこまで進んだか（1受け取り方 2本数 3お支払い 4ご確認 5郵送） */
   document.getElementById('stepItem').style.display = (n===0) ? 'block' : 'none';
   /* flex＝左に写真・右に名前と金額を横に並べる（block だと写真が上に乗ってしまう）
@@ -4364,5 +4494,6 @@ show('home');
   document.body.appendChild(bar);
 })();
 </script>
+
 
 </body></html>
