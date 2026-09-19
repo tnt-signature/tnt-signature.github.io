@@ -42,7 +42,9 @@ body{background:linear-gradient(160deg,#22707f 0%,#1a5a69 45%,#123f4b 100%);colo
         v = localStorage.getItem('tt_sub') || localStorage.getItem('tt_vid') || '';
         if (!v) { v = 'd' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); localStorage.setItem('tt_vid', v); }
       } catch(e) { v = 'dnostore'; }
-      var rt = 'web'; try { if (sessionStorage.getItem('tt_liff') === '1') rt = 'liff'; } catch(e) {}
+      /* ★2026-09-20 まるちゃん決定：リッチメニューと公式LINEの長いリンク（どちらも入口 index.html を通る）からだけ記録する */
+      var rt = ''; try { if (sessionStorage.getItem('tt_liff') === '1') rt = 'liff'; } catch(e) {}
+      if (rt !== 'liff') throw 0;
       fetch('https://script.google.com/macros/s/AKfycbzSxho3e4CHyAuoymGlzcVwGnLshGoCg53zY18laLrHMq5Cun_pBv8XgRsNxKMDxlKwUA/exec'
         + '?action=hit&who=shopv&role=' + encodeURIComponent('.' + rt) + '&device=' + encodeURIComponent(v) + '&view=lsel',
         { mode:'no-cors', cache:'no-store', keepalive:true }).catch(function(){});
