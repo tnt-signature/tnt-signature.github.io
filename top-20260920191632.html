@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
 </head>
-<body style="margin:0">
-<script>window.__FILM_ONLY__=true;</script><title>T&amp;T SIGNATURE</title>
+<body style="margin:0"><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1127,7 +1126,8 @@ body.dark .pays .row{margin-top:14px}
 
 /* ── 本数をえらぶ画面（2026-09-02 まるちゃん） ───────────── */
 body.dark .qtybox{
-  display:flex;align-items:center;justify-content:center;gap:22px;margin:6px 0 4px;
+  /* ★2026-09-20：「−」「本数の欄」「＋」を近づけて、1つのまとまりに見せる（前は22px離れていた） */
+  display:flex;align-items:center;justify-content:center;gap:12px;margin:6px 0 4px;
 }
 /* ★2026-09-20 まるちゃん「本数を押す所が目立たないので、お客様がまったく気づかない」。
    細い線の四角・薄い金の文字では「押せる物」に見えなかったので、
@@ -1146,9 +1146,18 @@ body.dark .qbtn:active{
   transform:translateY(1px);
 }
 body.dark .qbtn[disabled]{opacity:.34;box-shadow:none}
+/* ★2026-09-20 まるちゃん「ここ（今の本数の数字）も目立たない」。
+   地の色に溶けていたので、金色の枠で囲んだ「本数の欄」にして、
+   「−」「本数」「＋」が1つのまとまりに見えるようにした。
+   高さは左右のボタンと同じ62pxなので、行の高さも1画面に収まる形も変わらない。 */
 body.dark .qnum{
-  min-width:104px;text-align:center;color:#f5efe5;
-  font-family:"EB Garamond",serif;font-size:44px;font-weight:500;line-height:1;
+  min-width:112px;height:62px;box-sizing:border-box;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid rgba(232,211,166,.85);border-radius:2px;
+  background:rgba(0,0,0,.26);
+  box-shadow:inset 0 0 14px rgba(0,0,0,.3);
+  text-align:center;color:#fff;
+  font-family:"EB Garamond",serif;font-size:42px;font-weight:600;line-height:1;
 }
 body.dark .qnum .qunit{
   font-family:"Shippori Mincho",serif;font-size:16px;margin-left:6px;color:#c9ab73;
@@ -1166,7 +1175,7 @@ body.dark .qsum .qv{
    下の fitQty が、はみ出した時だけ qtight／qtighter を付ける（付かない機種は今までどおり）。 */
 body.dark #viewItem.qtight .stepttl{margin-bottom:10px}
 body.dark #viewItem.qtight .qbtn{width:54px;height:54px;font-size:23px}
-body.dark #viewItem.qtight .qnum{font-size:36px;min-width:92px}
+body.dark #viewItem.qtight .qnum{font-size:36px;min-width:92px;height:54px}   /* 欄の高さは左右のボタンとそろえる */
 body.dark #viewItem.qtight .qsum{margin-top:14px;padding-top:11px}
 body.dark #viewItem.qtight .qsum .qv{font-size:28px;margin-top:4px}
 body.dark #viewItem.qtight #stepQty .buy{padding:18px 14px}
@@ -1178,8 +1187,8 @@ body.dark #viewItem.qtight .stephead{margin-top:8px;padding-bottom:10px}
 
 body.dark #viewItem.qtighter .stepttl{margin-bottom:6px;font-size:13px}
 body.dark #viewItem.qtighter .qbtn{width:46px;height:46px;font-size:20px}
-body.dark #viewItem.qtighter .qnum{font-size:30px;min-width:80px}
-body.dark #viewItem.qtighter .qtybox{gap:16px;margin:2px 0}
+body.dark #viewItem.qtighter .qnum{font-size:30px;min-width:80px;height:46px}   /* 欄の高さは左右のボタンとそろえる */
+body.dark #viewItem.qtighter .qtybox{gap:10px;margin:2px 0}
 body.dark #viewItem.qtighter .qsum{margin-top:10px;padding-top:8px}
 body.dark #viewItem.qtighter .qsum .qv{font-size:24px}
 body.dark #viewItem.qtighter #stepQty .buy{padding:14px 12px}
@@ -1302,11 +1311,22 @@ body.dark .cartlist{margin:2px 0 0}
 body.dark .cartrow{
   display:flex;align-items:center;gap:12px;padding:16px 2px;
   border-bottom:1px solid rgba(201,171,115,.22);
+  flex-wrap:wrap;                 /* プレゼントの札を、下にまるごと1行で置けるようにする（2026-09-20） */
 }
 body.dark .cartrow .nm{
   flex:1;min-width:0;color:#f5efe5;
   font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;font-size:15px;line-height:1.5;
 }
+/* ★2026-09-20 まるちゃん「2本買うとプレゼント1本が、カートに行くと表示がない」。
+   商品名の下に、もらえる本数と合計の本数を出す（ご確認の画面・お店へ届く注文の文と同じ言い方）。 */
+body.dark .cartrow .gfrow{flex:0 0 100%;margin-top:-7px}
+body.dark .cartrow .gf{
+  display:inline-block;padding:1px 9px;
+  background:rgba(232,211,166,.16);border:1px solid rgba(232,211,166,.55);border-radius:20px;
+  font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;font-size:12.5px;color:#f1dfb7;
+  letter-spacing:.03em;white-space:nowrap;
+}
+body.dark .cartrow .gf .gt{font-size:11px;color:#cdbb95;margin-left:3px}
 body.dark .cartrow .pr{
   color:#e8d3a6;font-family:"EB Garamond",serif;font-size:18px;white-space:nowrap;
 }
@@ -1410,22 +1430,6 @@ body.dark .todoline{color:#a2947f}
   margin:16px 0 0;border:1px dashed #c9b48c;border-radius:14px;
   background:#fffaf0;padding:13px 16px;font-size:12.5px;color:#8a7444;line-height:1.8;
 }
-
-/* ★見せる用：下の見出しとボタンを隠して、上の映像だけにする */
-.homelower{display:none !important}
-#viewHome{justify-content:center}
-/* ★映像だけの版は「正方形のまま、いちばん大きく」出す（2026-09-02 まるちゃん）。
-   スマホ用の写真は正方形なので、入れ物の四角ぜんぶを写真で埋める。
-   パソコンでは高さいっぱいの正方形になり、左右に黒い余白ができる。 */
-html,body{background:#000}
-.wrap{max-width:none;padding:0;min-height:100dvh;
-      display:flex;align-items:center;justify-content:center}
-#viewHome{flex:none;width:min(100vw,100dvh)}
-.hero{width:100%;margin-left:0;margin-right:0;aspect-ratio:1/1}
-@media (min-width:780px){ .hero{aspect-ratio:1/1} }
-/* ★正方形の写真を使うので、字の置き方もスマホと同じ右そろえにする（2026-09-10） */
-.cap .ja4{align-items:flex-end}
-.cap .side{align-self:flex-end;align-items:flex-end}
 </style>
 <div class="wrap">
   <!-- 日本語のお客様向けのページなので、中国語は付けない（2026-09-02 まるちゃん） -->
@@ -4264,6 +4268,11 @@ function drawCart(){
   }
   var h = '';
   cart.forEach(function(l, i){
+    /* ★プレゼントが付く本数なら、商品名の下にその札を出す（2026-09-20 まるちゃん） */
+    var gf = l.gift
+      ? '<div class="gfrow"><span class="gf">🎁 ' + (isZH() ? '贈送 ' : 'プレゼント ') + honLabel(l.gift, l.cw)
+        + '<span class="gt">（' + (isZH() ? '共' : '合計') + honLabel(l.qty + l.gift, l.cw) + '）</span></span></div>'
+      : '';
     h += '<div class="cartrow">'
        +   '<div class="nm">' + l.nm + '</div>'
        +   '<div class="qb">'
@@ -4272,6 +4281,7 @@ function drawCart(){
        +     '<button type="button" onclick="cartStep(' + i + ',1)">＋</button>'
        +   '</div>'
        +   '<div class="pr">' + (l.price!=null ? yen(l.price * l.qty) : '') + '</div>'
+       +   gf                       /* ★プレゼントの札は、行の下にまるごと1行で出す（ボタンに重ならないように） */
        + '</div>';
   });
   box.innerHTML = h;
@@ -4593,5 +4603,16 @@ function ttResumeSave(){
 })();
 </script>
 
-
+<script>
+(function(){
+  function tomeru(){
+    var b = document.querySelectorAll("[data-go]");
+    for (var i = 0; i < b.length; i++){
+      b[i].onclick = function(e){ if (e && e.preventDefault) e.preventDefault(); };
+    }
+  }
+  tomeru();
+  setTimeout(tomeru, 1500);
+})();
+</script>
 </body></html>
