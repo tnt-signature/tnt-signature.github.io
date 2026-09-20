@@ -4,15 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
-<meta name="description" content="T&amp;T SIGNATURE">
-<meta property="og:type" content="website">
-<meta property="og:title" content="T&amp;T SIGNATURE">
-<meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
-<meta property="og:site_name" content="T&amp;T SIGNATURE">
-<meta name="twitter:card" content="summary">
 </head>
-<body style="margin:0"><title>T&amp;T SIGNATURE</title>
+<body style="margin:0">
+<script>window.__FILM_ONLY__=true;</script><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1133,18 +1127,38 @@ body.dark .pays .row{margin-top:14px}
 
 /* ── 本数をえらぶ画面（2026-09-02 まるちゃん） ───────────── */
 body.dark .qtybox{
-  display:flex;align-items:center;justify-content:center;gap:22px;margin:6px 0 4px;
+  /* ★2026-09-20：「−」「本数の欄」「＋」を近づけて、1つのまとまりに見せる（前は22px離れていた） */
+  display:flex;align-items:center;justify-content:center;gap:12px;margin:6px 0 4px;
 }
+/* ★2026-09-20 まるちゃん「本数を押す所が目立たないので、お客様がまったく気づかない」。
+   細い線の四角・薄い金の文字では「押せる物」に見えなかったので、
+   このページで一番「押せる」と分かっている金色のボタン（お支払いへ進む）と同じ見た目にした。
+   大きさ（62px）は変えていないので、1画面に収まる形はそのまま。 */
 body.dark .qbtn{
   width:62px;height:62px;border-radius:2px;cursor:pointer;
-  background:none;border:1px solid rgba(201,171,115,.55);color:#e8d3a6;
-  font-family:inherit;font-size:26px;line-height:1;font-weight:400;
+  background:linear-gradient(180deg,#e2caa0 0%,#cdad74 48%,#b7915a 100%);
+  border:1px solid rgba(255,246,228,.5);color:#0f333d;
+  font-family:inherit;font-size:30px;line-height:1;font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5), 0 8px 18px rgba(0,0,0,.28);
 }
-body.dark .qbtn:active{background:rgba(201,171,115,.16)}
-body.dark .qbtn[disabled]{opacity:.3}
+body.dark .qbtn:active{
+  background:linear-gradient(180deg,#cdad74,#a5814a);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 3px 8px rgba(0,0,0,.3);
+  transform:translateY(1px);
+}
+body.dark .qbtn[disabled]{opacity:.34;box-shadow:none}
+/* ★2026-09-20 まるちゃん「ここ（今の本数の数字）も目立たない」。
+   地の色に溶けていたので、金色の枠で囲んだ「本数の欄」にして、
+   「−」「本数」「＋」が1つのまとまりに見えるようにした。
+   高さは左右のボタンと同じ62pxなので、行の高さも1画面に収まる形も変わらない。 */
 body.dark .qnum{
-  min-width:104px;text-align:center;color:#f5efe5;
-  font-family:"EB Garamond",serif;font-size:44px;font-weight:500;line-height:1;
+  min-width:112px;height:62px;box-sizing:border-box;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid rgba(232,211,166,.85);border-radius:2px;
+  background:rgba(0,0,0,.26);
+  box-shadow:inset 0 0 14px rgba(0,0,0,.3);
+  text-align:center;color:#fff;
+  font-family:"EB Garamond",serif;font-size:42px;font-weight:600;line-height:1;
 }
 body.dark .qnum .qunit{
   font-family:"Shippori Mincho",serif;font-size:16px;margin-left:6px;color:#c9ab73;
@@ -1162,7 +1176,7 @@ body.dark .qsum .qv{
    下の fitQty が、はみ出した時だけ qtight／qtighter を付ける（付かない機種は今までどおり）。 */
 body.dark #viewItem.qtight .stepttl{margin-bottom:10px}
 body.dark #viewItem.qtight .qbtn{width:54px;height:54px;font-size:23px}
-body.dark #viewItem.qtight .qnum{font-size:36px;min-width:92px}
+body.dark #viewItem.qtight .qnum{font-size:36px;min-width:92px;height:54px}   /* 欄の高さは左右のボタンとそろえる */
 body.dark #viewItem.qtight .qsum{margin-top:14px;padding-top:11px}
 body.dark #viewItem.qtight .qsum .qv{font-size:28px;margin-top:4px}
 body.dark #viewItem.qtight #stepQty .buy{padding:18px 14px}
@@ -1174,7 +1188,7 @@ body.dark #viewItem.qtight .stephead{margin-top:8px;padding-bottom:10px}
 
 body.dark #viewItem.qtighter .stepttl{margin-bottom:6px;font-size:13px}
 body.dark #viewItem.qtighter .qbtn{width:46px;height:46px;font-size:20px}
-body.dark #viewItem.qtighter .qnum{font-size:30px;min-width:80px}
+body.dark #viewItem.qtighter .qnum{font-size:30px;min-width:80px;height:46px}   /* 欄の高さは左右のボタンとそろえる */
 body.dark #viewItem.qtighter .qtybox{gap:16px;margin:2px 0}
 body.dark #viewItem.qtighter .qsum{margin-top:10px;padding-top:8px}
 body.dark #viewItem.qtighter .qsum .qv{font-size:24px}
@@ -1191,6 +1205,13 @@ body.dark .bogo{display:flex;gap:10px;align-items:stretch;margin:4px 0 14px}
 body.dark .bogo .bc{flex:1;min-width:0;border:1px solid rgba(232,211,166,.55);border-radius:4px;
   background:rgba(0,0,0,.12);text-align:center;padding:10px 6px 10px;overflow:hidden;display:flex;flex-direction:column}
 body.dark .bogo .bc.best{border-color:#c0394a;padding-top:0}
+/* ★押したら本数が入る枠（2026-09-20 まるちゃん）。選んでいる方は金色の縁で分かるようにする。
+   縁は外側に出る影で描くので、枠の高さは変わらない＝1画面に収まる形をこわさない。 */
+body.dark .bogo .bc{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:box-shadow .12s}
+body.dark .bogo .bc:active{background:rgba(232,211,166,.10)}
+body.dark .bogo .bc.on{border-color:#e8d3a6;background:rgba(232,211,166,.10);
+  box-shadow:0 0 0 2px rgba(232,211,166,.75)}
+body.dark .bogo .bc.best.on{border-color:#e05a6c;box-shadow:0 0 0 2px rgba(232,211,166,.75)}
 body.dark .bogo .band{margin:0 -6px 8px;padding:8px 4px;background:#8e1f2c;text-shadow:0 1px 1px rgba(0,0,0,.35)}
 body.dark .bogo .op{font-size:12px;letter-spacing:.22em;font-weight:700;color:#ffe7a8}
 body.dark .bogo .b1{font-size:15px;font-weight:800;color:#fff;margin-top:2px}
@@ -1399,6 +1420,22 @@ body.dark .todoline{color:#a2947f}
   margin:16px 0 0;border:1px dashed #c9b48c;border-radius:14px;
   background:#fffaf0;padding:13px 16px;font-size:12.5px;color:#8a7444;line-height:1.8;
 }
+
+/* ★見せる用：下の見出しとボタンを隠して、上の映像だけにする */
+.homelower{display:none !important}
+#viewHome{justify-content:center}
+/* ★映像だけの版は「正方形のまま、いちばん大きく」出す（2026-09-02 まるちゃん）。
+   スマホ用の写真は正方形なので、入れ物の四角ぜんぶを写真で埋める。
+   パソコンでは高さいっぱいの正方形になり、左右に黒い余白ができる。 */
+html,body{background:#000}
+.wrap{max-width:none;padding:0;min-height:100dvh;
+      display:flex;align-items:center;justify-content:center}
+#viewHome{flex:none;width:min(100vw,100dvh)}
+.hero{width:100%;margin-left:0;margin-right:0;aspect-ratio:1/1}
+@media (min-width:780px){ .hero{aspect-ratio:1/1} }
+/* ★正方形の写真を使うので、字の置き方もスマホと同じ右そろえにする（2026-09-10） */
+.cap .ja4{align-items:flex-end}
+.cap .side{align-self:flex-end;align-items:flex-end}
 </style>
 <div class="wrap">
   <!-- 日本語のお客様向けのページなので、中国語は付けない（2026-09-02 まるちゃん） -->
@@ -4326,8 +4363,16 @@ function drawQty(){
 }
 
 /* ★オープン記念「2本買うと1本プレゼント」の2つの枠と、プレゼントの本数の札（2026-09-18 まるちゃん）。
-   左＝1本、右＝2本（小さい瓶が左右）＋1本（下に小さい瓶とFREE）。押しても何も起きない＝見せるだけ。
-   本数は今までどおり下の「−　＋」で選ぶ。 */
+   左＝1本、右＝2本（小さい瓶が左右）＋1本（下に小さい瓶とFREE）。
+   ★2026-09-20 まるちゃん：枠を押したら、その本数が自動で入る（下の「−　＋」で直すこともできる）。
+     左を押す＝1本／右を押す＝2本ぶんお買い上げ（プレゼント1本が付いて合計3本）。
+     いま入っている本数と同じ枠には、金色の縁を付けて「これを選んでいます」と分かるようにする。 */
+function bogoPick(n){
+  if (!(BOGO_ON && curItem && curItem.bogo)) return;
+  qty = n;
+  drawQty();          /* 本数・お支払い金額・プレゼントの札・枠の選ばれ方を全部書き直す */
+}
+
 function drawBogo(){
   var box = document.getElementById('qPromo'), gb = document.getElementById('qGift');
   if (!box || !gb) return;
@@ -4342,11 +4387,14 @@ function drawBogo(){
   if (payStep === 2){ var sh = document.getElementById('stepHead'); if (sh) sh.style.display = 'none'; }
   var zh = isZH(), cw = cntOf(curItem), p = curPrice();
   var img = BOTTLE_T ? '<img src="' + BOTTLE_T + '" alt="">' : '';
+  /* いま入っている本数と同じ枠に印を付ける（1本＝左／2本＝右。それ以外は どちらにも付けない） */
+  var on1 = (qty === 1) ? ' on' : '', on2 = (qty === 2) ? ' on' : '';
   box.innerHTML =
-      '<div class="bc"><div class="pic one">' + img + '</div>'
+      '<div class="bc' + on1 + '" role="button" tabindex="0" onclick="bogoPick(1)">'
+    +   '<div class="pic one">' + img + '</div>'
     +   '<div class="nm">' + honLabel(1, cw) + '</div>'
     +   '<div class="pr">' + (p!=null ? yen(p) : '') + '</div></div>'
-    + '<div class="bc best"><div class="band">'
+    + '<div class="bc best' + on2 + '" role="button" tabindex="0" onclick="bogoPick(2)"><div class="band">'
     +     '<div class="op">' + (zh ? '開幕紀念' : 'オープン記念') + '</div>'
     +     '<div class="b1">' + (zh ? ('買' + honLabel(2, cw)) : (honLabel(2, cw) + '買うと')) + '</div>'
     +     '<div class="b2">' + (zh ? ('送' + honLabel(1, cw)) : (honLabel(1, cw) + 'プレゼント')) + '</div></div>'
@@ -4554,5 +4602,6 @@ function ttResumeSave(){
   }catch(e){}
 })();
 </script>
+
 
 </body></html>
