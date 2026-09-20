@@ -4,13 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
-<meta name="description" content="T&amp;T SIGNATURE">
-<meta property="og:type" content="website">
-<meta property="og:title" content="T&amp;T SIGNATURE">
-<meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
-<meta property="og:site_name" content="T&amp;T SIGNATURE">
-<meta name="twitter:card" content="summary">
 </head>
 <body style="margin:0"><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
@@ -1917,6 +1910,13 @@ var PAYLINK = {
    日本のような支店名は入れない。名義（口座の持ち主の名前）は分かり次第 holder に入れる＝
    空のままなら、その行は画面に出ない。 */
 var BANK = { bank:"中國信託銀行", code:"822", number:"347540289303", holder:"" };
+
+/* ★2026-09-20 まるちゃん決定：注文ボタンを押したら、お客様のLINEから「お支払いのご案内」ごと送る
+   （お店からの返信を待たない＝その場でお支払いに進める）。
+   文はお店の決まりの1か所（お支払い案内文.py）から、このページを作る時に写している。
+   ★金額の所は差し込み口のままなので、送る時に本当の合計へ差し替える。 */
+var PAYTEXT = {"linepay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼LINE Payのお支払リンク\nhttps://x.gd/TTLINEPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、「支払い完了」とメッセージを送ってください", "jkopay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼街口支付のお支払リンク\nhttps://x.gd/TTJKOPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、「支払い完了」とメッセージを送ってください", "bank": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼お振込先\n中國信託銀行／銀行代號 822／口座番号 347540289303\n\n①上のお振込先に、お支払い金額をお振込みください\n\n②完了後、「支払い完了」とメッセージを送ってください"};
+var PAYKANE = "〔金額〕";
 
 var PAYWAYS = [
   { key:"linepay", name:"LINE Pay" },
@@ -3914,6 +3914,10 @@ function orderText(payName, payKey){
   msg += zh
     ? ('付款方式：' + Z(payName) + '\n' + '取貨方式：到店取貨')
     : ('お支払い：' + payName + '\n' + '受け取り：お店で受け取り');
+  /* ★お支払いのご案内を頭に付けて1通で送る（2026-09-20 まるちゃん）。
+     お値段が決まっていない商品の時だけ、今までどおり注文の中身だけを送る（お店から改めてご案内する）。 */
+  var guide = (PAYTEXT && PAYTEXT[payKey]) ? PAYTEXT[payKey] : '';
+  if (guide && tot != null) msg = guide.split(PAYKANE).join(tot.toLocaleString('ja-JP')) + '\n\n' + msg;
   return msg;
 }
 
@@ -4125,18 +4129,20 @@ function drawConfirm(){
        ? '接著<em>訂單內容會直接傳送到本店的LINE</em>'
        : ('接著<em>本店的LINE會自動開啟</em>，<em>請直接按下傳送鍵</em>'
           + '（訂單內容已自動填入LINE的輸入欄）');
+    /* ★2026-09-20：付款連結は「お店から届く」のではなく、お客様が送る文の中に入っている（1通で送る形） */
     s3 = (key === 'bank')
-       ? '稍後<em>匯款帳號就會送達</em>'
-       : ('稍後<em>' + esc(Z(way.name)) + '的付款連結就會送達</em>');
+       ? '要傳送的訊息中已附上<em>匯款帳號</em>'
+       : ('要傳送的訊息中已附上' + esc(Z(way.name)) + '的<em>付款連結</em>');
   } else {
     s1 = '<em>下の「この内容で注文する」を押してください</em>';
     s2 = LIFF_SEND
        ? 'すると<em>ご注文内容がそのまま当店のLINEに送られます</em>'
        : ('すると<em>当店のLINEが開きますので</em>、<em>そのまま送信ボタンを押してください</em>'
           + '（LINEの入力欄に自動で注文内容が入っています）');
+    /* ★2026-09-20：お支払いリンクは「お店から届く」のではなく、お客様が送る文の中に入っている（1通で送る形） */
     s3 = (key === 'bank')
-       ? 'すぐに<em>お振込先が届きます</em>'
-       : ('すぐに' + esc(way.name) + 'の<em>お支払いリンクが届きます</em>');
+       ? '送るメッセージの中に<em>お振込先が入っています</em>'
+       : ('送るメッセージの中に' + esc(way.name) + 'の<em>お支払いリンクが入っています</em>');
   }
   document.getElementById('confirmNote').innerHTML =
       '<div class="ost"><span class="no">①</span><span class="tx">' + s1 + '</span></div>'
@@ -4542,4 +4548,16 @@ function ttResumeSave(){
 })();
 </script>
 
+<script>
+(function(){
+  function tomeru(){
+    var b = document.querySelectorAll("[data-go]");
+    for (var i = 0; i < b.length; i++){
+      b[i].onclick = function(e){ if (e && e.preventDefault) e.preventDefault(); };
+    }
+  }
+  tomeru();
+  setTimeout(tomeru, 1500);
+})();
+</script>
 </body></html>
