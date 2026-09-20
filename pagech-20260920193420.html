@@ -1195,7 +1195,7 @@ body.dark #viewItem.qtight .stephead{margin-top:8px;padding-bottom:10px}
 body.dark #viewItem.qtighter .stepttl{margin-bottom:6px;font-size:13px}
 body.dark #viewItem.qtighter .qbtn{width:46px;height:46px;font-size:20px}
 body.dark #viewItem.qtighter .qnum{font-size:30px;min-width:80px;height:46px}   /* 欄の高さは左右のボタンとそろえる */
-body.dark #viewItem.qtighter .qtybox{gap:16px;margin:2px 0}
+body.dark #viewItem.qtighter .qtybox{gap:10px;margin:2px 0}
 body.dark #viewItem.qtighter .qsum{margin-top:10px;padding-top:8px}
 body.dark #viewItem.qtighter .qsum .qv{font-size:24px}
 body.dark #viewItem.qtighter #stepQty .buy{padding:14px 12px}
@@ -1318,11 +1318,22 @@ body.dark .cartlist{margin:2px 0 0}
 body.dark .cartrow{
   display:flex;align-items:center;gap:12px;padding:16px 2px;
   border-bottom:1px solid rgba(201,171,115,.22);
+  flex-wrap:wrap;                 /* プレゼントの札を、下にまるごと1行で置けるようにする（2026-09-20） */
 }
 body.dark .cartrow .nm{
   flex:1;min-width:0;color:#f5efe5;
   font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;font-size:15px;line-height:1.5;
 }
+/* ★2026-09-20 まるちゃん「2本買うとプレゼント1本が、カートに行くと表示がない」。
+   商品名の下に、もらえる本数と合計の本数を出す（ご確認の画面・お店へ届く注文の文と同じ言い方）。 */
+body.dark .cartrow .gfrow{flex:0 0 100%;margin-top:-7px}
+body.dark .cartrow .gf{
+  display:inline-block;padding:1px 9px;
+  background:rgba(232,211,166,.16);border:1px solid rgba(232,211,166,.55);border-radius:20px;
+  font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;font-size:12.5px;color:#f1dfb7;
+  letter-spacing:.03em;white-space:nowrap;
+}
+body.dark .cartrow .gf .gt{font-size:11px;color:#cdbb95;margin-left:3px}
 body.dark .cartrow .pr{
   color:#e8d3a6;font-family:"EB Garamond",serif;font-size:18px;white-space:nowrap;
 }
@@ -3314,16 +3325,27 @@ function show(which){
   vItem.style.display = which==='item' ? 'flex':'none';
   vCart.style.display = which==='cart' ? 'block':'none';
   back.classList.toggle('show', which!=='home');
-  /* 言葉の切り替え：2026-09-19 まるちゃん「最初の画面の上はかっこわるい。商品の画面に入ったら全部の画面に出す。
-     場所は前へ戻る・SELECTの上」。本物のショップの時だけ。 */
-  var _ls = document.getElementById('langSw');
-  if (_ls) _ls.style.display = (which!=='home' && /\/page(ch)?-\d+\.html$/.test(location.pathname)) ? 'flex' : 'none';
+  langSwSync(which);   /* 言葉の切り替えを出すか決める（下の langSwSync に決まりを1か所で書いてある） */
   /* 一覧と詳しい画面は、上の映像の続きに見えるよう暗い世界にする */
   document.body.classList.toggle('dark', which!=='home');
   curView = which;
   try { ttScrSync(); } catch(e) {}   /* ショップ履歴：前の画面の秒数を送って数え直す */
   drawCartBtn();
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ★言葉の切り替え（日本語｜中文）を出す画面の決まり（2026-09-20 まるちゃん）。
+   出すのは「商品一覧」と「商品詳細」の2つだけ。
+   最初の画面・受け取り方・本数・お支払い・ご注文内容のご確認・郵送・カートでは出さない。
+   （2026-09-19の「商品の画面に入ったら全部の画面に出す」から、この形に変わった）
+   決まりはここ1か所だけに書く＝画面を切り替える所と、段を進む所の両方がこれを呼ぶ。 */
+function langSwSync(which){
+  var ls = document.getElementById('langSw');
+  if (!ls) return;
+  which = which || curView;
+  var shop = /\/page(ch)?-\d+\.html$/.test(location.pathname);   /* 本物のショップの時だけ */
+  var ok = shop && (which === 'list' || (which === 'item' && payStep === 0));
+  ls.style.display = ok ? 'flex' : 'none';
 }
 
 function yen(n){ return n==null ? '' : n.toLocaleString('ja-JP') + '元'; }
@@ -4264,6 +4286,11 @@ function drawCart(){
   }
   var h = '';
   cart.forEach(function(l, i){
+    /* ★プレゼントが付く本数なら、商品名の下にその札を出す（2026-09-20 まるちゃん） */
+    var gf = l.gift
+      ? '<div class="gfrow"><span class="gf">🎁 ' + (isZH() ? '贈送 ' : 'プレゼント ') + honLabel(l.gift, l.cw)
+        + '<span class="gt">（' + (isZH() ? '共' : '合計') + honLabel(l.qty + l.gift, l.cw) + '）</span></span></div>'
+      : '';
     h += '<div class="cartrow">'
        +   '<div class="nm">' + l.nm + '</div>'
        +   '<div class="qb">'
@@ -4272,6 +4299,7 @@ function drawCart(){
        +     '<button type="button" onclick="cartStep(' + i + ',1)">＋</button>'
        +   '</div>'
        +   '<div class="pr">' + (l.price!=null ? yen(l.price * l.qty) : '') + '</div>'
+       +   gf                       /* ★プレゼントの札は、行の下にまるごと1行で出す（ボタンに重ならないように） */
        + '</div>';
   });
   box.innerHTML = h;
@@ -4405,6 +4433,7 @@ function drawBogo(){
 
 function setStep(n){
   payStep = n;
+  try { langSwSync(); } catch(e) {}  /* 言葉の切り替えは商品詳細（段0）まで。先へ進んだら消す（2026-09-20 まるちゃん） */
   try { ttScrSync(); } catch(e) {}   /* ショップ履歴：段ごとの秒数 */
   if (n > 0) ttTrack('s' + n);   /* ショップ履歴：どこまで進んだか（1受け取り方 2本数 3お支払い 4ご確認 5郵送） */
   document.getElementById('stepItem').style.display = (n===0) ? 'block' : 'none';
