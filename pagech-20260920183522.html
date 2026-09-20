@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-TW">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,7 +8,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="T&amp;T SIGNATURE">
 <meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
+<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
 <meta property="og:site_name" content="T&amp;T SIGNATURE">
 <meta name="twitter:card" content="summary">
 </head>
@@ -1135,13 +1135,23 @@ body.dark .pays .row{margin-top:14px}
 body.dark .qtybox{
   display:flex;align-items:center;justify-content:center;gap:22px;margin:6px 0 4px;
 }
+/* ★2026-09-20 まるちゃん「本数を押す所が目立たないので、お客様がまったく気づかない」。
+   細い線の四角・薄い金の文字では「押せる物」に見えなかったので、
+   このページで一番「押せる」と分かっている金色のボタン（お支払いへ進む）と同じ見た目にした。
+   大きさ（62px）は変えていないので、1画面に収まる形はそのまま。 */
 body.dark .qbtn{
   width:62px;height:62px;border-radius:2px;cursor:pointer;
-  background:none;border:1px solid rgba(201,171,115,.55);color:#e8d3a6;
-  font-family:inherit;font-size:26px;line-height:1;font-weight:400;
+  background:linear-gradient(180deg,#e2caa0 0%,#cdad74 48%,#b7915a 100%);
+  border:1px solid rgba(255,246,228,.5);color:#0f333d;
+  font-family:inherit;font-size:30px;line-height:1;font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5), 0 8px 18px rgba(0,0,0,.28);
 }
-body.dark .qbtn:active{background:rgba(201,171,115,.16)}
-body.dark .qbtn[disabled]{opacity:.3}
+body.dark .qbtn:active{
+  background:linear-gradient(180deg,#cdad74,#a5814a);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 3px 8px rgba(0,0,0,.3);
+  transform:translateY(1px);
+}
+body.dark .qbtn[disabled]{opacity:.34;box-shadow:none}
 body.dark .qnum{
   min-width:104px;text-align:center;color:#f5efe5;
   font-family:"EB Garamond",serif;font-size:44px;font-weight:500;line-height:1;
@@ -1191,6 +1201,13 @@ body.dark .bogo{display:flex;gap:10px;align-items:stretch;margin:4px 0 14px}
 body.dark .bogo .bc{flex:1;min-width:0;border:1px solid rgba(232,211,166,.55);border-radius:4px;
   background:rgba(0,0,0,.12);text-align:center;padding:10px 6px 10px;overflow:hidden;display:flex;flex-direction:column}
 body.dark .bogo .bc.best{border-color:#c0394a;padding-top:0}
+/* ★押したら本数が入る枠（2026-09-20 まるちゃん）。選んでいる方は金色の縁で分かるようにする。
+   縁は外側に出る影で描くので、枠の高さは変わらない＝1画面に収まる形をこわさない。 */
+body.dark .bogo .bc{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:box-shadow .12s}
+body.dark .bogo .bc:active{background:rgba(232,211,166,.10)}
+body.dark .bogo .bc.on{border-color:#e8d3a6;background:rgba(232,211,166,.10);
+  box-shadow:0 0 0 2px rgba(232,211,166,.75)}
+body.dark .bogo .bc.best.on{border-color:#e05a6c;box-shadow:0 0 0 2px rgba(232,211,166,.75)}
 body.dark .bogo .band{margin:0 -6px 8px;padding:8px 4px;background:#8e1f2c;text-shadow:0 1px 1px rgba(0,0,0,.35)}
 body.dark .bogo .op{font-size:12px;letter-spacing:.22em;font-weight:700;color:#ffe7a8}
 body.dark .bogo .b1{font-size:15px;font-weight:800;color:#fff;margin-top:2px}
@@ -1612,7 +1629,7 @@ body.dark .todoline{color:#a2947f}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "ja";
+var LANG = "zh";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1895,7 +1912,7 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
 var SHOPEE_CODE = "TAKY0105";
 var SHOPEE_OFF  = 150;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-020a716380.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -1922,7 +1939,7 @@ var BANK = { bank:"中國信託銀行", code:"822", number:"347540289303", holde
    （お店からの返信を待たない＝その場でお支払いに進める）。
    文はお店の決まりの1か所（お支払い案内文.py）から、このページを作る時に写している。
    ★金額の所は差し込み口のままなので、送る時に本当の合計へ差し替える。 */
-var PAYTEXT = {"linepay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼LINE Payのお支払リンク\nhttps://x.gd/TTLINEPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、「支払い完了」とメッセージを送ってください", "jkopay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼街口支付のお支払リンク\nhttps://x.gd/TTJKOPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、「支払い完了」とメッセージを送ってください", "bank": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼お振込先\n中國信託銀行／銀行代號 822／口座番号 347540289303\n\n①上のお振込先に、お支払い金額をお振込みください\n\n②完了後、「支払い完了」とメッセージを送ってください"};
+var PAYTEXT = {"linepay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼LINE Pay 付款連結\nhttps://x.gd/TTLINEPAY\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送「已完成付款」訊息給我們", "jkopay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼街口支付 付款連結\nhttps://x.gd/TTJKOPAY\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送「已完成付款」訊息給我們", "bank": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼匯款帳號\n中國信託銀行／銀行代號 822／帳號 347540289303\n\n①請將應付金額匯至上方帳戶\n\n②完成後，請傳送「已完成付款」訊息給我們"};
 var PAYKANE = "〔金額〕";
 
 var PAYWAYS = [
@@ -4136,18 +4153,20 @@ function drawConfirm(){
        ? '接著<em>訂單內容會直接傳送到本店的LINE</em>'
        : ('接著<em>本店的LINE會自動開啟</em>，<em>請直接按下傳送鍵</em>'
           + '（訂單內容已自動填入LINE的輸入欄）');
+    /* ★2026-09-20：付款連結は「お店から届く」のではなく、お客様が送る文の中に入っている（1通で送る形） */
     s3 = (key === 'bank')
-       ? '稍後<em>匯款帳號就會送達</em>'
-       : ('稍後<em>' + esc(Z(way.name)) + '的付款連結就會送達</em>');
+       ? '要傳送的訊息中已附上<em>匯款帳號</em>'
+       : ('要傳送的訊息中已附上' + esc(Z(way.name)) + '的<em>付款連結</em>');
   } else {
     s1 = '<em>下の「この内容で注文する」を押してください</em>';
     s2 = LIFF_SEND
        ? 'すると<em>ご注文内容がそのまま当店のLINEに送られます</em>'
        : ('すると<em>当店のLINEが開きますので</em>、<em>そのまま送信ボタンを押してください</em>'
           + '（LINEの入力欄に自動で注文内容が入っています）');
+    /* ★2026-09-20：お支払いリンクは「お店から届く」のではなく、お客様が送る文の中に入っている（1通で送る形） */
     s3 = (key === 'bank')
-       ? 'すぐに<em>お振込先が届きます</em>'
-       : ('すぐに' + esc(way.name) + 'の<em>お支払いリンクが届きます</em>');
+       ? '送るメッセージの中に<em>お振込先が入っています</em>'
+       : ('送るメッセージの中に' + esc(way.name) + 'の<em>お支払いリンクが入っています</em>');
   }
   document.getElementById('confirmNote').innerHTML =
       '<div class="ost"><span class="no">①</span><span class="tx">' + s1 + '</span></div>'
@@ -4324,8 +4343,16 @@ function drawQty(){
 }
 
 /* ★オープン記念「2本買うと1本プレゼント」の2つの枠と、プレゼントの本数の札（2026-09-18 まるちゃん）。
-   左＝1本、右＝2本（小さい瓶が左右）＋1本（下に小さい瓶とFREE）。押しても何も起きない＝見せるだけ。
-   本数は今までどおり下の「−　＋」で選ぶ。 */
+   左＝1本、右＝2本（小さい瓶が左右）＋1本（下に小さい瓶とFREE）。
+   ★2026-09-20 まるちゃん：枠を押したら、その本数が自動で入る（下の「−　＋」で直すこともできる）。
+     左を押す＝1本／右を押す＝2本ぶんお買い上げ（プレゼント1本が付いて合計3本）。
+     いま入っている本数と同じ枠には、金色の縁を付けて「これを選んでいます」と分かるようにする。 */
+function bogoPick(n){
+  if (!(BOGO_ON && curItem && curItem.bogo)) return;
+  qty = n;
+  drawQty();          /* 本数・お支払い金額・プレゼントの札・枠の選ばれ方を全部書き直す */
+}
+
 function drawBogo(){
   var box = document.getElementById('qPromo'), gb = document.getElementById('qGift');
   if (!box || !gb) return;
@@ -4340,11 +4367,14 @@ function drawBogo(){
   if (payStep === 2){ var sh = document.getElementById('stepHead'); if (sh) sh.style.display = 'none'; }
   var zh = isZH(), cw = cntOf(curItem), p = curPrice();
   var img = BOTTLE_T ? '<img src="' + BOTTLE_T + '" alt="">' : '';
+  /* いま入っている本数と同じ枠に印を付ける（1本＝左／2本＝右。それ以外は どちらにも付けない） */
+  var on1 = (qty === 1) ? ' on' : '', on2 = (qty === 2) ? ' on' : '';
   box.innerHTML =
-      '<div class="bc"><div class="pic one">' + img + '</div>'
+      '<div class="bc' + on1 + '" role="button" tabindex="0" onclick="bogoPick(1)">'
+    +   '<div class="pic one">' + img + '</div>'
     +   '<div class="nm">' + honLabel(1, cw) + '</div>'
     +   '<div class="pr">' + (p!=null ? yen(p) : '') + '</div></div>'
-    + '<div class="bc best"><div class="band">'
+    + '<div class="bc best' + on2 + '" role="button" tabindex="0" onclick="bogoPick(2)"><div class="band">'
     +     '<div class="op">' + (zh ? '開幕紀念' : 'オープン記念') + '</div>'
     +     '<div class="b1">' + (zh ? ('買' + honLabel(2, cw)) : (honLabel(2, cw) + '買うと')) + '</div>'
     +     '<div class="b2">' + (zh ? ('送' + honLabel(1, cw)) : (honLabel(1, cw) + 'プレゼント')) + '</div></div>'
