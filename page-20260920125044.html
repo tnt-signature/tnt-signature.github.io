@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,7 +8,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="T&amp;T SIGNATURE">
 <meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
+<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
 <meta property="og:site_name" content="T&amp;T SIGNATURE">
 <meta name="twitter:card" content="summary">
 </head>
@@ -1612,7 +1612,7 @@ body.dark .todoline{color:#a2947f}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "zh";
+var LANG = "ja";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1895,7 +1895,7 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
 var SHOPEE_CODE = "TAKY0105";
 var SHOPEE_OFF  = 150;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-020a716380.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -1917,6 +1917,13 @@ var PAYLINK = {
    日本のような支店名は入れない。名義（口座の持ち主の名前）は分かり次第 holder に入れる＝
    空のままなら、その行は画面に出ない。 */
 var BANK = { bank:"中國信託銀行", code:"822", number:"347540289303", holder:"" };
+
+/* ★2026-09-20 まるちゃん決定：注文ボタンを押したら、お客様のLINEから「お支払いのご案内」ごと送る
+   （お店からの返信を待たない＝その場でお支払いに進める）。
+   文はお店の決まりの1か所（お支払い案内文.py）から、このページを作る時に写している。
+   ★金額の所は差し込み口のままなので、送る時に本当の合計へ差し替える。 */
+var PAYTEXT = {"linepay": "ご注文ありがとうございます\nお支払い金額は次の通りです\n\n【〔金額〕元】\n\n①下のリンクを開き、上記金額を入力しお支払いください\n\n②完了後、「支払い完了」とメッセージを送ってください\n\n▼LINE Payのお支払リンク\nhttps://x.gd/TTLINEPAY", "jkopay": "ご注文ありがとうございます\nお支払い金額は次の通りです\n\n【〔金額〕元】\n\n①下のリンクを開き、上記金額を入力しお支払いください\n\n②完了後、「支払い完了」とメッセージを送ってください\n\n▼街口支付のお支払リンク\nhttps://x.gd/TTJKOPAY", "bank": "ご注文ありがとうございます\nお支払い金額は次の通りです\n\n【〔金額〕元】\n\n①下のお振込先に、上記金額をお振込みください\n\n②完了後、「支払い完了」とメッセージを送ってください\n\n▼お振込先\n中國信託銀行／銀行代號 822／口座番号 347540289303"};
+var PAYKANE = "〔金額〕";
 
 var PAYWAYS = [
   { key:"linepay", name:"LINE Pay" },
@@ -3142,7 +3149,7 @@ function dwellOf(i){
 }
 
 function runPhotos(i){
-  ttFilm(4 + i);                      /* ショップ履歴：4クジラ 5農務省 6ホホバ畑 7サボテン 8No.31の瓶 */
+  ttFilm(6 + i);                      /* ショップ履歴：6クジラ 7農務省 8ホホバ畑 9サボテン 10No.31の瓶 */
   setPhoto(i);
   later(function(){
     if (i + 1 < slides.length) runPhotos(i + 1);
@@ -3151,7 +3158,10 @@ function runPhotos(i){
 }
 
 function playIntro(instant){
-  ttFilm(2);                          /* ショップ履歴：冒頭の言葉 */
+  ttFilm(2);                          /* ショップ履歴：「お手持ちの…」の台詞 */
+  /* 「奇跡の美容成分」の台詞が出る時刻（下の見た目の指定 .intro .l3 の 6.5秒と同じ） */
+  clearTimeout(ttIntroTimer);
+  ttIntroTimer = setTimeout(function(){ ttFilm(3); }, 6500);
   /* 言葉の出方を最初からやり直す */
   introEl.querySelectorAll('.ln').forEach(function(e){
     e.style.animation = 'none';
@@ -3177,6 +3187,7 @@ function playIntro(instant){
     if (hasPic(lb)) {
       labelEl.style.backgroundImage = 'url("' + lb + '")';
       labelEl.classList.add('on');
+      ttFilm(4);                      /* ショップ履歴：NO31完全ラベル */
       later(function(){
         labelEl.classList.remove('on');
         later(showTitle, LABEL_OUT_MS);
@@ -3187,7 +3198,7 @@ function playIntro(instant){
   }, INTRO_MS);
 
   function showTitle(){
-    ttFilm(3);                        /* ショップ履歴：題名 */
+    ttFilm(5);                        /* ショップ履歴：物語タイトル */
     /* 灰色になりきったところで、映画の題名のような一枚を出す */
     titleEl.classList.add('on');
     /* 1文字ずつ打ち出す。打ち終わりの時刻が返るので、
@@ -3215,9 +3226,10 @@ var openingImB = document.getElementById('openingImgB');
 var openTimers = [];
 
 /* ★ショップ履歴（2026-09-19 まるちゃん）：上の映像がいまどの場面か。
-   1白い瓶 2冒頭の言葉 3題名 4クジラ 5農務省 6ホホバ畑 7サボテン 8No.31の瓶。
+   ★2026-09-19 まるちゃん指定で細かくした：1白バックの瓶 2「お手持ちの」台詞 3「奇跡の美容成分」台詞 4NO31完全ラベル
+   5物語タイトル 6クジラ 7農務省 8ホホバ畑 9サボテン 10No.31の瓶。（送る記録は f…＝前の h… とは番号が違う）
    最後まで行って白い瓶に戻った回数（一巡）も数える。記録へ送るのは下の ttScrFilm（最初の画面を見ている間だけ数える）。 */
-var TT_FILM_STAGE = 0, TT_FILM_LOOPS = 0;
+var TT_FILM_STAGE = 0, TT_FILM_LOOPS = 0, ttIntroTimer = null;
 function ttFilm(n, loopDone){
   TT_FILM_STAGE = n;
   if (loopDone) TT_FILM_LOOPS++;
@@ -3302,6 +3314,7 @@ function yen(n){ return n==null ? '' : n.toLocaleString('ja-JP') + '元'; }
       if (l === cur) return false;
       try { ttClick('lang', l); } catch(x) {}   /* ショップ履歴：言葉を切り替えた */
       try { localStorage.setItem('tt_lang', l); } catch(x) {}
+      ttResumeSave();   /* 今の画面を覚えて、切り替えた先でも同じ画面を出す（2026-09-19） */
       location.href = (l === 'zh' ? 'signaturech.html' : 'signature.html') + location.search + location.hash;
       return false;
     };
@@ -3670,6 +3683,9 @@ function ttSend(ev){
   /* ★2026-09-19：写真を差し込む前の元ファイルや手元のファイルを開いた試し（言葉が差し込み前の印のまま・住所が http でない）は送らない
      （AIの確かめが本物の記録に入っていた） */
   if (!/^https?:$/.test(location.protocol) || String(LANG).charAt(0) === '@') return;
+  /* ★2026-09-20 まるちゃん決定：お客様が入れるのは「リッチメニュー」と「公式LINEの長いリンク（専用ページ）」の2つだけ。
+     それ以外（ふつうの閲覧アプリ・短いリンク・機械の巡回）は記録しない。どちらも入口を通るので、その印で見分ける。 */
+  try { if (sessionStorage.getItem('tt_liff') !== '1') return; } catch(e) { return; }
   try{
     var u = SHOP_PIPE + '?action=hit&who=shopv'
       + '&role=' + encodeURIComponent(LANG + '.' + ttRoute())
@@ -3700,7 +3716,7 @@ ttTrack('open');
    ・スマホの画面を消している間・LINEを裏に回している間は数えない。
    ・1枚めくるごとには送らない（窓口の受け取りがパンクして注文の知らせまで遅れるため）。
    ・出来事の形（窓口は1項目20字まで）：
-       h秒.場面.一巡 … 最初の画面（映像）。場面＝そこまでに見た一番先の場面（ttFilm の番号）。一巡＝最後まで見て戻った回数
+       f秒.場面.一巡 … 最初の画面（映像・場面は10に分けた番号。前の h… は8つの番号）。場面＝そこまでに見た一番先の場面（ttFilm の番号）。一巡＝最後まで見て戻った回数
        lo秒／ls秒     … ORIGINAL／SELECT の一覧
        t商品.段.秒    … 商品の画面（段 0＝説明 1受け取り方 2本数 3お支払い 4ご確認 5郵送）
        c秒            … カート
@@ -3730,7 +3746,7 @@ function ttScrFlush(){
   if (sec >= 1){
     TT_SCR.ms -= sec * 1000;
     var k = TT_SCR.key, ev;
-    if (k === 'h') ev = 'h' + sec + '.' + (TT_SCR.max || 0) + '.' + (TT_SCR.loops || 0);
+    if (k === 'h') ev = 'f' + sec + '.' + (TT_SCR.max || 0) + '.' + (TT_SCR.loops || 0);   /* f＝場面を10に分けた新しい番号 */
     else if (k.charAt(0) === 't') ev = k + '.' + sec;
     else ev = k + sec;
     ttSendRaw(String(ev).slice(0, 20));
@@ -3905,6 +3921,10 @@ function orderText(payName, payKey){
   msg += zh
     ? ('付款方式：' + Z(payName) + '\n' + '取貨方式：到店取貨')
     : ('お支払い：' + payName + '\n' + '受け取り：お店で受け取り');
+  /* ★お支払いのご案内を頭に付けて1通で送る（2026-09-20 まるちゃん）。
+     お値段が決まっていない商品の時だけ、今までどおり注文の中身だけを送る（お店から改めてご案内する）。 */
+  var guide = (PAYTEXT && PAYTEXT[payKey]) ? PAYTEXT[payKey] : '';
+  if (guide && tot != null) msg = guide.split(PAYKANE).join(tot.toLocaleString('ja-JP')) + '\n\n' + msg;
   return msg;
 }
 
@@ -4482,6 +4502,54 @@ show('home');
     + 'font:700 13px/1.5 system-ui,sans-serif;text-align:center;padding:9px 12px;letter-spacing:.03em';
   bar.textContent = 'これは作業中の下書きです（写真はまだ入っていません）。本物のページは x.gd/TnTSIGNATURE';
   document.body.appendChild(bar);
+})();
+
+/* ★言葉を切り替えても、トップへ戻らず同じ画面のまま（2026-09-19 まるちゃん「毎回トップにいかないで」）。
+   押した時に今の画面（一覧／商品／注文のどの段か／本数／お支払い／カートの中身）を覚え、
+   もう一方の言葉のページが開いたら、始まりの映像を飛ばしてその画面を出し直す。
+   カートの商品名は、切り替えた先の言葉で作り直す（覚えるのは商品の番号と本数だけ）。1分より古い覚えは使わない。 */
+function ttResumeSave(){
+  try{
+    sessionStorage.setItem('tt_resume', JSON.stringify({
+      t: Date.now(), v: curView, cat: curCat, item: (curItem && curItem.id) || '',
+      size: curSize, step: payStep, qty: qty, pay: curPay,
+      cart: cart.map(function(l){ return { id: l.id, qty: l.qty }; })
+    }));
+  }catch(e){}
+}
+(function(){
+  var s = null;
+  try{ s = JSON.parse(sessionStorage.getItem('tt_resume') || 'null'); sessionStorage.removeItem('tt_resume'); }catch(e){}
+  if (!s || Date.now() - (s.t || 0) > 60000 || !s.v || s.v === 'home') return;
+  try{
+    openTimers.forEach(clearTimeout); openTimers = [];
+    openingEl.classList.add('gone', 'off');          /* 始まりの白い瓶の画面は出さない */
+    cart = [];
+    (s.cart || []).forEach(function(c){
+      var f = findItem(c.id); if (!f) return;
+      curItem = f.it; curCat = f.cat; curSize = f.size || 0; qty = c.qty || 1; cartPut();
+    });
+    if (s.v === 'list' && s.cat && DATA[s.cat]){
+      openList(s.cat);
+    } else if (s.v === 'cart'){
+      show('cart'); drawCart();
+    } else if (s.v === 'item' && s.cat && s.item && DATA[s.cat]){
+      openItem(s.cat, s.item);
+      curSize = s.size || 0;
+      try{ drawSizes(); drawPrice(); }catch(e){}
+      qty = s.qty || 1;
+      if (s.step === 4 && s.pay){ setStep(3); choosePay(s.pay); }
+      else if (s.step > 0){ setStep(s.step); }
+    }
+    drawCartBtn();
+    setTimeout(function(){ try{ fitAll(); }catch(e){} }, 50);
+    /* 始まりの映像を飛ばしたので、あとで「前へ戻る」でトップへ戻った時に映像を始める（1回だけ） */
+    var _shR = show, filmStarted = false;
+    show = function(w){
+      _shR(w);
+      if (w === 'home' && !filmStarted){ filmStarted = true; try{ playIntro(true); }catch(e){} }
+    };
+  }catch(e){}
 })();
 </script>
 
