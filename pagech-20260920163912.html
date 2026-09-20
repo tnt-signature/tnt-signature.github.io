@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-TW">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,7 +8,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="T&amp;T SIGNATURE">
 <meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
+<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
 <meta property="og:site_name" content="T&amp;T SIGNATURE">
 <meta name="twitter:card" content="summary">
 </head>
@@ -1612,7 +1612,7 @@ body.dark .todoline{color:#a2947f}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "ja";
+var LANG = "zh";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1895,7 +1895,7 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
 var SHOPEE_CODE = "TAKY0105";
 var SHOPEE_OFF  = 150;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-020a716380.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -1917,6 +1917,13 @@ var PAYLINK = {
    日本のような支店名は入れない。名義（口座の持ち主の名前）は分かり次第 holder に入れる＝
    空のままなら、その行は画面に出ない。 */
 var BANK = { bank:"中國信託銀行", code:"822", number:"347540289303", holder:"" };
+
+/* ★2026-09-20 まるちゃん決定：注文ボタンを押したら、お客様のLINEから「お支払いのご案内」ごと送る
+   （お店からの返信を待たない＝その場でお支払いに進める）。
+   文はお店の決まりの1か所（お支払い案内文.py）から、このページを作る時に写している。
+   ★金額の所は差し込み口のままなので、送る時に本当の合計へ差し替える。 */
+var PAYTEXT = {"linepay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼LINE Pay 付款連結\nhttps://x.gd/TTLINEPAY\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送「已完成付款」訊息給我們", "jkopay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼街口支付 付款連結\nhttps://x.gd/TTJKOPAY\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送「已完成付款」訊息給我們", "bank": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼匯款帳號\n中國信託銀行／銀行代號 822／帳號 347540289303\n\n①請將應付金額匯至上方帳戶\n\n②完成後，請傳送「已完成付款」訊息給我們"};
+var PAYKANE = "〔金額〕";
 
 var PAYWAYS = [
   { key:"linepay", name:"LINE Pay" },
@@ -3676,6 +3683,9 @@ function ttSend(ev){
   /* ★2026-09-19：写真を差し込む前の元ファイルや手元のファイルを開いた試し（言葉が差し込み前の印のまま・住所が http でない）は送らない
      （AIの確かめが本物の記録に入っていた） */
   if (!/^https?:$/.test(location.protocol) || String(LANG).charAt(0) === '@') return;
+  /* ★2026-09-20 まるちゃん決定：お客様が入れるのは「リッチメニュー」と「公式LINEの長いリンク（専用ページ）」の2つだけ。
+     それ以外（ふつうの閲覧アプリ・短いリンク・機械の巡回）は記録しない。どちらも入口を通るので、その印で見分ける。 */
+  try { if (sessionStorage.getItem('tt_liff') !== '1') return; } catch(e) { return; }
   try{
     var u = SHOP_PIPE + '?action=hit&who=shopv'
       + '&role=' + encodeURIComponent(LANG + '.' + ttRoute())
@@ -3911,6 +3921,10 @@ function orderText(payName, payKey){
   msg += zh
     ? ('付款方式：' + Z(payName) + '\n' + '取貨方式：到店取貨')
     : ('お支払い：' + payName + '\n' + '受け取り：お店で受け取り');
+  /* ★お支払いのご案内を頭に付けて1通で送る（2026-09-20 まるちゃん）。
+     お値段が決まっていない商品の時だけ、今までどおり注文の中身だけを送る（お店から改めてご案内する）。 */
+  var guide = (PAYTEXT && PAYTEXT[payKey]) ? PAYTEXT[payKey] : '';
+  if (guide && tot != null) msg = guide.split(PAYKANE).join(tot.toLocaleString('ja-JP')) + '\n\n' + msg;
   return msg;
 }
 

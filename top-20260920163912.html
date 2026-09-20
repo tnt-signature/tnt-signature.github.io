@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
 </head>
-<body style="margin:0">
-<script>window.__FILM_ONLY__=true;</script><title>T&amp;T SIGNATURE</title>
+<body style="margin:0"><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1393,22 +1392,6 @@ body.dark .todoline{color:#a2947f}
   margin:16px 0 0;border:1px dashed #c9b48c;border-radius:14px;
   background:#fffaf0;padding:13px 16px;font-size:12.5px;color:#8a7444;line-height:1.8;
 }
-
-/* ★見せる用：下の見出しとボタンを隠して、上の映像だけにする */
-.homelower{display:none !important}
-#viewHome{justify-content:center}
-/* ★映像だけの版は「正方形のまま、いちばん大きく」出す（2026-09-02 まるちゃん）。
-   スマホ用の写真は正方形なので、入れ物の四角ぜんぶを写真で埋める。
-   パソコンでは高さいっぱいの正方形になり、左右に黒い余白ができる。 */
-html,body{background:#000}
-.wrap{max-width:none;padding:0;min-height:100dvh;
-      display:flex;align-items:center;justify-content:center}
-#viewHome{flex:none;width:min(100vw,100dvh)}
-.hero{width:100%;margin-left:0;margin-right:0;aspect-ratio:1/1}
-@media (min-width:780px){ .hero{aspect-ratio:1/1} }
-/* ★正方形の写真を使うので、字の置き方もスマホと同じ右そろえにする（2026-09-10） */
-.cap .ja4{align-items:flex-end}
-.cap .side{align-self:flex-end;align-items:flex-end}
 </style>
 <div class="wrap">
   <!-- 日本語のお客様向けのページなので、中国語は付けない（2026-09-02 まるちゃん） -->
@@ -1927,6 +1910,13 @@ var PAYLINK = {
    日本のような支店名は入れない。名義（口座の持ち主の名前）は分かり次第 holder に入れる＝
    空のままなら、その行は画面に出ない。 */
 var BANK = { bank:"中國信託銀行", code:"822", number:"347540289303", holder:"" };
+
+/* ★2026-09-20 まるちゃん決定：注文ボタンを押したら、お客様のLINEから「お支払いのご案内」ごと送る
+   （お店からの返信を待たない＝その場でお支払いに進める）。
+   文はお店の決まりの1か所（お支払い案内文.py）から、このページを作る時に写している。
+   ★金額の所は差し込み口のままなので、送る時に本当の合計へ差し替える。 */
+var PAYTEXT = {"linepay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼LINE Payのお支払リンク\nhttps://x.gd/TTLINEPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、「支払い完了」とメッセージを送ってください", "jkopay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼街口支付のお支払リンク\nhttps://x.gd/TTJKOPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、「支払い完了」とメッセージを送ってください", "bank": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼お振込先\n中國信託銀行／銀行代號 822／口座番号 347540289303\n\n①上のお振込先に、お支払い金額をお振込みください\n\n②完了後、「支払い完了」とメッセージを送ってください"};
+var PAYKANE = "〔金額〕";
 
 var PAYWAYS = [
   { key:"linepay", name:"LINE Pay" },
@@ -3686,6 +3676,9 @@ function ttSend(ev){
   /* ★2026-09-19：写真を差し込む前の元ファイルや手元のファイルを開いた試し（言葉が差し込み前の印のまま・住所が http でない）は送らない
      （AIの確かめが本物の記録に入っていた） */
   if (!/^https?:$/.test(location.protocol) || String(LANG).charAt(0) === '@') return;
+  /* ★2026-09-20 まるちゃん決定：お客様が入れるのは「リッチメニュー」と「公式LINEの長いリンク（専用ページ）」の2つだけ。
+     それ以外（ふつうの閲覧アプリ・短いリンク・機械の巡回）は記録しない。どちらも入口を通るので、その印で見分ける。 */
+  try { if (sessionStorage.getItem('tt_liff') !== '1') return; } catch(e) { return; }
   try{
     var u = SHOP_PIPE + '?action=hit&who=shopv'
       + '&role=' + encodeURIComponent(LANG + '.' + ttRoute())
@@ -3921,6 +3914,10 @@ function orderText(payName, payKey){
   msg += zh
     ? ('付款方式：' + Z(payName) + '\n' + '取貨方式：到店取貨')
     : ('お支払い：' + payName + '\n' + '受け取り：お店で受け取り');
+  /* ★お支払いのご案内を頭に付けて1通で送る（2026-09-20 まるちゃん）。
+     お値段が決まっていない商品の時だけ、今までどおり注文の中身だけを送る（お店から改めてご案内する）。 */
+  var guide = (PAYTEXT && PAYTEXT[payKey]) ? PAYTEXT[payKey] : '';
+  if (guide && tot != null) msg = guide.split(PAYKANE).join(tot.toLocaleString('ja-JP')) + '\n\n' + msg;
   return msg;
 }
 
@@ -4549,5 +4546,16 @@ function ttResumeSave(){
 })();
 </script>
 
-
+<script>
+(function(){
+  function tomeru(){
+    var b = document.querySelectorAll("[data-go]");
+    for (var i = 0; i < b.length; i++){
+      b[i].onclick = function(e){ if (e && e.preventDefault) e.preventDefault(); };
+    }
+  }
+  tomeru();
+  setTimeout(tomeru, 1500);
+})();
+</script>
 </body></html>
