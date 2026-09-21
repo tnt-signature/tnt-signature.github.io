@@ -1,12 +1,20 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-TW">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
+<meta name="description" content="T&amp;T SIGNATURE">
+<meta property="og:type" content="website">
+<meta property="og:title" content="T&amp;T SIGNATURE">
+<meta property="og:description" content="T&amp;T SIGNATURE">
+<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
+<meta property="og:site_name" content="T&amp;T SIGNATURE">
+<meta name="twitter:card" content="summary">
 </head>
-<body style="margin:0">
-<script>window.__FILM_ONLY__=true;</script><title>T&amp;T SIGNATURE</title>
+<body style="margin:0"><title>T&amp;T SIGNATURE</title>
+<link rel="preload" as="image" fetchpriority="high" href="img/binw-9de5b69389.jpg">
+<link rel="preload" as="image" fetchpriority="high" href="img/binb-232f84d6c1.jpg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1431,22 +1439,6 @@ body.dark .todoline{color:#a2947f}
   margin:16px 0 0;border:1px dashed #c9b48c;border-radius:14px;
   background:#fffaf0;padding:13px 16px;font-size:12.5px;color:#8a7444;line-height:1.8;
 }
-
-/* ★見せる用：下の見出しとボタンを隠して、上の映像だけにする */
-.homelower{display:none !important}
-#viewHome{justify-content:center}
-/* ★映像だけの版は「正方形のまま、いちばん大きく」出す（2026-09-02 まるちゃん）。
-   スマホ用の写真は正方形なので、入れ物の四角ぜんぶを写真で埋める。
-   パソコンでは高さいっぱいの正方形になり、左右に黒い余白ができる。 */
-html,body{background:#000}
-.wrap{max-width:none;padding:0;min-height:100dvh;
-      display:flex;align-items:center;justify-content:center}
-#viewHome{flex:none;width:min(100vw,100dvh)}
-.hero{width:100%;margin-left:0;margin-right:0;aspect-ratio:1/1}
-@media (min-width:780px){ .hero{aspect-ratio:1/1} }
-/* ★正方形の写真を使うので、字の置き方もスマホと同じ右そろえにする（2026-09-10） */
-.cap .ja4{align-items:flex-end}
-.cap .side{align-self:flex-end;align-items:flex-end}
 </style>
 <div class="wrap">
   <!-- 日本語のお客様向けのページなので、中国語は付けない（2026-09-02 まるちゃん） -->
@@ -1660,7 +1652,7 @@ html,body{background:#000}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "ja";
+var LANG = "zh";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1943,7 +1935,7 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
 var SHOPEE_CODE = "TAKY0105";
 var SHOPEE_OFF  = 150;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-020a716380.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -1970,7 +1962,7 @@ var BANK = { bank:"中國信託銀行", code:"822", number:"347540289303", holde
    （お店からの返信を待たない＝その場でお支払いに進める）。
    文はお店の決まりの1か所（お支払い案内文.py）から、このページを作る時に写している。
    ★金額の所は差し込み口のままなので、送る時に本当の合計へ差し替える。 */
-var PAYTEXT = {"linepay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼LINE Payのお支払リンク\nhttps://x.gd/TTLINEPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、「支払い完了」とメッセージを送ってください", "jkopay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼街口支付のお支払リンク\nhttps://x.gd/TTJKOPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、「支払い完了」とメッセージを送ってください", "bank": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼お振込先\n中國信託銀行／銀行代號 822／口座番号 347540289303\n\n①上のお振込先に、お支払い金額をお振込みください\n\n②完了後、「支払い完了」とメッセージを送ってください"};
+var PAYTEXT = {"linepay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼LINE Pay 付款連結\nhttps://x.gd/TTLINEPAY\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送付款完成的截圖給我們", "jkopay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼街口支付 付款連結\nhttps://x.gd/TTJKOPAY\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送付款完成的截圖給我們", "bank": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼匯款帳號\n中國信託銀行／銀行代號 822／帳號 347540289303\n\n①請將應付金額匯至上方帳戶\n\n②完成後，請傳送付款完成的截圖，或告知我們您匯款帳號的末五碼"};
 var PAYKANE = "〔金額〕";
 
 var PAYWAYS = [
@@ -2923,6 +2915,60 @@ function loadInOrder(list, done){
   })();
 }
 
+/* ★開いた直後に運ぶ量を減らす（2026-09-21 まるちゃん「なんで5.5秒もかかった？かかりすぎだよ」）
+   ▼前まで：ページを開いたその瞬間から、ラベルの一枚(0.44MB)＋映像の7枚(1.7MB)＋
+     商品の写真(1.2MB)まで取りに行き始めていた。細い回線では、同じ1本の線を
+     「最初に出る瓶の写真」「LINEの本人確認の部品」と分け合うので、どれも遅くなる。
+   ▼いまの形：
+     ①はじめは、最初の画面に出る瓶の2枚だけ（この2枚はページが直に取る）
+     ②瓶が届いて、LINEの本人確認も終わってから、残りを「出る順に」1枚ずつ取る
+       ＝ラベルの一枚 → 映像の2枚目以降 → 商品の写真
+     ＝開いた直後に運ぶのは、ページ(0.29MB)＋瓶(0.18MB)＝約0.5MB だけ。
+   ▼まだ届いていなかった時の備え（絵が真っ黒にならない）
+     ・ラベルの一枚が届いていなければ、その画面を出さずに題名へ進む（playIntro）
+     ・映像の次の写真が届いていなければ、届くまで今の写真をそのまま映す（runPhotos） */
+function heroPics(i, wide){
+  var h = HEROS[i];
+  if (!h) return [];
+  if (wide === undefined) {
+    wide = (window.__FILM_ONLY__ === true)
+         ? false : window.matchMedia('(min-width:780px)').matches;
+  }
+  if (h.seq) return h.seq.map(function(g){ return wide ? g.pc : g.sp; });
+  return [wide ? h.pc : h.sp];
+}
+/* その絵は「もう出せる」か（下書き・埋め込みの絵は最初から出せる） */
+function picReady(u){
+  return !hasPic(u) || u.indexOf('data:') === 0 || !!HERO_READY[u];
+}
+/* 最初の画面（瓶）が届いたか。瓶の写真が無い版では待たない */
+function binDone(){
+  if (!hasPic(IMG_BOTTLE_WHITE)) return true;
+  var a = document.getElementById('openingImg');
+  var b = document.getElementById('openingImgB');
+  if (!a || !a.getAttribute('src') || !a.complete) return false;
+  if (hasPic(IMG_BOTTLE_BLUE) && b && (!b.getAttribute('src') || !b.complete)) return false;
+  return true;
+}
+/* 瓶が出て・本人確認が終わってから次に進む（長くても4.5秒で進む＝止まらない）。
+   ★合図を2本立てにしてある。「映像だけ」の版は最初に予定をいっせいに取り消すので、
+     ふつうの合図（setTimeout）1本だと消されて二度と進めなくなる（＝絵が届かない）。
+     画面を描くたびの合図（requestAnimationFrame）は取り消されないので、そちらでも進む。 */
+function afterOpening(go){
+  /* 「映像だけ」の版（スタッフに見せる用・動画を撮る用）は今までどおり、すぐ全部取りに行く。
+     お店が無く、LINEの本人確認もしないので、後回しにする意味が無い。 */
+  if (window.__FILM_ONLY__ === true) { go(); return; }
+  var t0 = Date.now(), sunda = false;
+  function susumu(){
+    if (sunda) return true;
+    var ok = false;
+    try { ok = binDone() && TT_READY === true; } catch(e){ ok = true; }
+    if (ok || Date.now() - t0 > 4500) { sunda = true; go(); return true; }
+    return false;
+  }
+  (function a(){ if (susumu()) return; setTimeout(a, 150); })();
+  (function b(){ if (susumu()) return; try { requestAnimationFrame(b); } catch(e){} })();
+}
 function preloadAll(){
   var wide = (window.__FILM_ONLY__ === true)
            ? false
@@ -2931,19 +2977,17 @@ function preloadAll(){
   /* ラベルの一枚は、映像の写真より先に要る（言葉のすぐあとに出るので）*/
   list.push({ url: labelPic() });
   HEROS.forEach(function(h, i){
-    if (h.seq) {
-      h.seq.forEach(function(g, k){
-        list.push({ url: wide ? g.pc : g.sp, after: function(){ applyHero(); } });
-      });
-    } else {
-      list.push({ url: wide ? h.pc : h.sp, after: function(){ applyHero(); } });
-    }
+    heroPics(i, wide).forEach(function(u){
+      list.push({ url: u, after: function(){ applyHero(); } });
+    });
   });
-  /* 商品の写真は映像のあと。ここまで来ればもう急がない */
-  loadInOrder(list, function(){
-    var later = [];
-    for (var k in ITEM_PICS) { if (ITEM_PICS.hasOwnProperty(k)) later.push({ url: ITEM_PICS[k] }); }
-    loadInOrder(later);
+  afterOpening(function(){
+    /* 商品の写真は映像のあと。ここまで来ればもう急がない */
+    loadInOrder(list, function(){
+      var later = [];
+      for (var k in ITEM_PICS) { if (ITEM_PICS.hasOwnProperty(k)) later.push({ url: ITEM_PICS[k] }); }
+      loadInOrder(later);
+    });
   });
 }
 preloadAll();
@@ -3197,6 +3241,12 @@ function dwellOf(i){
 }
 
 function runPhotos(i){
+  /* ★次の写真がまだ届いていなければ、届くまで今の写真をそのまま映す（2026-09-21）。
+     絵を「使う順に後から取る」形にしたので、細い回線で追いつかない時の備え。
+     取れなかった絵も「取り終わり」の印が付くので、ここで止まったままにはならない。 */
+  var need = heroPics(i), machi = false;
+  for (var n = 0; n < need.length; n++) { if (!picReady(need[n])) machi = true; }
+  if (machi) { later(function(){ runPhotos(i); }, 300); return; }
   ttFilm(6 + i);                      /* ショップ履歴：6クジラ 7農務省 8ホホバ畑 9サボテン 10No.31の瓶 */
   setPhoto(i);
   later(function(){
@@ -3232,7 +3282,9 @@ function playIntro(instant){
     /* ★言葉が光に包まれて消えたあと、ラベルの一枚をはさんでから題名へ進む
        （2026-09-07 まるちゃん）。写真がまだ無いときは、今までどおりすぐ題名へ進む。 */
     var lb = labelPic();
-    if (hasPic(lb)) {
+    /* ★まだ届いていない時は、この画面を出さずに題名へ進む（2026-09-21）。
+       絵が無いまま出すと、クリーム色の一枚のかわりに真っ黒な画面が数秒続いてしまう。 */
+    if (hasPic(lb) && picReady(lb)) {
       labelEl.style.backgroundImage = 'url("' + lb + '")';
       labelEl.classList.add('on');
       ttFilm(4);                      /* ショップ履歴：NO31完全ラベル */
@@ -3763,11 +3815,27 @@ function ttTrack(ev){
 function ttTrackReady(){
   if (TT_READY) return;
   TT_READY = true;
+  /* ★2026-09-21 まるちゃん：LINEの本人確認が終わるまでに何秒かかったかを残す（0.1秒きざみ）。
+     rdy＝ページを開き始めてから、本人確認が終わるまで。 */
+  try { ttSend('rdy' + Math.round(performance.now() / 100)); } catch(e){}
   var q = TT_Q; TT_Q = [];
   q.forEach(ttSend);
 }
 setTimeout(ttTrackReady, 4000);
-ttTrack('open');
+/* ★2026-09-21 まるちゃん決定：「画面が出た」は本人確認を待たずに、その場で送る。
+   前は open も本人確認が終わるまで待ってから送っていたので、記録の上で
+   「ページを受け取る時間」と「本人確認の待ち」が1つに混ざり、
+   お客様が6秒待った時にどちらが原因か追えなかった（2026-09-20の1件）。
+   ★待たずに送っても困らない＝スマホに置いた番号で送られ、そのあと届く
+   「前はこの番号でした」の知らせで、同じ人の記録としてつながる（前からある仕組み）。 */
+TT_LAST = 'open';
+ttSend('open');
+/* ld＝ページを開き始めてから、このページが届くまで（0.1秒きざみ）。
+   rdy との差が「本人確認の待ち」になる。 */
+try {
+  var _nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  if (_nav && _nav.responseEnd) ttSend('ld' + Math.round(_nav.responseEnd / 100));
+} catch(e){}
 
 /* ★2026-09-19 まるちゃん「どの画面を何秒見たか・どこまで見たか・何を押したか」も残す。
    ・1つの画面にいた秒数を、画面を移る時／スマホを裏に回した・閉じた時／30秒ごと に、
@@ -4631,6 +4699,5 @@ function ttResumeSave(){
   }catch(e){}
 })();
 </script>
-
 
 </body></html>
