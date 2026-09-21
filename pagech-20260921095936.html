@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-TW">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
+<meta name="description" content="T&amp;T SIGNATURE">
+<meta property="og:type" content="website">
+<meta property="og:title" content="T&amp;T SIGNATURE">
+<meta property="og:description" content="T&amp;T SIGNATURE">
+<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
+<meta property="og:site_name" content="T&amp;T SIGNATURE">
+<meta name="twitter:card" content="summary">
 </head>
-<body style="margin:0">
-<script>window.__FILM_ONLY__=true;</script><title>T&amp;T SIGNATURE</title>
+<body style="margin:0"><title>T&amp;T SIGNATURE</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1431,22 +1437,6 @@ body.dark .todoline{color:#a2947f}
   margin:16px 0 0;border:1px dashed #c9b48c;border-radius:14px;
   background:#fffaf0;padding:13px 16px;font-size:12.5px;color:#8a7444;line-height:1.8;
 }
-
-/* ★見せる用：下の見出しとボタンを隠して、上の映像だけにする */
-.homelower{display:none !important}
-#viewHome{justify-content:center}
-/* ★映像だけの版は「正方形のまま、いちばん大きく」出す（2026-09-02 まるちゃん）。
-   スマホ用の写真は正方形なので、入れ物の四角ぜんぶを写真で埋める。
-   パソコンでは高さいっぱいの正方形になり、左右に黒い余白ができる。 */
-html,body{background:#000}
-.wrap{max-width:none;padding:0;min-height:100dvh;
-      display:flex;align-items:center;justify-content:center}
-#viewHome{flex:none;width:min(100vw,100dvh)}
-.hero{width:100%;margin-left:0;margin-right:0;aspect-ratio:1/1}
-@media (min-width:780px){ .hero{aspect-ratio:1/1} }
-/* ★正方形の写真を使うので、字の置き方もスマホと同じ右そろえにする（2026-09-10） */
-.cap .ja4{align-items:flex-end}
-.cap .side{align-self:flex-end;align-items:flex-end}
 </style>
 <div class="wrap">
   <!-- 日本語のお客様向けのページなので、中国語は付けない（2026-09-02 まるちゃん） -->
@@ -1660,7 +1650,7 @@ html,body{background:#000}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "ja";
+var LANG = "zh";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1943,7 +1933,7 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
 var SHOPEE_CODE = "TAKY0105";
 var SHOPEE_OFF  = 150;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-020a716380.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -1970,7 +1960,7 @@ var BANK = { bank:"中國信託銀行", code:"822", number:"347540289303", holde
    （お店からの返信を待たない＝その場でお支払いに進める）。
    文はお店の決まりの1か所（お支払い案内文.py）から、このページを作る時に写している。
    ★金額の所は差し込み口のままなので、送る時に本当の合計へ差し替える。 */
-var PAYTEXT = {"linepay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼LINE Payのお支払リンク\nhttps://x.gd/TTLINEPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、「支払い完了」とメッセージを送ってください", "jkopay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼街口支付のお支払リンク\nhttps://x.gd/TTJKOPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、「支払い完了」とメッセージを送ってください", "bank": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼お振込先\n中國信託銀行／銀行代號 822／口座番号 347540289303\n\n①上のお振込先に、お支払い金額をお振込みください\n\n②完了後、「支払い完了」とメッセージを送ってください"};
+var PAYTEXT = {"linepay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼LINE Pay 付款連結\nhttps://x.gd/TTLINEPAY\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送付款完成的截圖給我們", "jkopay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼街口支付 付款連結\nhttps://x.gd/TTJKOPAY\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送付款完成的截圖給我們", "bank": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼匯款帳號\n中國信託銀行／銀行代號 822／帳號 347540289303\n\n①請將應付金額匯至上方帳戶\n\n②完成後，請傳送付款完成的截圖，或告知我們您匯款帳號的末五碼"};
 var PAYKANE = "〔金額〕";
 
 var PAYWAYS = [
@@ -3335,16 +3325,27 @@ function show(which){
   vItem.style.display = which==='item' ? 'flex':'none';
   vCart.style.display = which==='cart' ? 'block':'none';
   back.classList.toggle('show', which!=='home');
-  /* 言葉の切り替え：2026-09-19 まるちゃん「最初の画面の上はかっこわるい。商品の画面に入ったら全部の画面に出す。
-     場所は前へ戻る・SELECTの上」。本物のショップの時だけ。 */
-  var _ls = document.getElementById('langSw');
-  if (_ls) _ls.style.display = (which!=='home' && /\/page(ch)?-\d+\.html$/.test(location.pathname)) ? 'flex' : 'none';
+  langSwSync(which);   /* 言葉の切り替えを出すか決める（下の langSwSync に決まりを1か所で書いてある） */
   /* 一覧と詳しい画面は、上の映像の続きに見えるよう暗い世界にする */
   document.body.classList.toggle('dark', which!=='home');
   curView = which;
   try { ttScrSync(); } catch(e) {}   /* ショップ履歴：前の画面の秒数を送って数え直す */
   drawCartBtn();
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ★言葉の切り替え（日本語｜中文）を出す画面の決まり（2026-09-20 まるちゃん）。
+   出すのは「商品一覧」と「商品詳細」の2つだけ。
+   最初の画面・受け取り方・本数・お支払い・ご注文内容のご確認・郵送・カートでは出さない。
+   （2026-09-19の「商品の画面に入ったら全部の画面に出す」から、この形に変わった）
+   決まりはここ1か所だけに書く＝画面を切り替える所と、段を進む所の両方がこれを呼ぶ。 */
+function langSwSync(which){
+  var ls = document.getElementById('langSw');
+  if (!ls) return;
+  which = which || curView;
+  var shop = /\/page(ch)?-\d+\.html$/.test(location.pathname);   /* 本物のショップの時だけ */
+  var ok = shop && (which === 'list' || (which === 'item' && payStep === 0));
+  ls.style.display = ok ? 'flex' : 'none';
 }
 
 function yen(n){ return n==null ? '' : n.toLocaleString('ja-JP') + '元'; }
@@ -3752,11 +3753,27 @@ function ttTrack(ev){
 function ttTrackReady(){
   if (TT_READY) return;
   TT_READY = true;
+  /* ★2026-09-21 まるちゃん：LINEの本人確認が終わるまでに何秒かかったかを残す（0.1秒きざみ）。
+     rdy＝ページを開き始めてから、本人確認が終わるまで。 */
+  try { ttSend('rdy' + Math.round(performance.now() / 100)); } catch(e){}
   var q = TT_Q; TT_Q = [];
   q.forEach(ttSend);
 }
 setTimeout(ttTrackReady, 4000);
-ttTrack('open');
+/* ★2026-09-21 まるちゃん決定：「画面が出た」は本人確認を待たずに、その場で送る。
+   前は open も本人確認が終わるまで待ってから送っていたので、記録の上で
+   「ページを受け取る時間」と「本人確認の待ち」が1つに混ざり、
+   お客様が6秒待った時にどちらが原因か追えなかった（2026-09-20の1件）。
+   ★待たずに送っても困らない＝スマホに置いた番号で送られ、そのあと届く
+   「前はこの番号でした」の知らせで、同じ人の記録としてつながる（前からある仕組み）。 */
+TT_LAST = 'open';
+ttSend('open');
+/* ld＝ページを開き始めてから、このページが届くまで（0.1秒きざみ）。
+   rdy との差が「本人確認の待ち」になる。 */
+try {
+  var _nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  if (_nav && _nav.responseEnd) ttSend('ld' + Math.round(_nav.responseEnd / 100));
+} catch(e){}
 
 /* ★2026-09-19 まるちゃん「どの画面を何秒見たか・どこまで見たか・何を押したか」も残す。
    ・1つの画面にいた秒数を、画面を移る時／スマホを裏に回した・閉じた時／30秒ごと に、
@@ -4432,6 +4449,7 @@ function drawBogo(){
 
 function setStep(n){
   payStep = n;
+  try { langSwSync(); } catch(e) {}  /* 言葉の切り替えは商品詳細（段0）まで。先へ進んだら消す（2026-09-20 まるちゃん） */
   try { ttScrSync(); } catch(e) {}   /* ショップ履歴：段ごとの秒数 */
   if (n > 0) ttTrack('s' + n);   /* ショップ履歴：どこまで進んだか（1受け取り方 2本数 3お支払い 4ご確認 5郵送） */
   document.getElementById('stepItem').style.display = (n===0) ? 'block' : 'none';
@@ -4619,6 +4637,5 @@ function ttResumeSave(){
   }catch(e){}
 })();
 </script>
-
 
 </body></html>
