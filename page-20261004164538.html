@@ -1909,8 +1909,9 @@ var QR = { linepay:"", jkopay:"" };
    ここが空の間は、ボタンは出るが押せない（「ご用意でき次第…」と小さく出る）。
    商品ごとに別のページへ飛ばしたい時は、その商品の並びに shopee:"住所" を1行足せば、そちらが優先される。 */
 /* ★2026-09-18 まるちゃん：「郵送で受け取る」ボタンをしばらく隠す（また出す予定）。
-   出したくなったら true にして出し直すだけ（蝦皮の住所・割引コードの画面はそのまま残してある）。 */
-var NET_ON = false;
+   出したくなったら true にして出し直すだけ（蝦皮の住所・割引コードの画面はそのまま残してある）。
+   ★2026-10-04 まるちゃん「受取を蝦皮 もどす」＝また出す形に戻した（true）。 */
+var NET_ON = true;
 
 /* ★オープン記念「2本買うと1本プレゼント」（2026-09-18 まるちゃん）。
    商品の並びに bogo:true がある物（今はNo.31だけ）で、本数の画面の上に2つの枠を出し、
@@ -1932,8 +1933,11 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
    ・SHOPEE_OFF ＝いくら引かれるか（元）。案内の文に出る。
    ★蝦皮の割引券そのものは、蝦皮の賣家中心（行銷活動＞我的優惠券）で作る。
      ここを直しても券は作られないので、コードを変えた時は蝦皮側も必ず作り直すこと。 */
-var SHOPEE_CODE = "TAKY0105";
-var SHOPEE_OFF  = 150;
+/* ★2026-10-04 まるちゃん決定：蝦皮の値段を1,320元にして、割引コードを「7.5折」に変えた。
+   1,320 × 0.75 ＝ 990元（会員価格ぴったり）＝ 330元引き。
+   古いコード TAKY0105（150元引き）は同じ日に止めた（終わりを2026-10-04 17:30に縮めた）。 */
+var SHOPEE_CODE = "TAKY0025";
+var SHOPEE_OFF  = 330;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
 var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
 
@@ -1944,14 +1948,14 @@ var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
 var PAYLINK = {
   /* ★短いリンクにした（2026-09-06 まるちゃん指定）。飛び先はx.gdの管理画面から後で変えられる
      ＝お店のお支払い口が変わっても、このページを作り直さずに済む。中身＝上の長い住所と同じ。 */
-  linepay:"https://x.gd/TTLINEPAY",
+  linepay:"https://bit.ly/TTLinePay",
   /* ★街口は「収款コードが2つある」のが肝（2026-09-02）。
      ・共通のQR（中身が TWQRP:// で始まる物）＝カメラで読み取る専用。押しても何も起きない（実機で確認済み）
      ・街口だけのQR（中身が http://www.jkos.com/index.html?j=S%23…%3AP%23）＝ふつうの住所なので押せる ←こちら
      押すと街口の受け渡しページへ回され、そこから街口のアプリが開く作り
      （お店の番号を取り出して「お客様が金額を入れて払う」画面を出す）。LINE Payと同じ形。
      ★中身は1文字も変えずにそのまま貼ること。 */
-  jkopay:"https://x.gd/TTJKOPAY"   /* ★短いリンク（2026-09-06 まるちゃん指定）。中身＝上の住所と同じ */
+  jkopay:"https://bit.ly/TTJkoPay"   /* ★短いリンク（2026-09-06 まるちゃん指定）。中身＝上の住所と同じ */
 };
 /* ★お振込み先（2026-09-02 まるちゃんから）。台湾の振込は「銀行の番号＋口座番号」だけで足りるので、
    日本のような支店名は入れない。名義（口座の持ち主の名前）は分かり次第 holder に入れる＝
@@ -1962,7 +1966,7 @@ var BANK = { bank:"中國信託銀行", code:"822", number:"347540289303", holde
    （お店からの返信を待たない＝その場でお支払いに進める）。
    文はお店の決まりの1か所（お支払い案内文.py）から、このページを作る時に写している。
    ★金額の所は差し込み口のままなので、送る時に本当の合計へ差し替える。 */
-var PAYTEXT = {"linepay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼LINE Payのお支払リンク\nhttps://x.gd/TTLINEPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、支払い完了のスクショを送ってください", "jkopay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼街口支付のお支払リンク\nhttps://x.gd/TTJKOPAY\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、支払い完了のスクショを送ってください", "bank": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼お振込先\n中國信託銀行／銀行代號 822／口座番号 347540289303\n\n①上のお振込先に、お支払い金額をお振込みください\n\n②完了後、支払い完了のスクショ又は、お振込み口座番号の下5桁をお知らせください"};
+var PAYTEXT = {"linepay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼LINE Payのお支払リンク\nhttps://bit.ly/TTLinePay\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、支払い完了のスクショを送ってください", "jkopay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼街口支付のお支払リンク\nhttps://bit.ly/TTJkoPay\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、支払い完了のスクショを送ってください", "bank": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼お振込先\n中國信託銀行／銀行代號 822／口座番号 347540289303\n\n①上のお振込先に、お支払い金額をお振込みください\n\n②完了後、支払い完了のスクショ又は、お振込み口座番号の下5桁をお知らせください"};
 var PAYKANE = "〔金額〕";
 
 var PAYWAYS = [
@@ -2153,8 +2157,8 @@ var DATA = {
         /* 読みもののリンク（2026-09-07 まるちゃん）。飛び先はあとで教わる＝
            url が空の間はリンクを出さない（壊れない） */
         secret:{ t:"月室美容液の秘密",
-                 url:"https://x.gd/omiyabiyouekiJP",
-                 url_zh:"https://x.gd/omiyabiyouekiCH" },   /* 2026-09-07 まるちゃんが名前を指定 */
+                 url:"https://ttsuperzuco.github.io/tt-price/omiyabiyouekiJP.html",
+                 url_zh:"https://ttsuperzuco.github.io/tt-price/omiyabiyouekiCH.html" },   /* 2026-09-07 まるちゃんが名前を指定 */
         tags:[],
         body:"膣内を健康に保つ常在菌である、ラクトバチルス乳酸菌1,000億個相当を配合。\n\nさらに、NMN、プラセンタエキスなどの若返り美容成分を、皮膚の約42倍の吸収率を持つ膣へと届ける全身美容です。",
         note:"" },
@@ -2219,11 +2223,11 @@ var DATA = {
         /* 写真の中に白い字で重ねる一言（映像の最後の言葉・4行・2026-09-03 まるちゃん）*/
         lead:["１５０万の中から", "選ばれし", "真の最高峰を", "あなたの肌に"],
         /* 説明と購入ボタンの間に出す読みものリンク（2026-09-05 まるちゃんから飛び先をもらった） */
-        secret:{ t:"ホホバエッセンスの秘密", url:"https://x.gd/4mSe0",
+        secret:{ t:"ホホバエッセンスの秘密", url:"https://bit.ly/JojobaSecJ",
                  /* 中国語版は中国語の記事へ（出どころ＝問合せ回答集の「ズコLINK」表・2026-09-06） */
-                 url_zh:"https://x.gd/ELbRM" },
+                 url_zh:"https://bit.ly/JojobaSecC" },
         /* ★その下に出す「使い方」（2026-09-18 まるちゃん。画像はズコLINKと同じ短いリンク） */
-        usage:{ t:"ホホバエッセンスの使い方", url:"https://x.gd/JojobaUsageJ", url_zh:"https://x.gd/JojobaUsageC" },
+        usage:{ t:"ホホバエッセンスの使い方", url:"https://bit.ly/JojobaUseJ", url_zh:"https://bit.ly/JojobaUseC" },
         bogo:true,   /* オープン記念「2本買うと1本プレゼント」の対象（2026-09-18 まるちゃん） */
         now:990, was:1500,   /* 2026-09-02 まるちゃん決定＝1,090元から990元へ */
         lb_now:"当店LINE会員価格",   /* lb_was:"通常価格" ＝出さない。まるちゃんが整えた今の形のまま（2026-09-06） */
@@ -2243,8 +2247,8 @@ var DATA = {
 };
 
 /* 使い方の案内（すでに作ってあるリンク） */
-var JOJOBA_USE_JA = "https://x.gd/JojobaUsageJ";
-var JOJOBA_USE_ZH = "https://x.gd/JojobaUsageC";
+var JOJOBA_USE_JA = "https://bit.ly/JojobaUseJ";
+var JOJOBA_USE_ZH = "https://bit.ly/JojobaUseC";
 
 /* ───── 表紙の絵をゆっくり入れ替える ───── */
 var heroEl = document.getElementById('hero');
@@ -4146,7 +4150,7 @@ function drawCode(){
   var h = blk;
   if (IMG_SHOPEE_GUIDE){
     /* ★入れ方の説明（2026-09-13 まるちゃん）。値段は書き写さず、商品の値段（now）と
-       割引額（SHOPEE_OFF）から出す＝蝦皮の値段＝会員価格＋割引額（990＋150＝1140元）。 */
+       割引額（SHOPEE_OFF）から出す＝蝦皮の値段＝会員価格＋割引額（990＋330＝1320元）。 */
     var spNm  = (curItem && curItem.nm) ? Z(curItem.nm) : '';
     var spNow = (curItem && curItem.now != null) ? yen(curItem.now) : '';
     var spShp = (curItem && curItem.now != null) ? yen(curItem.now + SHOPEE_OFF) : '';
@@ -4647,7 +4651,7 @@ show('home');
   bar.style.cssText =
     'position:fixed;left:0;right:0;top:0;z-index:99999;background:#b4544f;color:#fff;'
     + 'font:700 13px/1.5 system-ui,sans-serif;text-align:center;padding:9px 12px;letter-spacing:.03em';
-  bar.textContent = 'これは作業中の下書きです（写真はまだ入っていません）。本物のページは x.gd/TnTSIGNATURE';
+  bar.textContent = 'これは作業中の下書きです（写真はまだ入っていません）。本物のページは ttsuperzuco.github.io/tt-price/signature.html';
   document.body.appendChild(bar);
 })();
 
