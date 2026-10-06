@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-TW">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,7 +8,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="T&amp;T SIGNATURE">
 <meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
+<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
 <meta property="og:site_name" content="T&amp;T SIGNATURE">
 <meta name="twitter:card" content="summary">
 </head>
@@ -1216,6 +1216,10 @@ body.dark .bogo .bc.best{border-color:#c0394a;padding-top:0}
 /* ★押したら本数が入る枠（2026-09-20 まるちゃん）。選んでいる方は金色の縁で分かるようにする。
    縁は外側に出る影で描くので、枠の高さは変わらない＝1画面に収まる形をこわさない。 */
 body.dark .bogo .bc{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:box-shadow .12s}
+/* ★郵送の画面の絵は見せるだけ（押せない）・2026-10-06 まるちゃん */
+body.dark #nPromo .bc{cursor:default}
+body.dark #nPromo .bc:active{background:none}
+body.dark #nPromo{margin-bottom:18px}
 body.dark .bogo .bc:active{background:rgba(232,211,166,.10)}
 body.dark .bogo .bc.on{border-color:#e8d3a6;background:rgba(232,211,166,.10);
   box-shadow:0 0 0 2px rgba(232,211,166,.75)}
@@ -1596,6 +1600,9 @@ body.dark .todoline{color:#a2947f}
     <!-- ═ 画面2-2＝郵送でのお受け取り（蝦皮で購入する・2026-09-06 まるちゃん） ═ -->
     <div id="stepNet" style="display:none">
       <div class="stepttl">郵送でのお受け取り</div>
+      <!-- ★2026-10-06 まるちゃん：お店で受け取る時と同じ「1本／2本買うと1本プレゼント」の絵を、
+           蝦皮のボタンの上にも出す（ここでは見せるだけ・押しても本数は変わらない） -->
+      <div class="bogo" id="nPromo" style="display:none"></div>
       <div class="buys" id="netBtn"></div>
     </div>
 
@@ -1652,7 +1659,7 @@ body.dark .todoline{color:#a2947f}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "ja";
+var LANG = "zh";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1909,8 +1916,9 @@ var QR = { linepay:"", jkopay:"" };
    ここが空の間は、ボタンは出るが押せない（「ご用意でき次第…」と小さく出る）。
    商品ごとに別のページへ飛ばしたい時は、その商品の並びに shopee:"住所" を1行足せば、そちらが優先される。 */
 /* ★2026-09-18 まるちゃん：「郵送で受け取る」ボタンをしばらく隠す（また出す予定）。
-   出したくなったら true にして出し直すだけ（蝦皮の住所・割引コードの画面はそのまま残してある）。 */
-var NET_ON = false;
+   出したくなったら true にして出し直すだけ（蝦皮の住所・割引コードの画面はそのまま残してある）。
+   ★2026-10-04 まるちゃん「受取を蝦皮 もどす」＝また出す形に戻した（true）。 */
+var NET_ON = true;
 
 /* ★オープン記念「2本買うと1本プレゼント」（2026-09-18 まるちゃん）。
    商品の並びに bogo:true がある物（今はNo.31だけ）で、本数の画面の上に2つの枠を出し、
@@ -1932,10 +1940,13 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
    ・SHOPEE_OFF ＝いくら引かれるか（元）。案内の文に出る。
    ★蝦皮の割引券そのものは、蝦皮の賣家中心（行銷活動＞我的優惠券）で作る。
      ここを直しても券は作られないので、コードを変えた時は蝦皮側も必ず作り直すこと。 */
-var SHOPEE_CODE = "TAKY0105";
-var SHOPEE_OFF  = 150;
+/* ★2026-10-04 まるちゃん決定：蝦皮の値段を1,320元にして、割引コードを「7.5折」に変えた。
+   1,320 × 0.75 ＝ 990元（会員価格ぴったり）＝ 330元引き。
+   古いコード TAKY0105（150元引き）は同じ日に止めた（終わりを2026-10-04 17:30に縮めた）。 */
+var SHOPEE_CODE = "TAKY0025";
+var SHOPEE_OFF  = 330;
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-927a071182.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-020a716380.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -1962,7 +1973,7 @@ var BANK = { bank:"中國信託銀行", code:"822", number:"347540289303", holde
    （お店からの返信を待たない＝その場でお支払いに進める）。
    文はお店の決まりの1か所（お支払い案内文.py）から、このページを作る時に写している。
    ★金額の所は差し込み口のままなので、送る時に本当の合計へ差し替える。 */
-var PAYTEXT = {"linepay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼LINE Payのお支払リンク\nhttps://bit.ly/TTLinePay\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、支払い完了のスクショを送ってください", "jkopay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼街口支付のお支払リンク\nhttps://bit.ly/TTJkoPay\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、支払い完了のスクショを送ってください", "bank": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼お振込先\n中國信託銀行／銀行代號 822／口座番号 347540289303\n\n①上のお振込先に、お支払い金額をお振込みください\n\n②完了後、支払い完了のスクショ又は、お振込み口座番号の下5桁をお知らせください"};
+var PAYTEXT = {"linepay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼LINE Pay 付款連結\nhttps://bit.ly/TTLinePay\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送付款完成的截圖給我們", "jkopay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼街口支付 付款連結\nhttps://bit.ly/TTJkoPay\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送付款完成的截圖給我們", "bank": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼匯款帳號\n中國信託銀行／銀行代號 822／帳號 347540289303\n\n①請將應付金額匯至上方帳戶\n\n②完成後，請傳送付款完成的截圖，或告知我們您匯款帳號的末五碼"};
 var PAYKANE = "〔金額〕";
 
 var PAYWAYS = [
@@ -4102,6 +4113,14 @@ function shopeeOpenUrl(){
    コードが無い時は、今までどおりそのまま蝦皮のページへ飛ぶ。 */
 function drawNet(){
   var url = shopeeUrl();
+  /* ★2026-10-06 まるちゃん：お店で受け取る時と同じ「1本／2本買うと1本プレゼント」の絵を、
+     蝦皮のボタンの上にも出す（見せるだけ・本数は蝦皮側で選ぶ） */
+  var np = document.getElementById('nPromo');
+  if (np){
+    var bon = !!(BOGO_ON && curItem && curItem.bogo);
+    np.style.display = bon ? '' : 'none';
+    if (bon) np.innerHTML = bogoHtml(false);
+  }
   document.getElementById('netBtn').innerHTML =
       (url && SHOPEE_CODE)
      ? '<button class="buy line order" id="netGo" type="button">'
@@ -4146,7 +4165,7 @@ function drawCode(){
   var h = blk;
   if (IMG_SHOPEE_GUIDE){
     /* ★入れ方の説明（2026-09-13 まるちゃん）。値段は書き写さず、商品の値段（now）と
-       割引額（SHOPEE_OFF）から出す＝蝦皮の値段＝会員価格＋割引額（990＋150＝1140元）。 */
+       割引額（SHOPEE_OFF）から出す＝蝦皮の値段＝会員価格＋割引額（990＋330＝1320元）。 */
     var spNm  = (curItem && curItem.nm) ? Z(curItem.nm) : '';
     var spNow = (curItem && curItem.now != null) ? yen(curItem.now) : '';
     var spShp = (curItem && curItem.now != null) ? yen(curItem.now + SHOPEE_OFF) : '';
@@ -4481,16 +4500,29 @@ function drawBogo(){
   if (!on) return;
   /* 枠に名前とお値段が出るので、上の小さな商品の行は隠して1画面に収める */
   if (payStep === 2){ var sh = document.getElementById('stepHead'); if (sh) sh.style.display = 'none'; }
+  box.innerHTML = bogoHtml(true);
+  gb.innerHTML = '🎁 ' + (isZH() ? '贈送 ' : 'プレゼント ') + '<b>' + g + '</b> ' + Z(cntOf(curItem))
+    + '<span class="gt">' + (isZH() ? ('（共' + honLabel(qty + g, cntOf(curItem)) + '）')
+                               : ('（合計' + honLabel(qty + g, cntOf(curItem)) + '）')) + '</span>';
+  /* ★本数を変えてプレゼントの札が出たり消えたりすると高さが変わるので、その場で1画面に収め直す */
+  if (payStep === 2) { try { fitQty(); } catch(e){} }
+}
+
+/* ★「1本／2本買うと1本プレゼント」の絵を組み立てる（2026-10-06 まるちゃん：郵送の画面にも同じ絵を出すため、
+   組み立てをここに1本化した）。osu=true＝押すとその本数が入る（本数の画面用）／
+   osu=false＝見せるだけ（郵送の画面用。蝦皮では本数を蝦皮側で選ぶので押せなくてよい）。 */
+function bogoHtml(osu){
   var zh = isZH(), cw = cntOf(curItem), p = curPrice();
   var img = BOTTLE_T ? '<img src="' + BOTTLE_T + '" alt="">' : '';
   /* いま入っている本数と同じ枠に印を付ける（1本＝左／2本＝右。それ以外は どちらにも付けない） */
-  var on1 = (qty === 1) ? ' on' : '', on2 = (qty === 2) ? ' on' : '';
-  box.innerHTML =
-      '<div class="bc' + on1 + '" role="button" tabindex="0" onclick="bogoPick(1)">'
+  var on1 = (osu && qty === 1) ? ' on' : '', on2 = (osu && qty === 2) ? ' on' : '';
+  var k1 = osu ? ' role="button" tabindex="0" onclick="bogoPick(1)"' : '';
+  var k2 = osu ? ' role="button" tabindex="0" onclick="bogoPick(2)"' : '';
+  return  '<div class="bc' + on1 + '"' + k1 + '>'
     +   '<div class="pic one">' + img + '</div>'
     +   '<div class="nm">' + honLabel(1, cw) + '</div>'
     +   '<div class="pr">' + (p!=null ? yen(p) : '') + '</div></div>'
-    + '<div class="bc best' + on2 + '" role="button" tabindex="0" onclick="bogoPick(2)"><div class="band">'
+    + '<div class="bc best' + on2 + '"' + k2 + '><div class="band">'
     +     '<div class="op">' + (zh ? '開幕紀念' : 'オープン記念') + '</div>'
     +     '<div class="b1">' + (zh ? ('買' + honLabel(2, cw)) : (honLabel(2, cw) + '買うと')) + '</div>'
     +     '<div class="b2">' + (zh ? ('送' + honLabel(1, cw)) : (honLabel(1, cw) + 'プレゼント')) + '</div></div>'
@@ -4502,11 +4534,6 @@ function drawBogo(){
     +   (p!=null ? '<div class="per">' + (zh ? ('每' + Z(cw) + ' ' + yen(Math.round(p * 2 / 3)))
                                               : ('1' + cw + 'あたり' + yen(Math.round(p * 2 / 3)))) + '</div>' : '')
     + '</div>';
-  gb.innerHTML = '🎁 ' + (zh ? '贈送 ' : 'プレゼント ') + '<b>' + g + '</b> ' + Z(cw)
-    + '<span class="gt">' + (zh ? ('（共' + honLabel(qty + g, cw) + '）')
-                               : ('（合計' + honLabel(qty + g, cw) + '）')) + '</span>';
-  /* ★本数を変えてプレゼントの札が出たり消えたりすると高さが変わるので、その場で1画面に収め直す */
-  if (payStep === 2) { try { fitQty(); } catch(e){} }
 }
 
 function setStep(n){
