@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-TW">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,7 +8,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="T&amp;T SIGNATURE">
 <meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
+<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
 <meta property="og:site_name" content="T&amp;T SIGNATURE">
 <meta name="twitter:card" content="summary">
 </head>
@@ -1659,7 +1659,7 @@ body.dark .todoline{color:#a2947f}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "ja";
+var LANG = "zh";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1730,6 +1730,7 @@ var ZH = {
   "日本価格":"日本售價",
   "当店価格":"本店價格",
   "当店LINE会員価格":"本店LINE會員價",
+  "当店インスタグラム会員価格":"本店Instagram會員價",   /* インスタの広告から来た人（2026-10-26 まるちゃん） */
   "通常価格":"原價",
   "単品で買うと":"單買合計",
   "1本だけ 250元":"單支 250元",
@@ -1951,8 +1952,30 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
      その時は 7.5折の TAKY0025（330元引き）へ戻すこと。この2行を書き換えて出し直す。 */
 var SHOPEE_CODE = "TAKY0034";
 var SHOPEE_OFF  = 510;
+
+/* ★2026-10-26 まるちゃん決定：インスタの広告から来た人の入口（ig.html＝日本語／igch.html＝中国語）。
+   住所に ?ig=<広告の名札> が付いて来た時だけ「広告から来た人」とみなして、
+   ①始まりの映像を飛ばし、No.31の「蝦皮でのご購入」の画面（割引コードの画面）をいきなり出す
+   ②値段の呼び名を「当店LINE会員価格」→「当店インスタグラム会員価格」（中国語＝本店Instagram會員價）にする
+   ③ショップ履歴に「インスタ広告（名札）」として残す（9/20の「LINEの2つの入口だけ記録」の決まりに、この入口だけ足した）。
+   名札＝jp（日本人IG）／twf（台湾女性IG）／twm（台湾男性IG）。英小文字・数字・_ だけ・20字まで。
+   名札は同じタブの間だけ覚える（言葉を切り替えても広告から来た人のまま）。
+   ふつうの入口（signature.html 等）から来た人には何も変わらない。 */
+var IG_AD_JUMP = /[?&]ig=[a-z0-9_]{1,20}(&|$)/.test(location.search);   /* 住所に名札がある＝いきなり割引コードの画面へ */
+var IG_AD = (function(){
+  var m = /[?&]ig=([a-z0-9_]{1,20})(&|$)/.exec(location.search);
+  if (m){ try{ sessionStorage.setItem('tt_ig', m[1]); }catch(e){} return m[1]; }
+  try{ return sessionStorage.getItem('tt_ig') || ''; }catch(e){ return ''; }
+})();
+var IG_AD_ITEM = 'jojoba_no31';   /* 広告で売る商品（蝦皮で買えるのは今No.31だけ） */
+/* 会員価格の呼び名は、ここ1か所で決める（画面ごとに書き分けない） */
+function memberLabel(){ return IG_AD ? '当店インスタグラム会員価格' : '当店LINE会員価格'; }
+function lbNow(it){
+  var l = (it && it.lb_now) || '当店価格';
+  return (l === '当店LINE会員価格') ? memberLabel() : l;
+}
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-66a7e1c4ee.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-030f9fdada.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -1979,7 +2002,7 @@ var BANK = { bank:"中國信託銀行", code:"822", number:"347540289303", holde
    （お店からの返信を待たない＝その場でお支払いに進める）。
    文はお店の決まりの1か所（お支払い案内文.py）から、このページを作る時に写している。
    ★金額の所は差し込み口のままなので、送る時に本当の合計へ差し替える。 */
-var PAYTEXT = {"linepay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼LINE Payのお支払リンク\nhttps://bit.ly/TTLinePay\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、支払い完了のスクショを送ってください", "jkopay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼街口支付のお支払リンク\nhttps://bit.ly/TTJkoPay\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、支払い完了のスクショを送ってください", "bank": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼お振込先\n中國信託銀行／銀行代號 822／口座番号 347540289303\n\n①上のお振込先に、お支払い金額をお振込みください\n\n②完了後、支払い完了のスクショ又は、お振込み口座番号の下5桁をお知らせください"};
+var PAYTEXT = {"linepay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼LINE Pay 付款連結\nhttps://bit.ly/TTLinePay\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送付款完成的截圖給我們", "jkopay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼街口支付 付款連結\nhttps://bit.ly/TTJkoPay\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送付款完成的截圖給我們", "bank": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼匯款帳號\n中國信託銀行／銀行代號 822／帳號 347540289303\n\n①請將應付金額匯至上方帳戶\n\n②完成後，請傳送付款完成的截圖，或告知我們您匯款帳號的末五碼"};
 var PAYKANE = "〔金額〕";
 
 var PAYWAYS = [
@@ -3577,7 +3600,7 @@ function drawPrice(){
       : '')
     +
     (now!=null
-      ? '<div class="pc"><div class="lb">' + (it.lb_now || '当店価格') + '</div>'
+      ? '<div class="pc"><div class="lb">' + lbNow(it) + '</div>'
         + '<div class="now">' + yen(now) + '</div></div>'
       : '<div class="pc"><div class="now" style="color:#b4544f;font-size:22px">値段 未定</div></div>');
 }
@@ -3589,7 +3612,7 @@ function drawSizes(){
   /* 棒1本の中身＝［大きさ］［日本価格（線を引いた小さい字）］［当店価格（大きい字）］
      （2026-09-06 まるちゃん「棒の中に全部入れる」）。ここに全部あるので上の値段は出さない。 */
   var lbW = it.lb_was || '日本価格';
-  var lbN = it.lb_now || '当店価格';
+  var lbN = lbNow(it);
   box.innerHTML = it.sizes.map(function(v, i){
     return '<button type="button" class="' + (i===curSize?'on':'') + '" data-i="' + i + '">'
          + '<span class="n">' + esc(v.nm) + '</span>'
@@ -3792,6 +3815,8 @@ function ttVid(){
 }
 function ttRoute(){
   var ua = navigator.userAgent || '';
+  /* ★2026-10-26：インスタの広告から来た人は、どの広告か（名札）まで分かるので一番はっきりした入口として返す */
+  if (IG_AD) return 'igad_' + IG_AD;
   if (TT_CTX === 'utou'){                                    /* お店とのトーク */
     /* ★2026-09-19：リッチメニューの住所には印（from=rm）が付けてある＝入口の係が覚えた印で見分ける */
     var rm = /[?&]from=rm(&|$)/.test(location.search);
@@ -3813,7 +3838,8 @@ function ttSend(ev){
   if (!/^https?:$/.test(location.protocol) || String(LANG).charAt(0) === '@') return;
   /* ★2026-09-20 まるちゃん決定：お客様が入れるのは「リッチメニュー」と「公式LINEの長いリンク（専用ページ）」の2つだけ。
      それ以外（ふつうの閲覧アプリ・短いリンク・機械の巡回）は記録しない。どちらも入口を通るので、その印で見分ける。 */
-  try { if (sessionStorage.getItem('tt_liff') !== '1') return; } catch(e) { return; }
+  /* ★2026-10-26 まるちゃん決定：インスタの広告の入口（?ig=名札）から来た人も記録する（この入口だけ足した） */
+  if (!IG_AD){ try { if (sessionStorage.getItem('tt_liff') !== '1') return; } catch(e) { return; } }
   try{
     var u = SHOP_PIPE + '?action=hit&who=shopv'
       + '&role=' + encodeURIComponent(LANG + '.' + ttRoute())
@@ -4152,10 +4178,10 @@ function drawCode(){
   var shp = (curItem && curItem.now != null) ? yen(curItem.now + SHOPEE_OFF) : '';
   var note1 = '<div class="spnote">'
         + (isZH()
-           ? ('複製下方優惠代碼後前往蝦皮頁面，結帳時輸入，即可以本店LINE會員價'
+           ? ('複製下方優惠代碼後前往蝦皮頁面，結帳時輸入，即可以' + Z(memberLabel())
               + (nm ? '（<b>' + nm + '</b>）' : '') + '購買' + (shp ? '（蝦皮售價' + shp + '）' : '')
               + '。')
-           : ('下記の割引コードをコピーして、蝦皮のページに飛び、決済の時に入力すると当店LINE会員価格'
+           : ('下記の割引コードをコピーして、蝦皮のページに飛び、決済の時に入力すると' + memberLabel()
               + (nm ? '（<b>' + nm + '</b>）' : '') + 'で購入できます' + (shp ? '（蝦皮価格は' + shp + '）' : '')
               + '。'))
         /* ★2026-09-13 まるちゃん：「割引コード（150元割引）の入力方法はこちらになります。」の行は削除。
@@ -4182,7 +4208,13 @@ function drawCode(){
       : ('蝦皮のAPPにて、以下の手順で割引コードを入力すると、' + spNm + 'が'
          + yen(SHOPEE_OFF) + '割引され、<b>' + spNow
          + '</b>でご購入いただけます（蝦皮価格は' + spShp + '）');
-    h += '<div class="spgttl">' + Z('割引コードの入力方法') + '</div>'
+    /* ★2026-10-20 まるちゃん：見出しに商品名と「蝦皮の値段→会員価格」を入れる。
+       値段は書き写さず、会員価格（now）と割引額（SHOPEE_OFF）から毎回出す。 */
+    var gttl = (spNm && spShp && spNow)
+      ? (isZH() ? (spNm + ' 從 ' + spShp + ' → ' + spNow + ' 的優惠代碼輸入方式')
+                : (spNm + ' が ' + spShp + ' → ' + spNow + ' になる割引コードの入力方法'))
+      : Z('割引コードの入力方法');
+    h += '<div class="spgttl">' + gttl + '</div>'
        /* ★2026-09-14 まるちゃん：「蝦皮のAPPにて、以下の手順で…」の説明文は削除 */
        /* ★2026-09-14 まるちゃん：割引コードは「お支払いの時」に入れてもらう（蝦皮の公式の手引きに
           「先に券を受け取っていなくても、支払い画面で割引コードを手で入力できる」とある）。
@@ -4199,7 +4231,7 @@ function drawCode(){
        /* ★2026-09-14 まるちゃん：下の方は見出しを出さず、文を「上記の手順で」の言い方に変える */
        + '<div class="spagain"><div class="spnote">'
        + Z('下記の割引コードをコピーして、蝦皮のページに飛び、上記の手順でコードを入力すると')
-       + Z('当店LINE会員価格') + (nm ? '（<b>' + nm + '</b>）' : '') + Z('で購入できます。')
+       + Z(memberLabel()) + (nm ? '（<b>' + nm + '</b>）' : '') + Z('で購入できます。')
        + '</div>' + codeBtn + '</div>';
   }
   box.innerHTML = h;
@@ -4697,6 +4729,33 @@ function ttResumeSave(){
     }));
   }catch(e){}
 }
+/* ★2026-10-26 まるちゃん決定：インスタの広告から来た人（住所に ?ig=名札）は、始まりの映像を飛ばして
+   No.31の「蝦皮でのご購入」の画面（割引コードの画面）をいきなり出す。作りは下の「言葉を切り替えた時」と同じ。
+   ★言葉を切り替えて来た時は、そちら（下）に任せる（切り替える前の画面を出し直すため）。
+   「← 前へ戻る」は今までどおり 郵送でのお受け取り → 受け取り方 → 商品 → 一覧 → トップ と1つずつ戻る。 */
+(function(){
+  if (!IG_AD_JUMP) return;
+  try{
+    var rs = JSON.parse(sessionStorage.getItem('tt_resume') || 'null');
+    if (rs && Date.now() - (rs.t || 0) <= 60000 && rs.v && rs.v !== 'home') return;
+  }catch(e){}
+  try{
+    var f = findItem(IG_AD_ITEM);
+    if (!f || !(f.it.shopee || SHOPEE)) return;     /* 蝦皮の住所が無い時は、ふつうのトップのまま */
+    openTimers.forEach(clearTimeout); openTimers = [];
+    openingEl.classList.add('gone', 'off');          /* 始まりの白い瓶の画面は出さない */
+    openItem(f.cat, IG_AD_ITEM);
+    wayAsked = true;
+    setStep(6);
+    setTimeout(function(){ try{ fitAll(); }catch(e){} }, 50);
+    /* 始まりの映像を飛ばしたので、あとで「前へ戻る」でトップへ戻った時に映像を始める（1回だけ） */
+    var _shI = show, filmStartedI = false;
+    show = function(w){
+      _shI(w);
+      if (w === 'home' && !filmStartedI){ filmStartedI = true; try{ playIntro(true); }catch(e){} }
+    };
+  }catch(e){}
+})();
 (function(){
   var s = null;
   try{ s = JSON.parse(sessionStorage.getItem('tt_resume') || 'null'); sessionStorage.removeItem('tt_resume'); }catch(e){}
