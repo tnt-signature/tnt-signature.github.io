@@ -1961,6 +1961,7 @@ var IG_AD = (function(){
   try{ return sessionStorage.getItem('tt_ig') || ''; }catch(e){ return ''; }
 })();
 var IG_AD_ITEM = 'jojoba_no31';   /* 広告で売る商品（蝦皮で買えるのは今No.31だけ） */
+var IG_AD_LANDING = false;        /* 広告から入って最初に開いた画面にいる間だけ true（「前へ戻る」を出さない・2026-10-27） */
 /* 会員価格の呼び名は、ここ1か所で決める（画面ごとに書き分けない） */
 function memberLabel(){ return IG_AD ? '当店インスタグラム会員価格' : '当店LINE会員価格'; }
 function lbNow(it){
@@ -3797,6 +3798,10 @@ function orderPingWait(){
    ・窓口は1項目20〜40字までしか受けないので短く詰める（device＝人の番号／role＝言葉.入口／view＝出来事）。
    ・確かめ用（ttdebug=1）の時は送らない。名前は受け取らない（許可の画面を増やさない・まるちゃん了承）。 */
 var TT_SUB = '', TT_CTX = '', TT_Q = [], TT_READY = false, TT_LAST = '';
+/* ★2026-10-26：確かめ用の印（ttdebug=1）は、ここで先に読む。
+   前は下の LIFF の所で読んでいたため、開いた直後に送る「open」「ld…」の時はまだ読めておらず、
+   確かめのつもりが本物の記録に入っていた（インスタ広告の入口を確かめた時に見つかった）。 */
+var TT_DBG = /[?&]ttdebug=1/.test(location.search);
 function ttVid(){
   if (TT_SUB) return TT_SUB;
   var v = '';
@@ -3956,7 +3961,7 @@ var LIFF_ID = "2011645873-ptEzpnsI";
 var LIFF_SEND = false;   /* true＝押した瞬間に送れる状態（お店とのトークから開いた） */
 /* ★2026-09-18 確かめ用：住所に ttdebug=1 が付いている時だけ、画面の下に途中の様子を出す（お客様には出ない）。
    専用リンクなら https://liff.line.me/<ID>/signature.html?ttdebug=1 で開く。 */
-var TT_DBG = /[?&]ttdebug=1/.test(location.search);
+/* TT_DBG は上の TT_SUB の所で読んでいる（2026-10-26 前へ動かした） */
 function ttDbg(m){
   if (!TT_DBG) return;
   try{
@@ -4572,11 +4577,29 @@ function setStep(n){
   try { langSwSync(); } catch(e) {}  /* 言葉の切り替えは商品詳細（段0）まで。先へ進んだら消す（2026-09-20 まるちゃん） */
   try { ttScrSync(); } catch(e) {}   /* ショップ履歴：段ごとの秒数 */
   if (n > 0) ttTrack('s' + n);   /* ショップ履歴：どこまで進んだか（1受け取り方 2本数 3お支払い 4ご確認 5郵送） */
-  document.getElementById('stepItem').style.display = (n===0) ? 'block' : 'none';
+  /* ★2026-10-27 まるちゃん決定：インスタの広告から来た人の割引コードの画面（6）は、上に商品の詳しい画面
+     （写真・名前・値段・説明・秘密と使い方のボタン）を出し、そのすぐ下に「蝦皮でのご購入」を続ける。
+     ①上の小さな写真・名前・値段の行は出さない（同じことが2回になる）
+     ②「◯◯を購入する」ボタンは出さない（下へ進めば蝦皮で買う案内が続く）
+     ③詳しい部分は今までどおり1画面ぶんに収まる大きさ（下へ送ると割引コードが出てくる）。
+     ふつうの入口から来た人は今までどおり（6の上には何も足さない）。 */
+  var adTop = !!(IG_AD && n === 6);
+  document.getElementById('stepItem').style.display = (n===0 || adTop) ? 'block' : 'none';
+  document.getElementById('buyStart').parentNode.style.display = adTop ? 'none' : '';
+  /* ★2026-10-27 まるちゃん「いちばんうえのもどるはいらないし、とっぷでしょ？そこのくうはくつめて」：
+     広告から来た人にはここが一番上の画面なので「← 前へ戻る」の並びごと出さない（その分の空白も消える） */
+  /*   ただし隠すのは「広告から入って最初に開いた画面」の間だけ。中を見て回って同じ画面に来た時は今までどおり出す。 */
+  if (n !== 6) IG_AD_LANDING = false;
+  document.getElementById('backRow').style.display = (adTop && IG_AD_LANDING) ? 'none' : '';
+  /* 上の詳しい部分と「蝦皮でのご購入」の間に余白と細い線（値段の下の線と同じ色）を入れる＝くっついて見えないように */
+  var sc = document.getElementById('stepCode');
+  sc.style.marginTop  = adTop ? '30px' : '';
+  sc.style.paddingTop = adTop ? '26px' : '';
+  sc.style.borderTop  = adTop ? '1px solid rgba(201,171,115,.28)' : '';   /* 説明の上の線（body.dark .dbody）と同じ色 */
   /* flex＝左に写真・右に名前と金額を横に並べる（block だと写真が上に乗ってしまう）
      ★ご確認の画面（4）では出さない。下のご注文内容の枠に同じことが全部書いてあるので、
        写真と名前をもう一度出すと同じ話が二度になり、1画面に収まらない（2026-09-06 まるちゃん） */
-  document.getElementById('stepHead').style.display = (n===0 || n===4) ? 'none'  : 'flex';
+  document.getElementById('stepHead').style.display = (n===0 || n===4 || adTop) ? 'none'  : 'flex';
   document.getElementById('stepWay').style.display  = (n===1) ? 'block' : 'none';
   /* 郵送で送れない商品（蝦皮の住所が無い）は「郵送で受け取る」を出さない（2026-09-14 まるちゃん） */
   document.getElementById('buyNet').style.display = (NET_ON && shopeeUrl()) ? '' : 'none';
@@ -4677,6 +4700,9 @@ back.onclick = function(){
     if (skipNext){ skipNext = false; return; }
     if (!guarded) return;
     guarded = false;
+    /* ★2026-10-27：広告から来た人の一番上の画面（割引コードの画面）では、スマホの戻るで前の画面へ行かず
+       そのままページを離れる（インスタへ戻る）。この画面には「前へ戻る」を出していないので、それに合わせる。 */
+    if (IG_AD_LANDING && payStep === 6){ try { history.back(); } catch(e){} return; }
     back.onclick();
     arm();
   });
@@ -4739,6 +4765,7 @@ function ttResumeSave(){
     openingEl.classList.add('gone', 'off');          /* 始まりの白い瓶の画面は出さない */
     openItem(f.cat, IG_AD_ITEM);
     wayAsked = true;
+    IG_AD_LANDING = true;
     setStep(6);
     setTimeout(function(){ try{ fitAll(); }catch(e){} }, 50);
     /* 始まりの映像を飛ばしたので、あとで「前へ戻る」でトップへ戻った時に映像を始める（1回だけ） */
