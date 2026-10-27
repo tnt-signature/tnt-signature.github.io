@@ -1730,6 +1730,7 @@ var ZH = {
   "日本価格":"日本售價",
   "当店価格":"本店價格",
   "当店LINE会員価格":"本店LINE會員價",
+  "当店インスタグラム会員価格":"本店Instagram會員價",   /* インスタの広告から来た人（2026-10-26 まるちゃん） */
   "通常価格":"原價",
   "単品で買うと":"單買合計",
   "1本だけ 250元":"單支 250元",
@@ -1951,6 +1952,28 @@ var SHOPEE = "";   /* ★2026-09-14 まるちゃん：郵送で送れるのは�
      その時は 7.5折の TAKY0025（330元引き）へ戻すこと。この2行を書き換えて出し直す。 */
 var SHOPEE_CODE = "TAKY0034";
 var SHOPEE_OFF  = 510;
+
+/* ★2026-10-26 まるちゃん決定：インスタの広告から来た人の入口（ig.html＝日本語／igch.html＝中国語）。
+   住所に ?ig=<広告の名札> が付いて来た時だけ「広告から来た人」とみなして、
+   ①始まりの映像を飛ばし、No.31の「蝦皮でのご購入」の画面（割引コードの画面）をいきなり出す
+   ②値段の呼び名を「当店LINE会員価格」→「当店インスタグラム会員価格」（中国語＝本店Instagram會員價）にする
+   ③ショップ履歴に「インスタ広告（名札）」として残す（9/20の「LINEの2つの入口だけ記録」の決まりに、この入口だけ足した）。
+   名札＝jp（日本人IG）／twf（台湾女性IG）／twm（台湾男性IG）。英小文字・数字・_ だけ・20字まで。
+   名札は同じタブの間だけ覚える（言葉を切り替えても広告から来た人のまま）。
+   ふつうの入口（signature.html 等）から来た人には何も変わらない。 */
+var IG_AD_JUMP = /[?&]ig=[a-z0-9_]{1,20}(&|$)/.test(location.search);   /* 住所に名札がある＝いきなり割引コードの画面へ */
+var IG_AD = (function(){
+  var m = /[?&]ig=([a-z0-9_]{1,20})(&|$)/.exec(location.search);
+  if (m){ try{ sessionStorage.setItem('tt_ig', m[1]); }catch(e){} return m[1]; }
+  try{ return sessionStorage.getItem('tt_ig') || ''; }catch(e){ return ''; }
+})();
+var IG_AD_ITEM = 'jojoba_no31';   /* 広告で売る商品（蝦皮で買えるのは今No.31だけ） */
+/* 会員価格の呼び名は、ここ1か所で決める（画面ごとに書き分けない） */
+function memberLabel(){ return IG_AD ? '当店インスタグラム会員価格' : '当店LINE会員価格'; }
+function lbNow(it){
+  var l = (it && it.lb_now) || '当店価格';
+  return (l === '当店LINE会員価格') ? memberLabel() : l;
+}
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
 var IMG_SHOPEE_GUIDE = "img/spguide-cbd11314e8.jpg";
 
@@ -3577,7 +3600,7 @@ function drawPrice(){
       : '')
     +
     (now!=null
-      ? '<div class="pc"><div class="lb">' + (it.lb_now || '当店価格') + '</div>'
+      ? '<div class="pc"><div class="lb">' + lbNow(it) + '</div>'
         + '<div class="now">' + yen(now) + '</div></div>'
       : '<div class="pc"><div class="now" style="color:#b4544f;font-size:22px">値段 未定</div></div>');
 }
@@ -3589,7 +3612,7 @@ function drawSizes(){
   /* 棒1本の中身＝［大きさ］［日本価格（線を引いた小さい字）］［当店価格（大きい字）］
      （2026-09-06 まるちゃん「棒の中に全部入れる」）。ここに全部あるので上の値段は出さない。 */
   var lbW = it.lb_was || '日本価格';
-  var lbN = it.lb_now || '当店価格';
+  var lbN = lbNow(it);
   box.innerHTML = it.sizes.map(function(v, i){
     return '<button type="button" class="' + (i===curSize?'on':'') + '" data-i="' + i + '">'
          + '<span class="n">' + esc(v.nm) + '</span>'
@@ -3781,6 +3804,10 @@ function orderPingWait(){
    ・窓口は1項目20〜40字までしか受けないので短く詰める（device＝人の番号／role＝言葉.入口／view＝出来事）。
    ・確かめ用（ttdebug=1）の時は送らない。名前は受け取らない（許可の画面を増やさない・まるちゃん了承）。 */
 var TT_SUB = '', TT_CTX = '', TT_Q = [], TT_READY = false, TT_LAST = '';
+/* ★2026-10-26：確かめ用の印（ttdebug=1）は、ここで先に読む。
+   前は下の LIFF の所で読んでいたため、開いた直後に送る「open」「ld…」の時はまだ読めておらず、
+   確かめのつもりが本物の記録に入っていた（インスタ広告の入口を確かめた時に見つかった）。 */
+var TT_DBG = /[?&]ttdebug=1/.test(location.search);
 function ttVid(){
   if (TT_SUB) return TT_SUB;
   var v = '';
@@ -3792,6 +3819,8 @@ function ttVid(){
 }
 function ttRoute(){
   var ua = navigator.userAgent || '';
+  /* ★2026-10-26：インスタの広告から来た人は、どの広告か（名札）まで分かるので一番はっきりした入口として返す */
+  if (IG_AD) return 'igad_' + IG_AD;
   if (TT_CTX === 'utou'){                                    /* お店とのトーク */
     /* ★2026-09-19：リッチメニューの住所には印（from=rm）が付けてある＝入口の係が覚えた印で見分ける */
     var rm = /[?&]from=rm(&|$)/.test(location.search);
@@ -3813,7 +3842,8 @@ function ttSend(ev){
   if (!/^https?:$/.test(location.protocol) || String(LANG).charAt(0) === '@') return;
   /* ★2026-09-20 まるちゃん決定：お客様が入れるのは「リッチメニュー」と「公式LINEの長いリンク（専用ページ）」の2つだけ。
      それ以外（ふつうの閲覧アプリ・短いリンク・機械の巡回）は記録しない。どちらも入口を通るので、その印で見分ける。 */
-  try { if (sessionStorage.getItem('tt_liff') !== '1') return; } catch(e) { return; }
+  /* ★2026-10-26 まるちゃん決定：インスタの広告の入口（?ig=名札）から来た人も記録する（この入口だけ足した） */
+  if (!IG_AD){ try { if (sessionStorage.getItem('tt_liff') !== '1') return; } catch(e) { return; } }
   try{
     var u = SHOP_PIPE + '?action=hit&who=shopv'
       + '&role=' + encodeURIComponent(LANG + '.' + ttRoute())
@@ -3937,7 +3967,7 @@ var LIFF_ID = "2011645873-ptEzpnsI";
 var LIFF_SEND = false;   /* true＝押した瞬間に送れる状態（お店とのトークから開いた） */
 /* ★2026-09-18 確かめ用：住所に ttdebug=1 が付いている時だけ、画面の下に途中の様子を出す（お客様には出ない）。
    専用リンクなら https://liff.line.me/<ID>/signature.html?ttdebug=1 で開く。 */
-var TT_DBG = /[?&]ttdebug=1/.test(location.search);
+/* TT_DBG は上の TT_SUB の所で読んでいる（2026-10-26 前へ動かした） */
 function ttDbg(m){
   if (!TT_DBG) return;
   try{
@@ -4152,10 +4182,10 @@ function drawCode(){
   var shp = (curItem && curItem.now != null) ? yen(curItem.now + SHOPEE_OFF) : '';
   var note1 = '<div class="spnote">'
         + (isZH()
-           ? ('複製下方優惠代碼後前往蝦皮頁面，結帳時輸入，即可以本店LINE會員價'
+           ? ('複製下方優惠代碼後前往蝦皮頁面，結帳時輸入，即可以' + Z(memberLabel())
               + (nm ? '（<b>' + nm + '</b>）' : '') + '購買' + (shp ? '（蝦皮售價' + shp + '）' : '')
               + '。')
-           : ('下記の割引コードをコピーして、蝦皮のページに飛び、決済の時に入力すると当店LINE会員価格'
+           : ('下記の割引コードをコピーして、蝦皮のページに飛び、決済の時に入力すると' + memberLabel()
               + (nm ? '（<b>' + nm + '</b>）' : '') + 'で購入できます' + (shp ? '（蝦皮価格は' + shp + '）' : '')
               + '。'))
         /* ★2026-09-13 まるちゃん：「割引コード（150元割引）の入力方法はこちらになります。」の行は削除。
@@ -4205,7 +4235,7 @@ function drawCode(){
        /* ★2026-09-14 まるちゃん：下の方は見出しを出さず、文を「上記の手順で」の言い方に変える */
        + '<div class="spagain"><div class="spnote">'
        + Z('下記の割引コードをコピーして、蝦皮のページに飛び、上記の手順でコードを入力すると')
-       + Z('当店LINE会員価格') + (nm ? '（<b>' + nm + '</b>）' : '') + Z('で購入できます。')
+       + Z(memberLabel()) + (nm ? '（<b>' + nm + '</b>）' : '') + Z('で購入できます。')
        + '</div>' + codeBtn + '</div>';
   }
   box.innerHTML = h;
@@ -4553,11 +4583,24 @@ function setStep(n){
   try { langSwSync(); } catch(e) {}  /* 言葉の切り替えは商品詳細（段0）まで。先へ進んだら消す（2026-09-20 まるちゃん） */
   try { ttScrSync(); } catch(e) {}   /* ショップ履歴：段ごとの秒数 */
   if (n > 0) ttTrack('s' + n);   /* ショップ履歴：どこまで進んだか（1受け取り方 2本数 3お支払い 4ご確認 5郵送） */
-  document.getElementById('stepItem').style.display = (n===0) ? 'block' : 'none';
+  /* ★2026-10-27 まるちゃん決定：インスタの広告から来た人の割引コードの画面（6）は、上に商品の詳しい画面
+     （写真・名前・値段・説明・秘密と使い方のボタン）を出し、そのすぐ下に「蝦皮でのご購入」を続ける。
+     ①上の小さな写真・名前・値段の行は出さない（同じことが2回になる）
+     ②「◯◯を購入する」ボタンは出さない（下へ進めば蝦皮で買う案内が続く）
+     ③詳しい部分は今までどおり1画面ぶんに収まる大きさ（下へ送ると割引コードが出てくる）。
+     ふつうの入口から来た人は今までどおり（6の上には何も足さない）。 */
+  var adTop = !!(IG_AD && n === 6);
+  document.getElementById('stepItem').style.display = (n===0 || adTop) ? 'block' : 'none';
+  document.getElementById('buyStart').parentNode.style.display = adTop ? 'none' : '';
+  /* 上の詳しい部分と「蝦皮でのご購入」の間に余白と細い線（値段の下の線と同じ色）を入れる＝くっついて見えないように */
+  var sc = document.getElementById('stepCode');
+  sc.style.marginTop  = adTop ? '30px' : '';
+  sc.style.paddingTop = adTop ? '26px' : '';
+  sc.style.borderTop  = adTop ? '1px solid rgba(201,171,115,.28)' : '';   /* 説明の上の線（body.dark .dbody）と同じ色 */
   /* flex＝左に写真・右に名前と金額を横に並べる（block だと写真が上に乗ってしまう）
      ★ご確認の画面（4）では出さない。下のご注文内容の枠に同じことが全部書いてあるので、
        写真と名前をもう一度出すと同じ話が二度になり、1画面に収まらない（2026-09-06 まるちゃん） */
-  document.getElementById('stepHead').style.display = (n===0 || n===4) ? 'none'  : 'flex';
+  document.getElementById('stepHead').style.display = (n===0 || n===4 || adTop) ? 'none'  : 'flex';
   document.getElementById('stepWay').style.display  = (n===1) ? 'block' : 'none';
   /* 郵送で送れない商品（蝦皮の住所が無い）は「郵送で受け取る」を出さない（2026-09-14 まるちゃん） */
   document.getElementById('buyNet').style.display = (NET_ON && shopeeUrl()) ? '' : 'none';
@@ -4703,6 +4746,33 @@ function ttResumeSave(){
     }));
   }catch(e){}
 }
+/* ★2026-10-26 まるちゃん決定：インスタの広告から来た人（住所に ?ig=名札）は、始まりの映像を飛ばして
+   No.31の「蝦皮でのご購入」の画面（割引コードの画面）をいきなり出す。作りは下の「言葉を切り替えた時」と同じ。
+   ★言葉を切り替えて来た時は、そちら（下）に任せる（切り替える前の画面を出し直すため）。
+   「← 前へ戻る」は今までどおり 郵送でのお受け取り → 受け取り方 → 商品 → 一覧 → トップ と1つずつ戻る。 */
+(function(){
+  if (!IG_AD_JUMP) return;
+  try{
+    var rs = JSON.parse(sessionStorage.getItem('tt_resume') || 'null');
+    if (rs && Date.now() - (rs.t || 0) <= 60000 && rs.v && rs.v !== 'home') return;
+  }catch(e){}
+  try{
+    var f = findItem(IG_AD_ITEM);
+    if (!f || !(f.it.shopee || SHOPEE)) return;     /* 蝦皮の住所が無い時は、ふつうのトップのまま */
+    openTimers.forEach(clearTimeout); openTimers = [];
+    openingEl.classList.add('gone', 'off');          /* 始まりの白い瓶の画面は出さない */
+    openItem(f.cat, IG_AD_ITEM);
+    wayAsked = true;
+    setStep(6);
+    setTimeout(function(){ try{ fitAll(); }catch(e){} }, 50);
+    /* 始まりの映像を飛ばしたので、あとで「前へ戻る」でトップへ戻った時に映像を始める（1回だけ） */
+    var _shI = show, filmStartedI = false;
+    show = function(w){
+      _shI(w);
+      if (w === 'home' && !filmStartedI){ filmStartedI = true; try{ playIntro(true); }catch(e){} }
+    };
+  }catch(e){}
+})();
 (function(){
   var s = null;
   try{ s = JSON.parse(sessionStorage.getItem('tt_resume') || 'null'); sessionStorage.removeItem('tt_resume'); }catch(e){}
