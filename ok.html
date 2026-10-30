@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Taiwan Tomato</title>
+<!--
+  ★前日お知らせの「読んだか確認リンク」の行き先（2026-10-28 まるちゃん決定）。
+  ・お客様がリンクを押してこのページが開いたら、お店の窓口へ「押した」の合図を1つ飛ばす。
+    運ぶ道は商品ページと同じ鍵の要らない軽い記録（action=hit）。窓口（グーグル側）は無改修。
+    who=rdok で他の記録と分ける。view＝リンクごとの使い捨て番号（名前・番号は入れない）。
+  ・LINEはリンクを送っただけで中身を読みに行く。読みに行く機械はページの中の仕掛けを動かさないので、
+    合図は「画面が実際に表に出てから」だけ飛ばす（押していないのに押した扱いにしないため）。
+  ・置き場所＝tnt-signature.github.io/ok.html（公開は試し送りの時。それまでは手元のこの1枚が正本）。
+-->
+<style>
+:root{--bg:#f6f7f8;--card:#fff;--ink:#1f2937;--sub:#6b7280;--teal:#2C7A99}
+@media (prefers-color-scheme:dark){:root{--bg:#111418;--card:#1b2026;--ink:#e5e7eb;--sub:#9ca3af}}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","PingFang TC","Noto Sans TC","Noto Sans JP",sans-serif}
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;box-sizing:border-box}
+.card{background:var(--card);border-radius:20px;padding:36px 24px;max-width:420px;width:100%;text-align:center;
+  box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.mark{width:72px;height:72px;border-radius:50%;background:var(--teal);color:#fff;font-size:40px;line-height:72px;margin:0 auto 18px}
+h1{font-size:22px;margin:0 0 12px;line-height:1.5}
+p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+  <div class="mark">✓</div>
+  <h1 id="t"></h1>
+  <p id="s"></p>
+</div></div>
+<script>
+(function(){
+  var q = location.search;
+  function arg(n){ var m = new RegExp('[?&]' + n + '=([^&]*)').exec(q); return m ? decodeURIComponent(m[1]) : ''; }
+  var k = arg('k').replace(/[^a-z0-9]/g, '').slice(0, 20);
+  var l = arg('l');
+  var T = {
+    ja: ['ご確認ありがとうございます', 'ご来店を心よりお待ちしております。<br>このページは閉じていただいて大丈夫です。'],
+    zh: ['感謝您的確認', '期待您的光臨！<br>此頁面可以直接關閉。'],
+    en: ['Thank you for confirming', 'We look forward to seeing you!<br>You may close this page.']
+  };
+  var w = T[l] || T.ja;
+  document.documentElement.lang = (l === 'zh') ? 'zh-Hant' : (l === 'en' ? 'en' : 'ja');
+  document.getElementById('t').innerHTML = w[0];
+  document.getElementById('s').innerHTML = w[1];
+
+  var PIPE = "https://script.google.com/macros/s/"
+    + "AKfycbzSxho3e4CHyAuoymGlzcVwGnLshGoCg53zY18laLrHMq5Cun_pBv8XgRsNxKMDxlKwUA/exec";
+  var sent = false;
+  function ping(){
+    if (sent || !k || document.visibilityState !== 'visible') return;
+    if (!/^https?:$/.test(location.protocol)) return;          /* 手元のファイルで開いた試しは送らない */
+    sent = true;
+    try{
+      fetch(PIPE + '?action=hit&who=rdok&device=page&role=' + encodeURIComponent((l || 'ja').slice(0, 5))
+            + '&view=' + encodeURIComponent(k),
+            { mode:'no-cors', cache:'no-store', keepalive:true }).catch(function(){ sent = false; });
+    }catch(e){ sent = false; }
+  }
+  /* 表に出てから少し待って1回だけ（読みに来ただけの機械や、裏で先読みされた時は飛ばない） */
+  setTimeout(ping, 400);
+  document.addEventListener('visibilitychange', function(){ setTimeout(ping, 400); });
+})();
+</script>
+</body>
+</html>
