@@ -1,18 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
-<meta name="description" content="T&amp;T SIGNATURE">
-<meta property="og:type" content="website">
-<meta property="og:title" content="T&amp;T SIGNATURE">
-<meta property="og:description" content="T&amp;T SIGNATURE">
-<meta property="og:url" content="https://tnt-signature.github.io/signaturech.html">
-<meta property="og:site_name" content="T&amp;T SIGNATURE">
-<meta name="twitter:card" content="summary">
 </head>
-<body style="margin:0"><title>T&amp;T SIGNATURE</title>
+<body style="margin:0">
+<script>window.__FILM_ONLY__=true;</script><title>T&amp;T SIGNATURE</title>
 <link rel="preload" as="image" fetchpriority="high" href="img/binw-9de5b69389.jpg">
 <link rel="preload" as="image" fetchpriority="high" href="img/binb-232f84d6c1.jpg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=EB+Garamond:ital,wght@1,400;1,500;1,600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Serif+JP:wght@200;300;500;600&display=swap">
@@ -942,14 +936,14 @@ body.dark .dhero.leadLight.hasLead::after{
 body.dark .dname{
   font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;
   font-weight:400;letter-spacing:.1em;color:#f5efe5;text-align:center;margin-top:10px;
-  white-space:nowrap;   /* 名前と（50ml）は1行のまま。入らない時は下の仕組みが字を詰める */
+  white-space:nowrap;   /* 名前と（40ml）は1行のまま。入らない時は下の仕組みが字を詰める */
 }
-/* 商品名の右に添える量（50ml）＝控えめに、名前より小さく淡く */
+/* 商品名の右に添える量（40ml）＝控えめに、名前より小さく淡く */
 body.dark .dname .u{
   font-size:.56em;letter-spacing:.04em;color:#cfc0a4;margin-left:.5em;
 }
 body.dark .dsub{
-  /* 量（50ml など）は白（2026-09-03 まるちゃん） */
+  /* 量（40ml など）は白（2026-09-03 まるちゃん） */
   font-family:"EB Garamond",serif;font-style:italic;color:#f5efe5;
   text-align:center;margin-top:8px;letter-spacing:.06em;
 }
@@ -1443,6 +1437,22 @@ body.dark .todoline{color:#a2947f}
   margin:16px 0 0;border:1px dashed #c9b48c;border-radius:14px;
   background:#fffaf0;padding:13px 16px;font-size:12.5px;color:#8a7444;line-height:1.8;
 }
+
+/* ★見せる用：下の見出しとボタンを隠して、上の映像だけにする */
+.homelower{display:none !important}
+#viewHome{justify-content:center}
+/* ★映像だけの版は「正方形のまま、いちばん大きく」出す（2026-09-02 まるちゃん）。
+   スマホ用の写真は正方形なので、入れ物の四角ぜんぶを写真で埋める。
+   パソコンでは高さいっぱいの正方形になり、左右に黒い余白ができる。 */
+html,body{background:#000}
+.wrap{max-width:none;padding:0;min-height:100dvh;
+      display:flex;align-items:center;justify-content:center}
+#viewHome{flex:none;width:min(100vw,100dvh)}
+.hero{width:100%;margin-left:0;margin-right:0;aspect-ratio:1/1}
+@media (min-width:780px){ .hero{aspect-ratio:1/1} }
+/* ★正方形の写真を使うので、字の置き方もスマホと同じ右そろえにする（2026-09-10） */
+.cap .ja4{align-items:flex-end}
+.cap .side{align-self:flex-end;align-items:flex-end}
 </style>
 <div class="wrap">
   <!-- 日本語のお客様向けのページなので、中国語は付けない（2026-09-02 まるちゃん） -->
@@ -1659,7 +1669,7 @@ body.dark .todoline{color:#a2947f}
      ・「朋友」は永久に使わない（まるちゃん厳命2026-09-02）
      ・VIOは女性向けなので 私密處
      ・リンクは中国語版があるものに差し替える                                    */
-var LANG = "zh";
+var LANG = "ja";
 function isZH(){ return LANG === "zh"; }
 
 var ZH = {
@@ -1848,7 +1858,7 @@ var ZH = {
   "USDA（米国農務省）オーガニック認証":"USDA（美國農業部）有機認證",
   "台湾の化粧品安全基準（PIF）に適合":"符合台灣化粧品PIF規範",
   "VIO保湿美容オイルとVIO専用泡ソープのセットです。":"私密處保濕美容油與私密處專用泡沫皂的組合。",
-  "50ml":"50ml"
+  "40ml":"40ml"
 };
 
 /* 日本語の文を、中国語版なら中国語にして返す（対応表に無ければそのまま） */
@@ -1968,6 +1978,7 @@ var IG_AD = (function(){
   try{ return sessionStorage.getItem('tt_ig') || ''; }catch(e){ return ''; }
 })();
 var IG_AD_ITEM = 'jojoba_no31';   /* 広告で売る商品（蝦皮で買えるのは今No.31だけ） */
+var IG_AD_LANDING = false;        /* 広告から入って最初に開いた画面にいる間だけ true（「前へ戻る」を出さない・2026-10-27） */
 /* 会員価格の呼び名は、ここ1か所で決める（画面ごとに書き分けない） */
 function memberLabel(){ return IG_AD ? '当店インスタグラム会員価格' : '当店LINE会員価格'; }
 function lbNow(it){
@@ -1975,7 +1986,7 @@ function lbNow(it){
   return (l === '当店LINE会員価格') ? memberLabel() : l;
 }
 /* 割引コードの入れ方＝蝦皮の公式の案内にある4つの手順を2×2に並べた1枚 */
-var IMG_SHOPEE_GUIDE = "img/spguide-030f9fdada.jpg";
+var IMG_SHOPEE_GUIDE = "img/spguide-cbd11314e8.jpg";
 
 /* ★お支払いの「行き先」＝お店のQRコードの中身（読み取ると出てくる http… の文字）。
    押すとそのお支払いのアプリが直接ひらくので、カメラでQRを写す必要がない
@@ -2002,7 +2013,7 @@ var BANK = { bank:"中國信託銀行", code:"822", number:"347540289303", holde
    （お店からの返信を待たない＝その場でお支払いに進める）。
    文はお店の決まりの1か所（お支払い案内文.py）から、このページを作る時に写している。
    ★金額の所は差し込み口のままなので、送る時に本当の合計へ差し替える。 */
-var PAYTEXT = {"linepay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼LINE Pay 付款連結\nhttps://bit.ly/TTLinePay\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送付款完成的截圖給我們", "jkopay": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼街口支付 付款連結\nhttps://bit.ly/TTJkoPay\n\n①請點開上方連結，輸入應付金額完成付款\n\n②完成後，請傳送付款完成的截圖給我們", "bank": "感謝您的訂購！應付金額如下😊\n\n【〔金額〕元】\n\n▼匯款帳號\n中國信託銀行／銀行代號 822／帳號 347540289303\n\n①請將應付金額匯至上方帳戶\n\n②完成後，請傳送付款完成的截圖，或告知我們您匯款帳號的末五碼"};
+var PAYTEXT = {"linepay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼LINE Payのお支払リンク\nhttps://bit.ly/TTLinePay\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、支払い完了のスクショを送ってください", "jkopay": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼街口支付のお支払リンク\nhttps://bit.ly/TTJkoPay\n\n①上のリンクを開き、お支払い金額をご入力のうえ、決済をお願いいたします\n\n②完了後、支払い完了のスクショを送ってください", "bank": "ご注文ありがとうございます！お支払い金額は次の通りです😊\n\n【〔金額〕元】\n\n▼お振込先\n中國信託銀行／銀行代號 822／口座番号 347540289303\n\n①上のお振込先に、お支払い金額をお振込みください\n\n②完了後、支払い完了のスクショ又は、お振込み口座番号の下5桁をお知らせください"};
 var PAYKANE = "〔金額〕";
 
 var PAYWAYS = [
@@ -2252,9 +2263,10 @@ var DATA = {
       { id:"jojoba_no31", img:"NO31",
         shopee:"https://shopee.tw/%E8%8D%B7%E8%8D%B7%E8%8A%AD%E7%B2%BE%E8%8F%AF+No.31-i.135867224.55217718557",   /* 郵送＝蝦皮で送れる商品（2026-09-14） */
         nm:"ホホバエッセンス No.31", nm_zh:"荷荷芭精華 No.31",
-        sub:"50ml",
-        /* 詳しい画面では商品名の右に（50ml）と小さく添える（2026-09-03 まるちゃん） */
-        unit:"50ml",
+        sub:"40ml",
+        /* 詳しい画面では商品名の右に（40ml）と小さく添える（2026-09-03 まるちゃん。
+           ★2026-10-30 まるちゃん指示で 50ml → 40ml に変更。蝦皮の商品名も同時に直した） */
+        unit:"40ml",
         one:"TaiwanTomato のオリジナル。ホホバの美容エッセンス。",
         /* 写真の中に白い字で重ねる一言（映像の最後の言葉・4行・2026-09-03 まるちゃん）*/
         lead:["１５０万の中から", "選ばれし", "真の最高峰を", "あなたの肌に"],
@@ -3683,7 +3695,7 @@ function openItem(cat, id){
       + '<span class="bk">💧</span>' + esc(Z(use.t)) + '<span class="ar">›</span></a>';
     ds.style.display = '';
   }
-  /* 商品名。量（50ml）がある商品は、その右に小さく添える */
+  /* 商品名。量（40ml）がある商品は、その右に小さく添える */
   document.getElementById('dname').innerHTML =
       '<span class="nm">' + esc(it.nm) + '</span>'
     + (it.unit ? '<span class="u">（' + esc(it.unit) + '）</span>' : '');
@@ -4583,11 +4595,29 @@ function setStep(n){
   try { langSwSync(); } catch(e) {}  /* 言葉の切り替えは商品詳細（段0）まで。先へ進んだら消す（2026-09-20 まるちゃん） */
   try { ttScrSync(); } catch(e) {}   /* ショップ履歴：段ごとの秒数 */
   if (n > 0) ttTrack('s' + n);   /* ショップ履歴：どこまで進んだか（1受け取り方 2本数 3お支払い 4ご確認 5郵送） */
-  document.getElementById('stepItem').style.display = (n===0) ? 'block' : 'none';
+  /* ★2026-10-27 まるちゃん決定：インスタの広告から来た人の割引コードの画面（6）は、上に商品の詳しい画面
+     （写真・名前・値段・説明・秘密と使い方のボタン）を出し、そのすぐ下に「蝦皮でのご購入」を続ける。
+     ①上の小さな写真・名前・値段の行は出さない（同じことが2回になる）
+     ②「◯◯を購入する」ボタンは出さない（下へ進めば蝦皮で買う案内が続く）
+     ③詳しい部分は今までどおり1画面ぶんに収まる大きさ（下へ送ると割引コードが出てくる）。
+     ふつうの入口から来た人は今までどおり（6の上には何も足さない）。 */
+  var adTop = !!(IG_AD && n === 6);
+  document.getElementById('stepItem').style.display = (n===0 || adTop) ? 'block' : 'none';
+  document.getElementById('buyStart').parentNode.style.display = adTop ? 'none' : '';
+  /* ★2026-10-27 まるちゃん「いちばんうえのもどるはいらないし、とっぷでしょ？そこのくうはくつめて」：
+     広告から来た人にはここが一番上の画面なので「← 前へ戻る」の並びごと出さない（その分の空白も消える） */
+  /*   ただし隠すのは「広告から入って最初に開いた画面」の間だけ。中を見て回って同じ画面に来た時は今までどおり出す。 */
+  if (n !== 6) IG_AD_LANDING = false;
+  document.getElementById('backRow').style.display = (adTop && IG_AD_LANDING) ? 'none' : '';
+  /* 上の詳しい部分と「蝦皮でのご購入」の間に余白と細い線（値段の下の線と同じ色）を入れる＝くっついて見えないように */
+  var sc = document.getElementById('stepCode');
+  sc.style.marginTop  = adTop ? '30px' : '';
+  sc.style.paddingTop = adTop ? '26px' : '';
+  sc.style.borderTop  = adTop ? '1px solid rgba(201,171,115,.28)' : '';   /* 説明の上の線（body.dark .dbody）と同じ色 */
   /* flex＝左に写真・右に名前と金額を横に並べる（block だと写真が上に乗ってしまう）
      ★ご確認の画面（4）では出さない。下のご注文内容の枠に同じことが全部書いてあるので、
        写真と名前をもう一度出すと同じ話が二度になり、1画面に収まらない（2026-09-06 まるちゃん） */
-  document.getElementById('stepHead').style.display = (n===0 || n===4) ? 'none'  : 'flex';
+  document.getElementById('stepHead').style.display = (n===0 || n===4 || adTop) ? 'none'  : 'flex';
   document.getElementById('stepWay').style.display  = (n===1) ? 'block' : 'none';
   /* 郵送で送れない商品（蝦皮の住所が無い）は「郵送で受け取る」を出さない（2026-09-14 まるちゃん） */
   document.getElementById('buyNet').style.display = (NET_ON && shopeeUrl()) ? '' : 'none';
@@ -4688,6 +4718,9 @@ back.onclick = function(){
     if (skipNext){ skipNext = false; return; }
     if (!guarded) return;
     guarded = false;
+    /* ★2026-10-27：広告から来た人の一番上の画面（割引コードの画面）では、スマホの戻るで前の画面へ行かず
+       そのままページを離れる（インスタへ戻る）。この画面には「前へ戻る」を出していないので、それに合わせる。 */
+    if (IG_AD_LANDING && payStep === 6){ try { history.back(); } catch(e){} return; }
     back.onclick();
     arm();
   });
@@ -4750,6 +4783,7 @@ function ttResumeSave(){
     openingEl.classList.add('gone', 'off');          /* 始まりの白い瓶の画面は出さない */
     openItem(f.cat, IG_AD_ITEM);
     wayAsked = true;
+    IG_AD_LANDING = true;
     setStep(6);
     setTimeout(function(){ try{ fitAll(); }catch(e){} }, 50);
     /* 始まりの映像を飛ばしたので、あとで「前へ戻る」でトップへ戻った時に映像を始める（1回だけ） */
@@ -4795,5 +4829,6 @@ function ttResumeSave(){
   }catch(e){}
 })();
 </script>
+
 
 </body></html>
