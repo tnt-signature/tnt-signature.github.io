@@ -26,6 +26,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);
 .mark{width:72px;height:72px;border-radius:50%;background:var(--teal);color:#fff;font-size:40px;line-height:72px;margin:0 auto 18px}
 h1{font-size:22px;margin:0 0 12px;line-height:1.5}
 p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
+.nb{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -44,9 +45,10 @@ p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
   if (!k && m2) { k = m2[1]; l = m2[2] || 'ja'; }
   k = (k || '').replace(/[^a-z0-9]/g, '').slice(0, 20);
   var T = {
-    ja: ['ご確認ありがとうございます', 'ご来店を心よりお待ちしております！<br>このページは閉じていただいて大丈夫です🙇'],
-    zh: ['感謝您的確認', '期待您的光臨！<br>此頁面可以直接關閉。'],
-    en: ['Thank you for confirming', 'We look forward to seeing you!<br>You may close this page.']
+    /* ★最後のひとかたまり（nb）は途中で折り返さない＝「す🙇」だけ次の行に落ちないように（2026-11-03） */
+    ja: ['ご確認ありがとうございます', 'ご来店を心よりお待ちしております！<br>このページは閉じていただいて<span class="nb">大丈夫です🙇</span>'],
+    zh: ['感謝您的確認', '期待您的光臨！<br>此頁面可以<span class="nb">直接關閉🙇</span>'],
+    en: ['Thank you for confirming', 'We look forward to seeing you!<br>You may close this <span class="nb">page now🙇</span>']
   };
   var w = T[l] || T.ja;
   document.documentElement.lang = (l === 'zh') ? 'zh-Hant' : (l === 'en' ? 'en' : 'ja');
