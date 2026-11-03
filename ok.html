@@ -28,7 +28,7 @@ h1{font-size:22px;margin:0 0 12px;line-height:1.5}
 p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
 .nb{white-space:nowrap}
 /* 土曜・台湾祝日のご予約の方だけに出す「ご来店時間のお願い」（2026-11-03 まるちゃん） */
-.busy{display:none;margin-top:20px;padding:14px 16px;border-radius:14px;background:#e8f3f7;
+.busy{display:none;margin:8px 0 20px;padding:14px 16px;border-radius:14px;background:#e8f3f7;
   color:var(--ink);font-size:15px;line-height:1.8;text-align:left}
 .busy b{display:block;text-align:center;color:var(--teal);margin-bottom:6px}
 .close{display:inline-block;margin-top:24px;padding:14px 44px;border:0;border-radius:999px;background:var(--teal);
@@ -39,8 +39,9 @@ p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
 <div class="wrap"><div class="card">
   <div class="mark">✓</div>
   <h1 id="t"></h1>
-  <p id="s"></p>
+  <!-- ★2026-11-03 まるちゃん：「ご来店時間のお願い」を上に、その下に「ご来店を心より…閉じていただいて大丈夫です」 -->
   <div class="busy" id="b"></div>
+  <p id="s"></p>
   <button class="close" id="c" type="button"></button>
 </div></div>
 <script>
