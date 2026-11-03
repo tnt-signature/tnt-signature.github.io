@@ -71,13 +71,13 @@ p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
     var hol = busy === 'h', B = {
       ja: ['❋ご来店時間のお願い❋', (today ? '本日' : '明日') + 'は' + (hol ? '祝日' : '週末')
            + 'で予約が混み合っております。遅れますと後のお客様に影響し、施術をお受けいただけない場合がございます'
-           + '（そして当日キャンセルの規定が適用されます）ので、お時間どおりの来店に何卒ご協力をお願いします🙇‍♀️'],
+           + '（その場合当日キャンセルの規定が適用されてしまいます）ので、お時間どおりの来店に何卒ご協力をお願いします🙇‍♀️'],
       zh: ['❋到店時間提醒❋', (today ? '今天' : '明天') + '為' + (hol ? '國定假日' : '週末')
-           + '，預約較為滿檔。若遲到將影響到後面的客人，可能無法為您服務（並將適用當天取消的規定），'
+           + '，預約較為滿檔。若遲到將影響到後面的客人，可能無法為您服務（屆時將不得不適用當天取消的規定），'
            + '敬請務必準時到店，感謝您的配合🙇‍♀️'],
       en: ['❋ Please arrive on time ❋', (today ? 'Today' : 'Tomorrow') + ' is a ' + (hol ? 'holiday' : 'weekend')
            + ', so we are fully booked. If you are late, it may affect the next customer and we may not be able to '
-           + 'provide your treatment (in which case our same-day cancellation policy will apply), so please be sure '
+           + 'provide your treatment (in which case, unfortunately, our same-day cancellation policy will apply), so please be sure '
            + 'to arrive on time🙇‍♀️']
     }[l] || null;
     if (B) {
