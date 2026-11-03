@@ -12,7 +12,8 @@
     who=rdok で他の記録と分ける。view＝リンクごとの使い捨て番号（名前・番号は入れない）。
   ・LINEはリンクを送っただけで中身を読みに行く。読みに行く機械はページの中の仕掛けを動かさないので、
     合図は「画面が実際に表に出てから」だけ飛ばす（押していないのに押した扱いにしないため）。
-  ・置き場所＝tnt-signature.github.io/ok.html（公開は試し送りの時。それまでは手元のこの1枚が正本）。
+  ・置き場所＝taiwantomato.github.io/（index.html として置く・2026-11-03〜）。手元のこの1枚が正本。
+    前の置き場 tnt-signature.github.io/ok.html にも同じ物を置いてある（前の形の住所も開けるように）。
 -->
 <style>
 :root{--bg:#f6f7f8;--card:#fff;--ink:#1f2937;--sub:#6b7280;--teal:#2C7A99}
@@ -37,8 +38,11 @@ p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
 (function(){
   var q = location.search;
   function arg(n){ var m = new RegExp('[?&]' + n + '=([^&]*)').exec(q); return m ? decodeURIComponent(m[1]) : ''; }
-  var k = arg('k').replace(/[^a-z0-9]/g, '').slice(0, 20);
-  var l = arg('l');
+  var k = arg('k'), l = arg('l');
+  /* ★2026-11-03 短い住所＝taiwantomato.github.io/?番号（日本語）／?番号-zh／?番号-en。前の ?k=&l= の形も読める */
+  var m2 = /^\?([a-z0-9]{6,20})(?:-(ja|zh|en))?$/.exec(q);
+  if (!k && m2) { k = m2[1]; l = m2[2] || 'ja'; }
+  k = (k || '').replace(/[^a-z0-9]/g, '').slice(0, 20);
   var T = {
     ja: ['ご確認ありがとうございます', 'ご来店を心よりお待ちしております！<br>このページは閉じていただいて大丈夫です🙇'],
     zh: ['感謝您的確認', '期待您的光臨！<br>此頁面可以直接關閉。'],
