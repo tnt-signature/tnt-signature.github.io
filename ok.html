@@ -27,6 +27,8 @@ html,body{margin:0;background:var(--bg);color:var(--ink);
 h1{font-size:22px;margin:0 0 12px;line-height:1.5}
 p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
 .nb{white-space:nowrap}
+.close{display:inline-block;margin-top:24px;padding:14px 44px;border:0;border-radius:999px;background:var(--teal);
+  color:#fff;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer}
 </style>
 </head>
 <body>
@@ -34,6 +36,7 @@ p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
   <div class="mark">✓</div>
   <h1 id="t"></h1>
   <p id="s"></p>
+  <button class="close" id="c" type="button"></button>
 </div></div>
 <script>
 (function(){
@@ -54,6 +57,7 @@ p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
   document.documentElement.lang = (l === 'zh') ? 'zh-Hant' : (l === 'en' ? 'en' : 'ja');
   document.getElementById('t').innerHTML = w[0];
   document.getElementById('s').innerHTML = w[1];
+  document.getElementById('c').textContent = ({ja:'閉じる', zh:'關閉', en:'Close'})[l] || '閉じる';
 
   var PIPE = "https://script.google.com/macros/s/"
     + "AKfycbzSxho3e4CHyAuoymGlzcVwGnLshGoCg53zY18laLrHMq5Cun_pBv8XgRsNxKMDxlKwUA/exec";
@@ -71,6 +75,15 @@ p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
   /* 表に出てから少し待って1回だけ（読みに来ただけの機械や、裏で先読みされた時は飛ばない） */
   setTimeout(ping, 400);
   document.addEventListener('visibilitychange', function(){ setTimeout(ping, 400); });
+
+  /* ★閉じるボタン（2026-11-03 まるちゃん「閉じるボタンないとうざい」）。
+     LINEの中のブラウザは、ページから自分を閉じられないことが多い。閉じられなかった時は、お店とのトーク
+     （公式LINE @hci2793z・文なし）を開き直す＝LINEの画面に戻る（商品ページで2026-09-18にまるちゃんのスマホで効いた形）。 */
+  document.getElementById('c').addEventListener('click', function(){
+    ping();
+    try{ window.close(); }catch(e){}
+    setTimeout(function(){ location.href = 'https://line.me/R/oaMessage/@hci2793z/'; }, 300);
+  });
 })();
 </script>
 </body>
