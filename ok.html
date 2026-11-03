@@ -27,6 +27,10 @@ html,body{margin:0;background:var(--bg);color:var(--ink);
 h1{font-size:22px;margin:0 0 12px;line-height:1.5}
 p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
 .nb{white-space:nowrap}
+/* 土曜・台湾祝日のご予約の方だけに出す「ご来店時間のお願い」（2026-11-03 まるちゃん） */
+.busy{display:none;margin-top:20px;padding:14px 16px;border-radius:14px;background:#e8f3f7;
+  color:var(--ink);font-size:15px;line-height:1.8;text-align:left}
+.busy b{display:block;text-align:center;color:var(--teal);margin-bottom:6px}
 .close{display:inline-block;margin-top:24px;padding:14px 44px;border:0;border-radius:999px;background:var(--teal);
   color:#fff;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer}
 </style>
@@ -36,16 +40,18 @@ p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
   <div class="mark">✓</div>
   <h1 id="t"></h1>
   <p id="s"></p>
+  <div class="busy" id="b"></div>
   <button class="close" id="c" type="button"></button>
 </div></div>
 <script>
 (function(){
   var q = location.search;
   function arg(n){ var m = new RegExp('[?&]' + n + '=([^&]*)').exec(q); return m ? decodeURIComponent(m[1]) : ''; }
-  var k = arg('k'), l = arg('l');
-  /* ★2026-11-03 短い住所＝taiwantomato.github.io/?番号（日本語）／?番号-zh／?番号-en。前の ?k=&l= の形も読める */
-  var m2 = /^\?([a-z0-9]{6,20})(?:-(ja|zh|en))?$/.exec(q);
-  if (!k && m2) { k = m2[1]; l = m2[2] || 'ja'; }
+  var k = arg('k'), l = arg('l'), busy = '', today = false;
+  /* ★2026-11-03 短い住所＝taiwantomato.github.io/?番号（日本語）／?番号-zh／?番号-en。前の ?k=&l= の形も読める
+     最後の「.w」＝土曜のご予約・「.h」＝台湾の祝日のご予約（後ろに t が付けば当日＝2回目の送信）。 */
+  var m2 = /^\?([a-z0-9]{6,20})(?:-(ja|zh|en))?(?:\.([wh])(t?))?$/.exec(q);
+  if (!k && m2) { k = m2[1]; l = m2[2] || 'ja'; busy = m2[3] || ''; today = m2[4] === 't'; }
   k = (k || '').replace(/[^a-z0-9]/g, '').slice(0, 20);
   var T = {
     /* ★最後のひとかたまり（nb）は途中で折り返さない＝「す🙇」だけ次の行に落ちないように（2026-11-03） */
@@ -58,6 +64,27 @@ p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
   document.getElementById('t').innerHTML = w[0];
   document.getElementById('s').innerHTML = w[1];
   document.getElementById('c').textContent = ({ja:'閉じる', zh:'關閉', en:'Close'})[l] || '閉じる';
+
+  /* ★土曜・台湾祝日のご予約の方だけ「ご来店時間のお願い」を出す（2026-11-03 まるちゃんの文） */
+  if (busy) {
+    var hol = busy === 'h', B = {
+      ja: ['❋ご来店時間のお願い❋', (today ? '本日' : '明日') + 'は' + (hol ? '祝日' : '週末')
+           + 'で予約が混み合っております。遅れますと後のお客様に影響し、施術をお受けいただけない場合がございます'
+           + '（そして当日キャンセルの規定が適用されます）ので、お時間どおりの来店に何卒ご協力をお願いします🙇‍♀️'],
+      zh: ['❋到店時間提醒❋', (today ? '今天' : '明天') + '為' + (hol ? '國定假日' : '週末')
+           + '，預約較為滿檔。若遲到將影響到後面的客人，可能無法為您服務（並將適用當天取消的規定），'
+           + '敬請務必準時到店，感謝您的配合🙇‍♀️'],
+      en: ['❋ Please arrive on time ❋', (today ? 'Today' : 'Tomorrow') + ' is a ' + (hol ? 'holiday' : 'weekend')
+           + ', so we are fully booked. If you are late, it may affect the next customer and we may not be able to '
+           + 'provide your treatment (in which case our same-day cancellation policy will apply), so please be sure '
+           + 'to arrive on time🙇‍♀️']
+    }[l] || null;
+    if (B) {
+      var el = document.getElementById('b');
+      el.innerHTML = '<b>' + B[0] + '</b>' + B[1];
+      el.style.display = 'block';
+    }
+  }
 
   var PIPE = "https://script.google.com/macros/s/"
     + "AKfycbzSxho3e4CHyAuoymGlzcVwGnLshGoCg53zY18laLrHMq5Cun_pBv8XgRsNxKMDxlKwUA/exec";
