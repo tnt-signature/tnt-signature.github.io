@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>T&amp;T SIGNATURE</title>
+<meta name="description" content="T&amp;T SIGNATURE">
+<meta property="og:type" content="website">
+<meta property="og:title" content="T&amp;T SIGNATURE">
+<meta property="og:description" content="T&amp;T SIGNATURE">
+<meta property="og:url" content="https://tnt-signature.github.io/signature.html">
+<meta property="og:site_name" content="T&amp;T SIGNATURE">
+<meta name="twitter:card" content="summary">
 </head>
 <body style="margin:0"><title>T&amp;T SIGNATURE</title>
 <link rel="preload" as="image" fetchpriority="high" href="img/binw-9de5b69389.jpg">
@@ -935,14 +942,14 @@ body.dark .dhero.leadLight.hasLead::after{
 body.dark .dname{
   font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;
   font-weight:400;letter-spacing:.1em;color:#f5efe5;text-align:center;margin-top:10px;
-  white-space:nowrap;   /* 名前と（50ml）は1行のまま。入らない時は下の仕組みが字を詰める */
+  white-space:nowrap;   /* 名前と（40ml）は1行のまま。入らない時は下の仕組みが字を詰める */
 }
-/* 商品名の右に添える量（50ml）＝控えめに、名前より小さく淡く */
+/* 商品名の右に添える量（40ml）＝控えめに、名前より小さく淡く */
 body.dark .dname .u{
   font-size:.56em;letter-spacing:.04em;color:#cfc0a4;margin-left:.5em;
 }
 body.dark .dsub{
-  /* 量（50ml など）は白（2026-09-03 まるちゃん） */
+  /* 量（40ml など）は白（2026-09-03 まるちゃん） */
   font-family:"EB Garamond",serif;font-style:italic;color:#f5efe5;
   text-align:center;margin-top:8px;letter-spacing:.06em;
 }
@@ -1809,7 +1816,7 @@ var ZH = {
   "独自開発技術で汚れを浮かせすみずみまで洗浄":"獨家技術帶走髒污，洗淨每一處",
   "天然・植物由来成分100%":"100%天然植物來源成分",
   "デリケートゾーンに優しい弱酸性":"對私密處溫和的弱酸性",
-  "お宮まいり 月室美容液":"產後祈福 月室精華液",
+  "お宮まいり 膣ケア美容液":"產後祈福 月室精華液",
   "全身を若返らせる膣用美容液":"讓全身回春的陰道精華液",
   "日本から取り寄せている、膣用の美容液。":"自日本引進的私密處專用精華液。",
   "1箱 2ml × 10本":"1盒 2ml × 10支",
@@ -1824,7 +1831,7 @@ var ZH = {
   "選ばれし":"脫穎而出",
   "ホホバエッセンスの秘密":"荷荷芭精華的秘密",
   "ホホバエッセンスの使い方":"荷荷芭精華的使用方法",
-  "月室美容液の秘密":"月室精華液的秘密",
+  "膣ケア美容液の秘密":"月室精華液的秘密",
   "準備中":"準備中",
   "台湾GUMI茶":"台灣果蜜茶",   /* 中国語版での名前（2026-09-18 まるちゃん指定） */
   "小さな命と出会って生まれた、":"與小小生命相遇而生，",
@@ -1841,7 +1848,7 @@ var ZH = {
   "USDA（米国農務省）オーガニック認証":"USDA（美國農業部）有機認證",
   "台湾の化粧品安全基準（PIF）に適合":"符合台灣化粧品PIF規範",
   "VIO保湿美容オイルとVIO専用泡ソープのセットです。":"私密處保濕美容油與私密處專用泡沫皂的組合。",
-  "50ml":"50ml"
+  "40ml":"40ml"
 };
 
 /* 日本語の文を、中国語版なら中国語にして返す（対応表に無ければそのまま） */
@@ -1961,6 +1968,7 @@ var IG_AD = (function(){
   try{ return sessionStorage.getItem('tt_ig') || ''; }catch(e){ return ''; }
 })();
 var IG_AD_ITEM = 'jojoba_no31';   /* 広告で売る商品（蝦皮で買えるのは今No.31だけ） */
+var IG_AD_LANDING = false;        /* 広告から入って最初に開いた画面にいる間だけ true（「前へ戻る」を出さない・2026-10-27） */
 /* 会員価格の呼び名は、ここ1か所で決める（画面ごとに書き分けない） */
 function memberLabel(){ return IG_AD ? '当店インスタグラム会員価格' : '当店LINE会員価格'; }
 function lbNow(it){
@@ -2175,7 +2183,7 @@ var DATA = {
         note:"" },
 
       { id:"tsukimuro",
-        nm:"お宮まいり 月室美容液", nm_zh:"【中文名 未定】お宮まいり 月室",
+        nm:"お宮まいり 膣ケア美容液", nm_zh:"【中文名 未定】お宮まいり 月室",
         sub:"全身を若返らせる膣用美容液",   /* 量の代わりに一言（2026-09-07 まるちゃん） */
         one:"日本から取り寄せている、膣用の美容液。",
         now:2500, was:null,
@@ -2185,7 +2193,7 @@ var DATA = {
         pic2:"tsukimuro2",   /* 詳しい画面だけ、1枚目の右にもう1枚（2026-09-07 まるちゃん） */
         /* 読みもののリンク（2026-09-07 まるちゃん）。飛び先はあとで教わる＝
            url が空の間はリンクを出さない（壊れない） */
-        secret:{ t:"月室美容液の秘密",
+        secret:{ t:"膣ケア美容液の秘密",
                  url:"https://ttsuperzuco.github.io/tt-price/omiyabiyouekiJP.html",
                  url_zh:"https://ttsuperzuco.github.io/tt-price/omiyabiyouekiCH.html" },   /* 2026-09-07 まるちゃんが名前を指定 */
         tags:[],
@@ -2245,9 +2253,10 @@ var DATA = {
       { id:"jojoba_no31", img:"NO31",
         shopee:"https://shopee.tw/%E8%8D%B7%E8%8D%B7%E8%8A%AD%E7%B2%BE%E8%8F%AF+No.31-i.135867224.55217718557",   /* 郵送＝蝦皮で送れる商品（2026-09-14） */
         nm:"ホホバエッセンス No.31", nm_zh:"荷荷芭精華 No.31",
-        sub:"50ml",
-        /* 詳しい画面では商品名の右に（50ml）と小さく添える（2026-09-03 まるちゃん） */
-        unit:"50ml",
+        sub:"40ml",
+        /* 詳しい画面では商品名の右に（40ml）と小さく添える（2026-09-03 まるちゃん。
+           ★2026-10-30 まるちゃん指示で 50ml → 40ml に変更。蝦皮の商品名も同時に直した） */
+        unit:"40ml",
         one:"TaiwanTomato のオリジナル。ホホバの美容エッセンス。",
         /* 写真の中に白い字で重ねる一言（映像の最後の言葉・4行・2026-09-03 まるちゃん）*/
         lead:["１５０万の中から", "選ばれし", "真の最高峰を", "あなたの肌に"],
@@ -3676,7 +3685,7 @@ function openItem(cat, id){
       + '<span class="bk">💧</span>' + esc(Z(use.t)) + '<span class="ar">›</span></a>';
     ds.style.display = '';
   }
-  /* 商品名。量（50ml）がある商品は、その右に小さく添える */
+  /* 商品名。量（40ml）がある商品は、その右に小さく添える */
   document.getElementById('dname').innerHTML =
       '<span class="nm">' + esc(it.nm) + '</span>'
     + (it.unit ? '<span class="u">（' + esc(it.unit) + '）</span>' : '');
@@ -4585,6 +4594,11 @@ function setStep(n){
   var adTop = !!(IG_AD && n === 6);
   document.getElementById('stepItem').style.display = (n===0 || adTop) ? 'block' : 'none';
   document.getElementById('buyStart').parentNode.style.display = adTop ? 'none' : '';
+  /* ★2026-10-27 まるちゃん「いちばんうえのもどるはいらないし、とっぷでしょ？そこのくうはくつめて」：
+     広告から来た人にはここが一番上の画面なので「← 前へ戻る」の並びごと出さない（その分の空白も消える） */
+  /*   ただし隠すのは「広告から入って最初に開いた画面」の間だけ。中を見て回って同じ画面に来た時は今までどおり出す。 */
+  if (n !== 6) IG_AD_LANDING = false;
+  document.getElementById('backRow').style.display = (adTop && IG_AD_LANDING) ? 'none' : '';
   /* 上の詳しい部分と「蝦皮でのご購入」の間に余白と細い線（値段の下の線と同じ色）を入れる＝くっついて見えないように */
   var sc = document.getElementById('stepCode');
   sc.style.marginTop  = adTop ? '30px' : '';
@@ -4694,6 +4708,9 @@ back.onclick = function(){
     if (skipNext){ skipNext = false; return; }
     if (!guarded) return;
     guarded = false;
+    /* ★2026-10-27：広告から来た人の一番上の画面（割引コードの画面）では、スマホの戻るで前の画面へ行かず
+       そのままページを離れる（インスタへ戻る）。この画面には「前へ戻る」を出していないので、それに合わせる。 */
+    if (IG_AD_LANDING && payStep === 6){ try { history.back(); } catch(e){} return; }
     back.onclick();
     arm();
   });
@@ -4756,6 +4773,7 @@ function ttResumeSave(){
     openingEl.classList.add('gone', 'off');          /* 始まりの白い瓶の画面は出さない */
     openItem(f.cat, IG_AD_ITEM);
     wayAsked = true;
+    IG_AD_LANDING = true;
     setStep(6);
     setTimeout(function(){ try{ fitAll(); }catch(e){} }, 50);
     /* 始まりの映像を飛ばしたので、あとで「前へ戻る」でトップへ戻った時に映像を始める（1回だけ） */
@@ -4802,16 +4820,4 @@ function ttResumeSave(){
 })();
 </script>
 
-<script>
-(function(){
-  function tomeru(){
-    var b = document.querySelectorAll("[data-go]");
-    for (var i = 0; i < b.length; i++){
-      b[i].onclick = function(e){ if (e && e.preventDefault) e.preventDefault(); };
-    }
-  }
-  tomeru();
-  setTimeout(tomeru, 1500);
-})();
-</script>
 </body></html>
