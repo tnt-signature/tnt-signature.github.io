@@ -89,28 +89,84 @@ p{font-size:16px;line-height:1.8;color:var(--sub);margin:0}
 
   var PIPE = "https://script.google.com/macros/s/"
     + "AKfycbzSxho3e4CHyAuoymGlzcVwGnLshGoCg53zY18laLrHMq5Cun_pBv8XgRsNxKMDxlKwUA/exec";
-  var sent = false;
-  function ping(){
-    if (sent || !k || document.visibilityState !== 'visible') return;
-    if (!/^https?:$/.test(location.protocol)) return;          /* 手元のファイルで開いた試しは送らない */
-    sent = true;
-    try{
-      fetch(PIPE + '?action=hit&who=rdok&device=page&role=' + encodeURIComponent((l || 'ja').slice(0, 5))
-            + '&view=' + encodeURIComponent(k),
-            { mode:'no-cors', cache:'no-store', keepalive:true }).catch(function(){ sent = false; });
-    }catch(e){ sent = false; }
+  /* ★2026-11-06 まるちゃん「クリックしたら必ずキャッチ。客に失礼になるから絶対にもらしたくない」。
+     前は開いて0.4秒後に1回だけ送り、返事も見なかった（しくじっても送り直さない）。今は：
+     ①表に出たらすぐ送り、窓口の「受け取った（保存した）」の返事をもらうまで間を空けて送り直す。
+     ②返事をもらう前にページが隠れる・閉じる時は、閉じても届く送り方（sendBeacon）でもう1回送る。
+     ③届いたと分かるまで、このスマホに番号を覚えておき、次にどの確認リンクを開いた時でも送り直す（3日まで）。
+     何回届いても、仕組みは一番早い時刻だけを見る＝二重に数えない。
+     ★読みに来ただけの機械（LINEのリンクの下見）は仕掛けを動かさず、裏で先読みされた時は表に出ていない＝送らない。 */
+  var LIVE = /^https?:$/.test(location.protocol);                /* 手元のファイルで開いた試しは送らない */
+  var PEND = 'rdok_pending', DAY3 = 3 * 24 * 3600 * 1000;
+  var done = false, seen = false, busy = false, tries = 0, waiters = [];
+  var WAIT = [1000, 2000, 3000, 5000, 8000, 13000, 20000];
+  function hitUrl(tok, lang){
+    return PIPE + '?action=hit&who=rdok&device=page&role=' + encodeURIComponent((lang || 'ja').slice(0, 5))
+         + '&view=' + encodeURIComponent(tok);
   }
-  /* 表に出てから少し待って1回だけ（読みに来ただけの機械や、裏で先読みされた時は飛ばない） */
-  setTimeout(ping, 400);
-  document.addEventListener('visibilitychange', function(){ setTimeout(ping, 400); });
+  function pendGet(){ try{ return JSON.parse(localStorage.getItem(PEND) || '{}') || {}; }catch(e){ return {}; } }
+  function pendSet(m){ try{ localStorage.setItem(PEND, JSON.stringify(m)); }catch(e){} }
+  function remember(tok, lang){ var m = pendGet(); if (!m[tok]) { m[tok] = { l: lang || 'ja', t: Date.now() }; pendSet(m); } }
+  function forget(tok){ var m = pendGet(); if (m[tok]) { delete m[tok]; pendSet(m); } }
+  /* 返事付きで送る（窓口が保存できた時だけ ok:true が返る）。8秒で返事が無ければ失敗扱い。 */
+  function send(tok, lang, cb){
+    var name = '__rdok' + Math.random().toString(36).slice(2), s = document.createElement('script'), fin = false;
+    function end(ok){ if (fin) return; fin = true; clearTimeout(t); window[name] = function(){};
+                      if (s.parentNode) s.parentNode.removeChild(s); cb(ok); }
+    var t = setTimeout(function(){ end(false); }, 8000);
+    window[name] = function(r){ end(!!(r && r.ok)); };
+    s.onerror = function(){ end(false); };
+    s.src = hitUrl(tok, lang) + '&callback=' + name + '&_=' + Date.now();
+    (document.head || document.documentElement).appendChild(s);
+  }
+  function got(){ done = true; forget(k); var w = waiters; waiters = []; w.forEach(function(f){ f(); }); }
+  function ping(){
+    if (!LIVE || !k || done || busy) return;
+    if (document.visibilityState && document.visibilityState !== 'visible') return;   /* 裏で先読みされた時は送らない */
+    seen = true; busy = true; remember(k, l);
+    send(k, l, function(ok){
+      busy = false;
+      if (ok) { got(); return; }
+      setTimeout(ping, WAIT[Math.min(tries++, WAIT.length - 1)]);
+    });
+  }
+  function beacon(){
+    if (!LIVE || !k || done || !seen) return;
+    try{ if (navigator.sendBeacon) navigator.sendBeacon(hitUrl(k, l)); }catch(e){}
+  }
+  /* 前に開いた確認リンクで、届いたと分からないままの分を送り直す（このページの番号は ping が送る） */
+  function resendOld(){
+    if (!LIVE) return;
+    var m = pendGet(), now = Date.now();
+    Object.keys(m).forEach(function(tok){
+      if (tok === k) return;
+      if (!m[tok] || now - (m[tok].t || 0) > DAY3) { forget(tok); return; }
+      send(tok, m[tok].l, function(ok){ if (ok) forget(tok); });
+    });
+  }
+  ping();
+  resendOld();
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'hidden') beacon(); else ping();
+  });
+  window.addEventListener('pagehide', beacon);
 
   /* ★閉じるボタン（2026-11-03 まるちゃん「閉じるボタンないとうざい」）。
      LINEの中のブラウザは、ページから自分を閉じられないことが多い。閉じられなかった時は、お店とのトーク
-     （公式LINE @hci2793z・文なし）を開き直す＝LINEの画面に戻る（商品ページで2026-09-18にまるちゃんのスマホで効いた形）。 */
+     （公式LINE @hci2793z・文なし）を開き直す＝LINEの画面に戻る（商品ページで2026-09-18にまるちゃんのスマホで効いた形）。
+     ★2026-11-06：まだ「受け取った」の返事が無い時は、返事を最大2.5秒待ってから閉じる（閉じる前に閉じても届く送り方でも送る）。 */
   document.getElementById('c').addEventListener('click', function(){
+    var gone = false;
+    function close(){
+      if (gone) return; gone = true;
+      try{ window.close(); }catch(e){}
+      setTimeout(function(){ location.href = 'https://line.me/R/oaMessage/@hci2793z/'; }, 300);
+    }
+    if (done || !LIVE || !k) { close(); return; }
+    waiters.push(close);
     ping();
-    try{ window.close(); }catch(e){}
-    setTimeout(function(){ location.href = 'https://line.me/R/oaMessage/@hci2793z/'; }, 300);
+    beacon();
+    setTimeout(close, 2500);
   });
 })();
 </script>
